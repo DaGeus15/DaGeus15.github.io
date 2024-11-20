@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/static/css/main.340e1856.css",
+    "main.js": "/static/js/main.41cd034c.js",
+    "static/media/fondo.jpg": "/static/media/fondo.60310fe80f90ef0af306.jpg",
+    "static/media/fondo-dark.jpg": "/static/media/fondo-dark.ead0e18d9c463ab6a2f0.jpg",
+    "static/media/Mona-Sans.woff2": "/static/media/Mona-Sans.955a87eb3766a32ac970.woff2",
+    "index.html": "/index.html",
+    "main.340e1856.css.map": "/static/css/main.340e1856.css.map",
+    "main.41cd034c.js.map": "/static/js/main.41cd034c.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.340e1856.css",
+    "static/js/main.41cd034c.js"
+  ]
+}
