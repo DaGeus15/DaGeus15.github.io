@@ -1272,3 +1272,119 @@ input:checked {
   --thumb-position: 100%;
   background-color: var(--track-active);
 }
+body.light {
+  --resume-primary-color: var(--primary-color);
+  --resume-bg-color: var(--bg-color-secondary);
+  --resume-text-color: var(--body);
+  --resume-subtext-color: var(--sub);
+  --resume-border-color: #000; /* Línea negra */
+  --resume-hover-shadow: rgba(0, 0, 0, 0.5); /* Sombra más oscura */
+  --resume-highlight-bg: var(--bg-color-primary);
+  --resume-hover-bg: rgba(0, 0, 0, 0.1); /* Fondo destacado en hover */
+  --resume-ball-color: #000; /* Bolita negra en modo claro */
+}
+
+body.dark {
+  --resume-primary-color: #cf9edf;
+  --resume-bg-color: #2d2a32;
+  --resume-text-color: #e0e0e0;
+  --resume-subtext-color: #bdbdbd;
+  --resume-border-color: #cf9edf; /* Línea morada */
+  --resume-hover-shadow: rgba(255, 255, 255, 0.3); /* Sombra blanca tenue */
+  --resume-highlight-bg: #3e3b45;
+  --resume-hover-bg: rgba(207, 158, 223, 0.2); /* Morado claro en hover */
+  --resume-ball-color: #cf9edf; /* Bolita morada en modo oscuro */
+}
+
+.resume-container * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.resume-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-column-gap: 20px;
+  align-items: stretch;
+  width: 100%;
+  padding: 35px 10%;
+}
+
+.resume-col {
+  display: flex;
+  flex-direction: column;
+  padding-right: calc(10% - 30px);
+}
+
+.resume-title {
+  font-family: helvetica;
+  color: var(--resume-primary-color);
+  padding: 0px 0px 20px 30px;
+}
+
+.resume-contents {
+  flex: 1;
+  padding: 0px 30px;
+  border-left: 2px solid var(--resume-border-color);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.resume-box {
+  position: relative;
+  padding: 20px;
+  border: 1px solid var(--resume-border-color);
+  background-color: var(--resume-bg-color);
+  cursor: pointer;
+  transition: all 0.4s;
+  margin-bottom: 20px;
+}
+
+.resume-box:hover {
+  box-shadow: var(--resume-hover-shadow);
+  background-color: var(--resume-hover-bg);
+}
+
+.resume-box::before {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  right: calc(100% + 22px);
+  top: 0;
+  background-color: var(--resume-ball-color); /* Color de la bolita */
+  border: 2px solid var(--resume-bg-color);
+}
+
+.resume-box h4 {
+  position: relative;
+  color: var(--resume-primary-color);
+}
+
+.resume-box h3 {
+  font-size: 19px;
+  padding: 10px 0px 6px;
+  font-family: helvetica;
+  color: var(--resume-text-color);
+}
+
+.resume-box p {
+  line-height: 1.2;
+  color: var(--resume-subtext-color);
+  font-size: 17px;
+}
+
+@media (max-width: 768px) {
+  .resume-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .resume-col:nth-child(2) {
+    margin-top: 30px;
+  }
+}
+
