@@ -4,7 +4,7 @@ const Skills = () => {
     <section className="skills">
       <div className="container">
         <h2 className="h2" id="skills">
-          My Toolkit
+          Habilidades
         </h2>
         <div className="skills-imgs">
           <img

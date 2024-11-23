@@ -506,7 +506,7 @@ body.dark .nav {
 /* --------------------------------- */
 
 .header {
-  min-block-size: calc(100vh + var(--radius));
+  min-height: 100vh;
   background-attachment: fixed;
   background-size: cover;
   background-position: center;
