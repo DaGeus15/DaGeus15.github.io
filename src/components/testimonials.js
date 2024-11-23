@@ -2,33 +2,35 @@ import React from "react";
 const Testimonials = () => {
   return (
     <section>
-      <h2 className="h2">Testimonials</h2>
+      <h2 className="h2">Testimonios</h2>
       <div className="container">
         <ol className="testimonials">
           <li className="testimonial">
             <blockquote className="testimonial-text">
-              Working with Dayle was a great experience. His drive htmlFor clean
-              aesthetics and his open communication style helped us collaborate
-              closely on the solution.
+              Trabajar con Dayle fue una experiencia excelente. Su dedicación a
+              una estética limpia y su estilo de comunicación abierta nos
+              permitió colaborar de manera efectiva en la solución.
             </blockquote>
             <figure className="testimonial-author">
               <img
                 src="assets/images/testimonials/rich-harris.png"
-                alt="Rich Harris"
+                alt="Harris Kareem"
                 loading="lazy"
               />
               <figcaption>
                 <h3 className="testimonial-author-name">Harris Kareem</h3>
-                <p className="testimonial-author-job">Developer @Outlets</p>
+                <p className="testimonial-author-job">
+                  Desarrollador en @Outlets
+                </p>
               </figcaption>
             </figure>
           </li>
           <li className="testimonial">
             <blockquote className="testimonial-text">
-              Dayle is a fantastic UI/UX designer and developer with a keen sense
-              htmlFor marketing, and lead generation. He's the only designer I know
-              who also has a deep understanding htmlFor code and front-end
-              development.
+              Dayle es una excelente diseñadora UI/UX y desarrolladora con una
+              gran visión para el marketing y la generación de leads. Es la
+              única persona que conozco que combina un profundo conocimiento de
+              diseño con un excelente manejo del código y desarrollo frontend.
             </blockquote>
             <figure className="testimonial-author">
               <img
@@ -38,15 +40,19 @@ const Testimonials = () => {
               />
               <figcaption>
                 <h3 className="testimonial-author-name">Andrew Mead</h3>
-                <p className="testimonial-author-job">Chief Scientist @Logos</p>
+                <p className="testimonial-author-job">
+                  Científico Principal en @Logos
+                </p>
               </figcaption>
             </figure>
           </li>
           <li className="testimonial">
             <blockquote className="testimonial-text">
-              Talented artist, experienced with various media and can make any
-              project you are working on look good. He is easy to work with and
-              is a self starter. I would work with Dayle again.
+              Es una artista talentosa, con experiencia en diversos medios,
+              capaz de hacer que cualquier proyecto que estés desarrollando
+              luzca increíble. Es fácil trabajar con ella y tiene la iniciativa
+              para empezar proyectos por sí sola. Sin duda, volvería a trabajar
+              con Dayle.
             </blockquote>
             <figure className="testimonial-author">
               <img
@@ -62,10 +68,10 @@ const Testimonials = () => {
           </li>
           <li className="testimonial">
             <blockquote className="testimonial-text">
-              Dayle is a true professional with amazing talent. He is a creative
-              thinker, has his finger on the pulse of whats to come, and
-              absolutely one of the quickest and best problem solvers I have
-              ever met.
+              Dayle es una verdadera profesional con un talento impresionante.
+              Es una pensadora creativa, siempre al tanto de las tendencias
+              futuras, y es una de las solucionadoras de problemas más rápidas y
+              efectivas que he conocido.
             </blockquote>
             <figure className="testimonial-author">
               <img
@@ -75,16 +81,16 @@ const Testimonials = () => {
               />
               <figcaption>
                 <h3 className="testimonial-author-name">Adam Argalye</h3>
-                <p className="testimonial-author-job">SWE @Google</p>
+                <p className="testimonial-author-job">SWE en @Google</p>
               </figcaption>
             </figure>
           </li>
           <li className="testimonial">
             <blockquote className="testimonial-text">
-              Dayle is one of my favourite people to work with. He's my go-to
-              colleague when trouble shooting any new technique or technology
-              because she understands how to tackle unknown problems with
-              gumption.
+              Dayle es una de mis personas favoritas para trabajar. Es mi colega
+              de referencia cuando tenemos que resolver cualquier técnica o
+              tecnología nueva, porque sabe cómo abordar problemas desconocidos
+              con mucha determinación.
             </blockquote>
             <figure className="testimonial-author">
               <img
@@ -94,16 +100,16 @@ const Testimonials = () => {
               />
               <figcaption>
                 <h3 className="testimonial-author-name">Val Head</h3>
-                <p className="testimonial-author-job">CEO @Engines</p>
+                <p className="testimonial-author-job">CEO en @Engines</p>
               </figcaption>
             </figure>
           </li>
           <li className="testimonial">
             <blockquote className="testimonial-text">
-              Dayle is a talented artist. He is very experienced with various
-              media and can make any project you are working on look good. He is
-              easy to work with and is a self starter. I would work with Dayle
-              again.
+              Dayle es una artista talentosa. Tiene mucha experiencia con
+              diversos medios y sabe cómo hacer que cualquier proyecto en el que
+              trabajes se vea genial. Es fácil trabajar con ella y es muy
+              proactiva. Definitivamente volvería a trabajar con Dayle.
             </blockquote>
             <figure className="testimonial-author">
               <img
@@ -113,7 +119,9 @@ const Testimonials = () => {
               />
               <figcaption>
                 <h3 className="testimonial-author-name">Gary Simon</h3>
-                <p className="testimonial-author-job">A11y Advocate @W3C</p>
+                <p className="testimonial-author-job">
+                  Defensor de la accesibilidad en @W3C
+                </p>
               </figcaption>
             </figure>
           </li>

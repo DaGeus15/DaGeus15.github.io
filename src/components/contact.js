@@ -4,27 +4,28 @@ const Contact = () => {
     <section className="contact">
       <div className="container">
         <h2 className="h2" id="contact">
-          Send Message
+          Enviar Mensaje
         </h2>
         <div className="contact-content">
           <div className="contact-textbox">
             <strong href="#" className="hire-alert">
               <span className="indicator"></span>
-              Available for hire
+              Disponible para contratación
             </strong>
             <p className="contact-text">
-              I am a software engineering student with a passion for learning. I
-              specialize in building web interfaces and designing systems,
-              always focusing on accessibility and performance. I enjoy coding
-              from scratch and love bringing ideas to life through technology.
+              Soy estudiante de ingeniería de software con pasión por el
+              aprendizaje. Me especializo en construir interfaces web y diseñar
+              sistemas, siempre enfocándome en la accesibilidad y el
+              rendimiento. Disfruto programar desde cero y me encanta dar vida a
+              las ideas a través de la tecnología.
             </p>
             <p className="contact-text">
-              As an open-source enthusiast, I contribute to various projects in
-              my free time.
+              Como entusiasta del código abierto, contribuyo a varios proyectos
+              en mi tiempo libre.
             </p>
 
             <img
-              src="/assets/images/signatures.png"
+              src="/assets/images/R.png"
               alt="Syed Mohsin"
               className="signatures"
               loading="lazy"
@@ -32,11 +33,11 @@ const Contact = () => {
           </div>
           <form action="#" className="contact-form" netlify="true">
             <div className="form-field">
-              <label htmlFor="name">Name</label>
+              <label htmlFor="name">Nombre</label>
               <input type="text" name="name" id="name" required />
             </div>
             <div className="form-field">
-              <label htmlFor="email">Email</label>
+              <label htmlFor="email">Correo Electrónico</label>
               <input
                 type="email"
                 name="email"
@@ -46,11 +47,11 @@ const Contact = () => {
               />
             </div>
             <div className="form-field">
-              <label htmlFor="message">How can I help you?</label>
+              <label htmlFor="message">¿Cómo puedo ayudarte?</label>
               <textarea name="message" id="message" required></textarea>
             </div>
             <button type="submit" className="btn btn-cta">
-              Send
+              Enviar
             </button>
           </form>
         </div>

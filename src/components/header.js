@@ -4,6 +4,7 @@ const Header = () => {
   useEffect(() => {
     const nav = document.querySelector(".nav");
     const btnToggleNav = document.querySelector(".menu-btn");
+    const navLinks = document.querySelectorAll(".nav-item a");
 
     const toggleNav = () => {
       nav.classList.toggle("hidden");
@@ -23,9 +24,24 @@ const Header = () => {
 
     document.body.addEventListener("keydown", handleKeyDown);
 
+    navLinks.forEach((link) => {
+      link.addEventListener("click", () => {
+        if (!nav.classList.contains("hidden")) {
+          toggleNav();
+        }
+      });
+    });
+
     return () => {
       btnToggleNav.removeEventListener("click", toggleNav);
       document.body.removeEventListener("keydown", handleKeyDown);
+      navLinks.forEach((link) => {
+        link.removeEventListener("click", () => {
+          if (!nav.classList.contains("hidden")) {
+            toggleNav();
+          }
+        });
+      });
     };
   }, []);
 
@@ -34,7 +50,7 @@ const Header = () => {
       <div className="menu-btn-container">
         <div className="container">
           <button type="button" className="menu-btn">
-            Menu
+            Menú
           </button>
         </div>
       </div>
@@ -42,17 +58,20 @@ const Header = () => {
       <nav className="nav hidden">
         <ol className="nav-items">
           <li className="nav-item">
-            <a href="#">Home</a>
+            <a href="#home">Inicio</a>
           </li>
           <li className="nav-item">
-            <a href="#work">My Work</a>
+            <a href="#work">Mi Trabajo</a>
           </li>
           <li className="nav-item">
-            <a href="#skills">My Skills</a>
+            <a href="#resume">Resumen</a>
+          </li>
+          <li className="nav-item">
+            <a href="#skills">Mis Habilidades</a>
           </li>
           <li className="nav-item">
             <a href="#contact" data-focused="last-focused">
-              Contact
+              Contacto
             </a>
           </li>
         </ol>
@@ -60,20 +79,26 @@ const Header = () => {
 
       <div className="container">
         <div className="header-textbox">
+          <div className="profile-picture">
+            <img src="/assets/images/foto para todo.jpg" alt="Perfil" id="home"/>
+          </div>
+
           <h1 className="h1">
-            <span>Hi, I'm Dayle García</span>
-            <span>Web Developer</span>
+            <span>Hola, soy Dayle García</span>
+            <span>Estudiante de Ingeniería en Software</span>
           </h1>
+
           <p className="header-text">
-            A frontend software engineer and interface designer who builds UX
-            rich accessible and performant websites.
+            Estudiante de Ingeniería en Software con interés en desarrollo
+            backend. Busco crear aplicaciones escalables y optimizadas.
           </p>
+
           <div className="header-btns">
             <a href="#contact" className="btn btn-cta">
-              Hire me
+              Contáctame
             </a>
             <a href="#work" className="btn btn-secondary">
-              See my work
+              Ver mi trabajo
             </a>
           </div>
         </div>

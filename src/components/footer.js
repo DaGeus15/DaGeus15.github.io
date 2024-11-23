@@ -49,7 +49,7 @@ const Footer = () => {
               <li className="footer-link">
                 <a
                   title="Linkedin"
-                  href="https://github.com/DaGeus15"
+                  href="https://www.linkedin.com/in/dayle-garcia-6a0878170/"
                   target="_blank"
                   rel="noopener"
                 >
@@ -62,15 +62,15 @@ const Footer = () => {
               </li>
               <li className="footer-link">
                 <a
-                  title="Twitter"
-                  href="https://github.com/DaGeus15"
+                  title="X"
+                  href="https://x.com/garci015"
                   target="_blank"
                   rel="noopener"
                 >
                   <img
                     loading="lazy"
-                    src="/assets/images/social-links/twitter.svg"
-                    alt="Twitter"
+                    src="/assets/images/social-links/x.png"
+                    alt="X"
                   />
                 </a>
               </li>

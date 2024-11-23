@@ -19,35 +19,35 @@ const Work = () => {
           }
         });
       },
-      { threshold: 0.3 } 
+      { threshold: 0.3 }
     );
     workEls.forEach((workEl) => observer.observe(workEl));
 
     return () => {
       observer.disconnect();
     };
-  }, []); 
+  }, []);
 
   return (
     <section className="work">
       <div className="container">
         <h2 className="h2" id="work">
-          Selected Work
+          Trabajo Seleccionado
         </h2>
         <div className="work-boxes">
           <div className="work-box">
             <div className="work-textbox">
-              <h3 className="h3">Political Campaign Support Platform</h3>
+              <h3 className="h3">Plataforma de Apoyo a Campañas Políticas</h3>
               <p className="work-text">
-                A tailored platform designed to support the online presence and
-                activities of a political party, ensuring efficiency and
-                accessibility htmlFor campaign management.
+                Una plataforma personalizada diseñada para apoyar la presencia
+                en línea y las actividades de un partido político, asegurando
+                eficiencia y accesibilidad para la gestión de campañas.
               </p>
               <ol className="work-technologies">
                 <li>Node.js</li>
                 <li>SQL (phpMyAdmin)</li>
                 <li>JavaScript</li>
-                <li>Responsive Design</li>
+                <li>Diseño Responsivo</li>
               </ol>
               <div className="work-links">
                 <a
@@ -56,13 +56,13 @@ const Work = () => {
                   rel="noopener"
                   className="link"
                 >
-                  Explore this project
+                  Explorar este proyecto
                 </a>
                 <a
                   href="https://github.com/DaGeus15"
                   target="_blank"
                   rel="noopener"
-                  title="Source code"
+                  title="Código fuente"
                 >
                   <img
                     src="/assets/images/social-links/github.svg"
@@ -76,7 +76,7 @@ const Work = () => {
               <img
                 loading="lazy"
                 src="/assets/images/work/partido-mary-cruz.png"
-                alt="Political campaign platform"
+                alt="Plataforma de campaña política"
               />
             </picture>
           </div>
@@ -85,14 +85,14 @@ const Work = () => {
             <div className="work-textbox">
               <h3 className="h3">ShadowWilds</h3>
               <p className="work-text">
-                A PHP and MySQL-based blog website where users can access as
-                guests or registered members. The project is hosted on Infinity
-                Free.
+                Un sitio web de blog basado en PHP y MySQL donde los usuarios
+                pueden acceder como invitados o miembros registrados. El
+                proyecto está alojado en Infinity Free.
               </p>
               <ol className="work-technologies">
                 <li>PHP</li>
                 <li>MySQL</li>
-                <li>Infinity Free Hosting</li>
+                <li>Alojamiento en Infinity Free</li>
               </ol>
               <div className="work-links">
                 <a
@@ -101,13 +101,13 @@ const Work = () => {
                   rel="noopener"
                   className="link"
                 >
-                  Explore this project
+                  Explorar este proyecto
                 </a>
                 <a
                   href="https://github.com/DaGeus15"
                   target="_blank"
                   rel="noopener"
-                  title="Source code"
+                  title="Código fuente"
                 >
                   <img
                     src="assets/images/social-links/github.svg"
@@ -121,7 +121,7 @@ const Work = () => {
               <img
                 loading="lazy"
                 src="/assets/images/work/blog.png"
-                alt="Blog project"
+                alt="Proyecto de blog"
               />
             </picture>
           </div>
@@ -130,15 +130,16 @@ const Work = () => {
             <div className="work-textbox">
               <h3 className="h3">Tamagotchi</h3>
               <p className="work-text">
-                A virtual Tamagotchi developed in Java, using JFrame htmlFor the
-                graphical interface and SQL to save the state and progress of
-                the Tamagotchi. Ideal htmlFor learning and practicing
-                object-oriented programming and database integration.
+                Un Tamagotchi virtual desarrollado en Java, utilizando JFrame
+                para la interfaz gráfica y SQL para guardar el estado y el
+                progreso del Tamagotchi. Ideal para aprender y practicar
+                programación orientada a objetos e integración de bases de
+                datos.
               </p>
               <ol className="work-technologies">
-                <li>Java (Swing and JFrame)</li>
-                <li>SQL (database integration)</li>
-                <li>Object-Oriented Programming</li>
+                <li>Java (Swing y JFrame)</li>
+                <li>SQL (integración de bases de datos)</li>
+                <li>Programación Orientada a Objetos</li>
               </ol>
               <div className="work-links">
                 <a
@@ -147,13 +148,13 @@ const Work = () => {
                   rel="noopener"
                   className="link"
                 >
-                  Explore this project
+                  Explorar este proyecto
                 </a>
                 <a
                   href="https://github.com/DaGeus15"
                   target="_blank"
                   rel="noopener"
-                  title="Source code"
+                  title="Código fuente"
                 >
                   <img
                     src="/assets/images/social-links/github.svg"
@@ -167,7 +168,7 @@ const Work = () => {
               <img
                 loading="lazy"
                 src="/assets/images/work/tamagochi.jpg"
-                alt="Tamagotchi project"
+                alt="Proyecto Tamagotchi"
               />
             </picture>
           </div>
