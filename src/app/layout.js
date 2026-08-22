@@ -24,7 +24,10 @@ export const metadata = {
     siteName: `${profile.name} — Portafolio`,
     title: `${profile.name} | ${profile.role}`,
     description: `Portafolio personal de ${profile.name}. Desarrollo full-stack, arquitectura cloud e IA.`,
-    images: [{ url: profile.avatar, width: 1200, height: 630, alt: profile.name }],
+    // Dimensiones reales de la foto. Es un retrato, no el 1200x630 apaisado
+    // que prefieren las redes: la vista previa saldrá recortada o en pequeño.
+    // Para un enlace más vistoso habría que crear una imagen OG dedicada.
+    images: [{ url: profile.avatar, width: 525, height: 675, alt: profile.name }],
   },
   twitter: {
     card: "summary_large_image",
