@@ -253,23 +253,36 @@
 
 .profile-glow {
   position: absolute;
-  top: 10%;
-  width: 244px;
-  height: 244px;
+  top: 8%;
+  width: 240px;
+  height: 320px;
   border-radius: 50%;
   background: var(--spotlight-color);
   filter: blur(45px);
   pointer-events: none;
 }
 
+/* Retrato redondeado, no círculo: el encuadre llega hasta la cintura e
+   incluye los brazos, y un círculo recortaría justo las esquinas donde
+   están las manos. */
 .profile-photo {
   position: relative;
   z-index: 1;
-  border-radius: 50%;
+  border-radius: 26px;
   overflow: hidden;
   border: 4px solid var(--glass-border);
   box-shadow: var(--shadow-soft);
   transform: translateZ(25px);
+}
+
+/* En el raíl compacto el hueco es cuadrado, así que se encuadra la cara:
+   con el recorte centrado por defecto se vería el torso. */
+.profile-card.is-compact .profile-photo {
+  border-radius: 50%;
+}
+
+.profile-card.is-compact .profile-photo img {
+  object-position: center 8%;
 }
 
 .profile-photo img {
