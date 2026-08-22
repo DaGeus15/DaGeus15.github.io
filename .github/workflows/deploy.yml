@@ -1,0 +1,57 @@
+name: Deploy to GitHub Pages
+
+# Publica el sitio estático en la rama `gh-pages`, que es de donde GitHub
+# Pages sirve este repositorio. No hace falta cambiar ningún ajuste del repo.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Permite que el job empuje a la rama gh-pages.
+permissions:
+  contents: write
+
+# Si se empuja dos veces seguidas, cancela el despliegue anterior.
+concurrency:
+  group: pages-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      # `output: 'export'` en next.config.mjs hace que `next build` genere
+      # directamente la carpeta `out/`. El comando `next export` ya no existe
+      # (se eliminó en Next 14).
+      - name: Build estático
+        run: npm run build
+
+      - name: Verificar que el export es válido
+        run: |
+          test -f out/index.html || { echo "Falta out/index.html"; exit 1; }
+          test -f out/.nojekyll || { echo "Falta out/.nojekyll"; exit 1; }
+          echo "Export correcto:"
+          ls -la out
+
+      - name: Publicar en gh-pages
+        run: |
+          git config --global user.name  "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          npx gh-pages -d out --dotfiles \
+            -r "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+            -u "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

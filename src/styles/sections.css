@@ -1,0 +1,517 @@
+/* ==========================================================================
+   Contenido interno de las secciones
+   ========================================================================== */
+
+/* ── Timeline de experiencia ──────────────────────────────────────────── */
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-6);
+  margin-bottom: var(--sp-8);
+}
+
+.timeline-item {
+  position: relative;
+  padding-left: var(--sp-6);
+  border-left: 2px solid var(--glass-border);
+  transition: border-color var(--dur-base) var(--ease-out);
+}
+
+.timeline-item:hover {
+  border-left-color: var(--foreground);
+}
+
+.timeline-dot {
+  position: absolute;
+  top: 6px;
+  left: -6px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--background);
+  border: 2px solid var(--muted-foreground);
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out);
+}
+
+.timeline-item:hover .timeline-dot {
+  background: var(--foreground);
+  border-color: var(--foreground);
+}
+
+.timeline-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-3);
+}
+
+.role-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--foreground);
+}
+
+.role-date {
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-hover);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  white-space: nowrap;
+}
+
+.role-desc {
+  font-size: 0.96rem;
+  line-height: 1.65;
+  color: var(--muted-foreground);
+}
+
+/* ── Grid de tecnologías ──────────────────────────────────────────────── */
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(86px, 1fr));
+  gap: var(--sp-5);
+  margin-top: var(--sp-5);
+}
+
+.skill-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-2);
+  text-align: center;
+}
+
+.skill-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  padding: 13px;
+  border-radius: var(--r-lg);
+  background: var(--liquid-bg);
+  border: 1px solid var(--liquid-border);
+  box-shadow: var(--shadow-liquid);
+  backdrop-filter: blur(10px) saturate(var(--glass-saturate));
+  transition:
+    transform var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out),
+    background-color var(--dur-base) var(--ease-out);
+}
+
+.skill-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.skill-item:hover .skill-icon {
+  transform: translateY(-5px) scale(1.04);
+  border-color: var(--foreground);
+  background-color: var(--glass-hover);
+}
+
+.skill-name {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.skill-item:hover .skill-name {
+  color: var(--foreground);
+}
+
+/* ── Tarjetas de proyecto (vista resumida) ────────────────────────────── */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+  gap: var(--sp-4);
+  margin-top: var(--sp-4);
+}
+
+.project-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  height: 100%;
+  padding: var(--sp-5);
+  border-radius: var(--r-lg);
+  background: var(--liquid-bg);
+  border: 1px solid var(--liquid-border);
+  box-shadow: var(--shadow-liquid);
+  backdrop-filter: blur(10px) saturate(var(--glass-saturate));
+  transition:
+    border-color var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out);
+}
+
+.project-card:hover {
+  border-color: var(--foreground);
+  box-shadow: var(--shadow-soft), var(--shadow-glow);
+}
+
+.project-card__header {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.repo-icon {
+  flex-shrink: 0;
+  color: var(--muted-foreground);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.project-card:hover .repo-icon {
+  color: var(--foreground);
+}
+
+.project-card__title {
+  font-size: 1.08rem;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--foreground);
+}
+
+.project-card__desc {
+  flex: 1;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--muted-foreground);
+}
+
+.project-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+  margin-top: auto;
+  padding-top: var(--sp-3);
+  border-top: 1px solid var(--glass-border);
+}
+
+.lang-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  font-size: 0.78rem;
+  color: var(--muted-foreground);
+}
+
+.lang-dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.tech-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.tech-badge {
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-hover);
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.tech-badges--lg .tech-badge {
+  padding: 0.3rem 0.8rem;
+  font-size: 0.74rem;
+}
+
+/* ── Navegación rápida entre proyectos ────────────────────────────────── */
+.quick-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  margin: var(--sp-5) 0 var(--sp-6);
+}
+
+.quick-nav__link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  min-height: 44px;
+  padding: 0.6rem 1.1rem;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  font-size: 0.86rem;
+  font-weight: 500;
+  color: var(--muted-foreground);
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+}
+
+.quick-nav__link:hover {
+  background-color: var(--glass-hover);
+  border-color: var(--foreground);
+  color: var(--foreground);
+}
+
+.quick-nav__num {
+  font-weight: 700;
+  opacity: 0.55;
+}
+
+/* ==========================================================================
+   Ficha detallada de proyecto
+   --------------------------------------------------------------------------
+   Estas clases NO tenían ninguna regla de escritorio: sólo existían dentro
+   del media query de móvil, y la regla `.project-showcase-details` (grid
+   1.8fr/1.2fr) apuntaba a una clase que el JSX ya no renderizaba.
+
+   Resultado: en escritorio las dos columnas se apilaban a ancho completo y
+   el hueco de la captura colapsaba a 48px de alto. Eso era la asimetría.
+   ========================================================================== */
+
+.showcase-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-8);
+}
+
+.project-showcase {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  scroll-margin-top: var(--sp-4);
+}
+
+.project-showcase + .project-showcase {
+  padding-top: var(--sp-8);
+  border-top: 1px solid var(--glass-border);
+}
+
+.project-showcase__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  flex-wrap: wrap;
+}
+
+.project-showcase__title-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  min-width: 0;
+}
+
+.project-showcase__title-row h3 {
+  font-size: clamp(1.05rem, 0.9rem + 0.6vw, 1.35rem);
+  font-weight: 800;
+  line-height: 1.35;
+  color: var(--foreground);
+}
+
+.project-showcase__index {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--muted-foreground);
+  opacity: 0.35;
+}
+
+/* Cuerpo: contenido a la izquierda, captura a la derecha —pero sólo si hay
+   captura. Sin ella el texto ocupa todo el ancho en vez de dejar un hueco. */
+.project-showcase__body {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sp-5);
+  align-items: start;
+}
+
+@media (min-width: 1180px) {
+  .project-showcase__body.has-media {
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+  }
+}
+
+/* Las dos columnas de texto. `minmax(0, 1fr)` evita que un texto largo
+   desborde la celda del grid. */
+.project-showcase__cols {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sp-5);
+  min-width: 0;
+}
+
+@media (min-width: 700px) {
+  .project-showcase__cols {
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  }
+}
+
+.details-col {
+  min-width: 0;
+}
+
+.details-col h4 {
+  margin-bottom: var(--sp-2);
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--foreground);
+}
+
+.details-col .section-text {
+  font-size: 0.94rem;
+}
+
+/* Ficha técnica en formato definición. */
+.spec-list {
+  display: grid;
+  gap: var(--sp-2);
+  margin: 0;
+}
+
+.spec-list dt {
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.spec-list dd {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin: 0 0 var(--sp-2);
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--foreground);
+}
+
+/* Captura del proyecto. */
+.project-showcase__media {
+  margin: 0;
+  min-width: 0;
+}
+
+.project-shot {
+  width: 100%;
+  height: auto;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-soft);
+}
+
+/* ── Hobbies ──────────────────────────────────────────────────────────── */
+.hobbies-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.hobbies-list li {
+  position: relative;
+  padding-left: var(--sp-5);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--muted-foreground);
+}
+
+.hobbies-list li::before {
+  content: "";
+  position: absolute;
+  top: 0.6em;
+  left: var(--sp-2);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--foreground);
+}
+
+/* ── Botón "ver más" ──────────────────────────────────────────────────── */
+.expand-btn-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--sp-6);
+}
+
+/* ── Subtítulos y metadatos de proyecto ───────────────────────────────── */
+.project-card__subtitle {
+  margin-top: 2px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--muted-foreground);
+}
+
+.project-showcase__subtitle {
+  margin-top: 3px;
+  font-size: 0.86rem;
+  font-weight: 500;
+  color: var(--muted-foreground);
+}
+
+/* El icono de carpeta debe quedar alineado con el título, no centrado
+   respecto al bloque título + subtítulo. */
+.project-card__header,
+.project-showcase__title-row {
+  align-items: flex-start;
+}
+
+.project-card__header .repo-icon,
+.project-showcase__title-row .repo-icon {
+  margin-top: 3px;
+}
+
+/* Insignias de la tarjeta: se muestran unas pocas y se indica cuántas faltan. */
+.tech-badges-row {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.tech-more {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  white-space: nowrap;
+}
+
+.repo-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--foreground);
+  border-bottom: 1px solid var(--glass-border);
+  transition: border-color var(--dur-fast) var(--ease-out);
+  word-break: break-all;
+}
+
+.repo-link:hover {
+  border-bottom-color: var(--foreground);
+}
+
+.repo-link svg {
+  flex-shrink: 0;
+}
+
+/* "Mi rol" es un párrafo, no un dato de una línea: necesita respirar. */
+.spec-list dd {
+  line-height: 1.55;
+}

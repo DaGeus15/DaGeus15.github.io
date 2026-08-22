@@ -1,0 +1,229 @@
+/* ==========================================================================
+   Formulario de contacto, botones y redes
+   ========================================================================== */
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  margin-top: var(--sp-5);
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-input,
+.form-textarea {
+  width: 100%;
+  padding: 0.95rem 1.15rem;
+  border-radius: var(--r-md);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  color: var(--foreground);
+  font-family: inherit;
+  /* 16px evita que iOS haga zoom automático al enfocar el campo. */
+  font-size: 1rem;
+  backdrop-filter: blur(8px);
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out);
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: var(--muted-foreground);
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  outline: none;
+  background: var(--background);
+  border-color: var(--foreground);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.form-textarea {
+  min-height: 130px;
+  resize: vertical;
+}
+
+.form-error {
+  font-size: 0.88rem;
+  color: #ef4444;
+}
+
+.contact-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  min-height: 48px;
+  margin-top: var(--sp-1);
+  padding: 0.85rem 2rem;
+  border-radius: var(--r-md);
+  background: var(--foreground);
+  color: var(--accent-inverse);
+  font-size: 0.94rem;
+  font-weight: 600;
+  box-shadow: var(--shadow-soft);
+  transition:
+    transform var(--dur-fast) var(--ease-out),
+    opacity var(--dur-fast) var(--ease-out);
+}
+
+.contact-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.contact-button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.contact-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.form-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-top: var(--sp-5);
+  padding: var(--sp-6);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  text-align: center;
+  box-shadow: var(--shadow-soft), var(--shadow-glow);
+}
+
+.form-success h3 {
+  font-size: 1.15rem;
+  color: var(--foreground);
+}
+
+.form-success p {
+  font-size: 0.94rem;
+  color: var(--muted-foreground);
+}
+
+/* ── Botón specular ───────────────────────────────────────────────────── */
+.specular-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0.7rem 1.5rem;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--liquid-border);
+  background: var(--liquid-bg);
+  color: var(--foreground);
+  font-size: 0.88rem;
+  font-weight: 600;
+  overflow: hidden;
+  box-shadow: var(--shadow-liquid);
+  backdrop-filter: var(--glass-filter);
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+/* Reflejo que barre el botón al pasar el cursor. */
+.specular-button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.28) 50%,
+    transparent 70%
+  );
+  transform: translateX(-100%);
+  transition: transform var(--dur-slow) var(--ease-out);
+  pointer-events: none;
+}
+
+.specular-button:hover {
+  border-color: var(--foreground);
+  background-color: var(--glass-hover);
+  transform: translateY(-2px);
+}
+
+.specular-button:hover::after {
+  transform: translateX(100%);
+}
+
+.specular-button:active {
+  transform: scale(0.97);
+}
+
+.specular-button__label {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Redes sociales ───────────────────────────────────────────────────── */
+.social-links {
+  margin-top: var(--sp-8);
+  padding-top: var(--sp-6);
+  border-top: 1px solid var(--glass-border);
+}
+
+.social-title {
+  margin-bottom: var(--sp-4);
+  font-size: 0.86rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: var(--muted-foreground);
+}
+
+.social-icons {
+  display: flex;
+  gap: var(--sp-4);
+}
+
+.social-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--r-lg);
+  background: var(--liquid-bg);
+  border: 1px solid var(--liquid-border);
+  box-shadow: var(--shadow-liquid);
+  backdrop-filter: blur(10px) saturate(var(--glass-saturate));
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out);
+}
+
+.social-icon:hover {
+  border-color: var(--foreground);
+  background-color: var(--glass-hover);
+}
+
+.social-icon img {
+  filter: var(--svg-filter);
+  transition: filter var(--dur-fast) var(--ease-out);
+}

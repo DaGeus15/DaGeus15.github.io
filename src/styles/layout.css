@@ -1,0 +1,375 @@
+/* ==========================================================================
+   Estructura general: barra lateral + panel de contenido
+   ========================================================================== */
+
+.portfolio {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  width: 100%;
+  min-height: 100dvh;
+}
+
+/* ── Fondos ───────────────────────────────────────────────────────────── */
+.aurora {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background: var(--background);
+  transition: background-color var(--dur-slow) var(--ease-out);
+}
+
+/* Malla de color. Se dibuja algo más grande que la pantalla (inset negativo)
+   para que la deriva lenta nunca descubra un borde. */
+.aurora__mesh {
+  position: absolute;
+  inset: -12%;
+  background:
+    /* luz cenital: da sensación de foco desde arriba */
+    radial-gradient(70% 45% at 50% -8%, var(--mesh-glow), transparent 70%),
+    radial-gradient(48% 42% at 12% 18%, var(--mesh-1), transparent 68%),
+    radial-gradient(52% 46% at 88% 82%, var(--mesh-2), transparent 68%),
+    radial-gradient(42% 38% at 74% 22%, var(--mesh-3), transparent 66%),
+    radial-gradient(46% 40% at 22% 88%, var(--mesh-4), transparent 68%);
+  animation: aurora-drift 48s infinite ease-in-out alternate;
+  will-change: transform;
+}
+
+/* Grano: sin él, un degradado tan amplio se ve a bandas en pantallas de 8 bits.
+   Es un SVG en data-URI, así que se rasteriza una vez y se repite — no hay
+   petición de red (el sitio es estático) ni filtro en tiempo real. */
+.aurora__grain {
+  position: absolute;
+  inset: 0;
+  opacity: var(--grain-opacity);
+  mix-blend-mode: var(--grain-blend);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+}
+
+/* Viñeta: oscurece las esquinas y hace que el contenido central pese más. */
+.aurora__vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 90% at 50% 40%, transparent 55%, var(--vignette) 100%);
+}
+
+/* Deriva muy lenta y sólo por traslación: la capa se rasteriza una vez y el
+   compositor se limita a moverla. Sin `scale`, que forzaría re-rasterizar. */
+@keyframes aurora-drift {
+  from { transform: translate3d(-1.5%, -1%, 0); }
+  to { transform: translate3d(1.5%, 1.5%, 0); }
+}
+
+.spotlight {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ── Pila de contenido ────────────────────────────────────────────────── */
+.content-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  width: 100%;
+}
+
+/* Celda única donde conviven la vista saliente y la entrante.
+   Al ocupar ambas la misma área de grid quedan exactamente superpuestas, que
+   es lo que permite un fundido cruzado real sin posicionarlas en absoluto. */
+.content-view {
+  display: grid;
+  width: 100%;
+}
+
+.content-view > * {
+  grid-area: 1 / 1;
+}
+
+/* Pila de tarjetas de la vista resumida. */
+.summary-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-8);
+}
+
+/* ── Botones de icono reutilizables ───────────────────────────────────── */
+.icon-button,
+.theme-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--r-md);
+  color: var(--foreground);
+  background: var(--liquid-bg);
+  border: 1px solid var(--liquid-border);
+  box-shadow: var(--shadow-liquid);
+  backdrop-filter: var(--glass-filter);
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.icon-button:hover,
+.theme-toggle-btn:hover {
+  background-color: var(--glass-hover);
+  border-color: var(--liquid-highlight);
+  transform: translateY(-1px);
+}
+
+.icon-button:active,
+.theme-toggle-btn:active {
+  transform: scale(0.96);
+}
+
+/* Variante pequeña para la fila de ajustes de la barra lateral. */
+.icon-button.is-small,
+.theme-toggle-btn.is-small {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--r-sm);
+}
+
+.icon-button-placeholder {
+  width: 44px;
+}
+
+.theme-toggle-icon {
+  display: flex;
+}
+
+.theme-toggle-sun { color: #fbbf24; }
+.theme-toggle-moon { color: #6366f1; }
+
+/* ── Barra prev/inicio/siguiente del modo detallado ───────────────────── */
+.section-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  width: 100%;
+  height: 54px;
+  padding: 0 var(--sp-3);
+  border-radius: var(--r-xl);
+  background: var(--liquid-bg);
+  border: 1px solid var(--liquid-border);
+  box-shadow: var(--shadow-liquid);
+  backdrop-filter: var(--glass-filter);
+}
+
+/* ==========================================================================
+   ESCRITORIO (>= 1024px)
+   ========================================================================== */
+@media (min-width: 1024px) {
+  html,
+  body {
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  .portfolio {
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  /* ── El armazón ─────────────────────────────────────────────────────────
+     Los dos paneles están SIEMPRE en `position: fixed`, en ambos modos.
+
+     Antes el modo resumido los colocaba en flujo flex y el detallado los
+     pasaba a `fixed`: un cambio discontinuo que Framer Motion sólo podía
+     "animar" con una proyección de layout, es decir interpolando un
+     `scale`. Como los hijos no llevaban su propia proyección, el contenido
+     se veía estirado hasta que la escala volvía a 1.
+
+     Manteniendo el mismo modelo de posicionamiento, el cambio de modo es
+     una interpolación de inset/width que el navegador anima nativamente,
+     sin deformar nada. */
+  .portfolio__sidebar,
+  .portfolio__content {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    transition:
+      top var(--dur-shell) var(--ease-out),
+      bottom var(--dur-shell) var(--ease-out),
+      left var(--dur-shell) var(--ease-out),
+      right var(--dur-shell) var(--ease-out),
+      width var(--dur-shell) var(--ease-out),
+      padding var(--dur-shell) var(--ease-out);
+  }
+
+  /* ── Vista resumida ─────────────────────────────────────────────────── */
+  .portfolio__sidebar {
+    z-index: 100;
+    left: var(--shell-pad);
+    width: var(--sidebar-w);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 44px;
+  }
+
+  /* El cristal del raíl vive en un pseudo-elemento cuya opacidad sí se puede
+     animar. Transicionar `background` directamente no funciona: los
+     degradados no interpolan y el fondo aparecería de golpe. */
+  .portfolio__sidebar::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    opacity: 0;
+    background: var(--liquid-bg);
+    border: 1px solid var(--liquid-border);
+    box-shadow: var(--shadow-liquid);
+    backdrop-filter: var(--glass-filter);
+    transition: opacity var(--dur-shell) var(--ease-out);
+    pointer-events: none;
+  }
+
+  .portfolio__content {
+    left: calc(var(--shell-pad) + var(--sidebar-w) + var(--sidebar-gap));
+    right: var(--shell-pad);
+    padding: 15dvh var(--sp-6) 25dvh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .portfolio__content::-webkit-scrollbar {
+    width: 0;
+  }
+
+  .sidebar-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--sp-2);
+    margin-top: var(--sp-5);
+  }
+
+  /* ── Vista detallada ────────────────────────────────────────────────────
+     El marco se calcula con un único token (--frame-gap), así que los cuatro
+     márgenes son iguales por construcción: no puede quedar asimétrico.
+
+       │←30→│ rail 88 │←30→│      contenido      │←30→│
+  */
+  .portfolio__sidebar.is-compact {
+    top: var(--frame-gap);
+    bottom: var(--frame-gap);
+    left: var(--frame-gap);
+    width: var(--rail-width);
+    padding: var(--sp-4) 0;
+  }
+
+  .portfolio__sidebar.is-compact::before {
+    opacity: 1;
+  }
+
+  .portfolio.is-detailed .portfolio__content {
+    top: var(--frame-gap);
+    right: var(--frame-gap);
+    bottom: var(--frame-gap);
+    left: calc(var(--frame-gap) * 2 + var(--rail-width));
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  /* Las dos variantes de la barra se funden una sobre otra, así que cada una
+     ocupa el alto completo y reparte sus hijos por su cuenta. */
+  .sidebar-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+  }
+
+  .sidebar-inner.is-compact {
+    justify-content: space-between;
+  }
+
+  .sidebar-top,
+  .sidebar-center,
+  .sidebar-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .sidebar-center {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .sidebar-bottom {
+    flex-direction: column;
+    gap: var(--sp-2);
+    flex-shrink: 0;
+    padding-top: var(--sp-3);
+    border-top: 1px solid var(--liquid-border);
+  }
+
+  /* Dentro del raíl el dock no lleva su propio cristal. */
+  .portfolio__sidebar.is-compact .dock-panel {
+    background: none;
+    border: none;
+    box-shadow: none;
+    backdrop-filter: none;
+    padding: 0;
+  }
+
+  /* ── La tarjeta expandida ocupa el alto restante y scrollea por dentro ── */
+  .content-stack.is-expanded {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .content-stack.is-expanded .content-view {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .content-stack.is-expanded .content-card.is-expanded {
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* El cuerpo de CUALQUIER sección expandida es su área de scroll.
+     Antes esta regla colgaba de `.section-body--detail`, un modificador que
+     sólo emite `Section.jsx`: `Contact.jsx` construye su tarjeta por su
+     cuenta, no lo ponía, y su contenido quedaba recortado por el
+     `overflow: hidden` de la tarjeta sin posibilidad de desplazarlo. */
+  .content-stack.is-expanded .content-card.is-expanded > .section-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-right: var(--sp-3);
+    margin-right: calc(var(--sp-3) * -1);
+  }
+}
+
+/* Pantallas muy anchas: la tarjeta no debería estirarse sin límite. */
+@media (min-width: 1800px) {
+  .portfolio.is-detailed .portfolio__content {
+    right: auto;
+    width: min(
+      calc(100vw - var(--frame-gap) * 3 - var(--rail-width)),
+      1500px
+    );
+  }
+}

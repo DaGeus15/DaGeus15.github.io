@@ -1,0 +1,189 @@
+/* ==========================================================================
+   Design tokens — la única fuente de verdad del aspecto visual.
+   Cambiá algo aquí y se propaga a todo el sitio.
+   ========================================================================== */
+
+:root {
+  /* ── Easings ────────────────────────────────────────────────────────── */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+
+  /* ── Duraciones (macOS: nada por encima de ~0.45s) ──────────────────── */
+  --dur-fast: 0.18s;
+  --dur-base: 0.28s;
+  --dur-slow: 0.42s;
+  /* Morfeo del armazón al cambiar resumen ↔ detalle. Si lo cambiás, cambiá
+     también SHELL_MS en src/lib/motion.js. */
+  --dur-shell: 0.44s;
+
+  /* ── Escala de espaciado ────────────────────────────────────────────── */
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-5: 1.5rem;
+  --sp-6: 2rem;
+  --sp-7: 2.5rem;
+  --sp-8: 3rem;
+
+  /* ── Radios ─────────────────────────────────────────────────────────── */
+  --r-sm: 10px;
+  --r-md: 14px;
+  --r-lg: 18px;
+  --r-xl: 24px;
+  --r-pill: 999px;
+
+  /* ── Cristal (liquid glass) ─────────────────────────────────────────── */
+  /* El look de macOS es blur moderado + saturación ALTA. La saturación es
+     lo que hace que el color del fondo "se filtre" y dé el efecto premium. */
+  --glass-blur: 20px;
+  --glass-saturate: 180%;
+  --glass-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+
+  /* ── Armazón de escritorio ──────────────────────────────────────────────
+     Los dos modos definen LOS MISMOS lados (top/right/bottom/left/width),
+     de forma que pasar de uno a otro es una interpolación real y no un
+     salto que haya que disimular con transformaciones. */
+
+  /* modo resumido */
+  --shell-pad: 3rem;
+  --sidebar-w: 360px;
+  --sidebar-gap: 2rem;
+
+  /* modo detallado */
+  --frame-gap: 30px;
+  --rail-width: 88px;
+
+  /* ── Alturas fijas ──────────────────────────────────────────────────── */
+  --mobile-header-h: 64px;
+  --drawer-w: 280px;
+}
+
+/* ── Tema oscuro (por defecto) ────────────────────────────────────────── */
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --background: #09090b;
+  --foreground: #f4f4f5;
+  --foreground-rgb: 244, 244, 245;
+  --muted-foreground: #a1a1aa;
+
+  --spotlight-color: rgba(99, 102, 241, 0.08);
+  --accent-inverse: #09090b;
+  --accent-glow: rgba(255, 255, 255, 0.15);
+
+  --glass-bg: rgba(22, 22, 28, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-hover: rgba(255, 255, 255, 0.08);
+
+  /* Degradado del cristal: reflejo arriba-izquierda, cuerpo translúcido. */
+  --liquid-bg:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.09),
+      rgba(255, 255, 255, 0.025) 42%,
+      rgba(255, 255, 255, 0.055)
+    ),
+    rgba(17, 17, 23, 0.62);
+  --liquid-border: rgba(255, 255, 255, 0.13);
+  --liquid-highlight: rgba(255, 255, 255, 0.3);
+
+  --card-bg: rgba(18, 18, 22, 0.94);
+  --card-border: rgba(255, 255, 255, 0.07);
+  --card-hover-border: rgba(255, 255, 255, 0.2);
+
+  /* El cajón se superpone al contenido, así que lleva un desenfoque más
+     fuerte que el resto: convierte el texto de debajo en una mancha
+     ilegible y deja que el del menú se lea limpio. */
+  --drawer-bg: rgba(14, 14, 19, 0.78);
+  --drawer-filter: blur(32px) saturate(var(--glass-saturate));
+  --scrim: rgba(0, 0, 0, 0.55);
+
+  --shadow-soft: 0 10px 40px -12px rgba(0, 0, 0, 0.55);
+  --shadow-glow: 0 0 28px rgba(99, 102, 241, 0.13);
+  --shadow-liquid:
+    0 18px 60px -35px rgba(0, 0, 0, 0.9),
+    inset 0 1px 0 rgba(255, 255, 255, 0.09);
+
+  /* Malla del fondo. Paleta fría con un acento cálido abajo a la izquierda:
+     el contraste de temperatura es lo que evita que se lea como un degradado
+     genérico. */
+  --mesh-glow: rgba(148, 163, 255, 0.1);
+  --mesh-1: rgba(79, 70, 229, 0.34);
+  --mesh-2: rgba(192, 38, 211, 0.2);
+  --mesh-3: rgba(14, 165, 233, 0.16);
+  --mesh-4: rgba(244, 114, 82, 0.1);
+
+  --grain-opacity: 0.055;
+  --grain-blend: overlay;
+  --vignette: rgba(0, 0, 0, 0.55);
+
+  /* Iconos SVG monocromos (redes sociales) */
+  --svg-filter: invert(1);
+}
+
+/* ── Tema claro ───────────────────────────────────────────────────────── */
+[data-theme="light"] {
+  color-scheme: light;
+
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --foreground-rgb: 15, 23, 42;
+  --muted-foreground: #64748b;
+
+  --spotlight-color: rgba(59, 130, 246, 0.05);
+  --accent-inverse: #ffffff;
+  --accent-glow: rgba(15, 23, 42, 0.1);
+
+  /* Saturación algo mayor que en oscuro: sobre un fondo claro es lo que hace
+     que el color del fondo difuminado se note a través del cristal. */
+  --glass-saturate: 200%;
+
+  --glass-bg: rgba(255, 255, 255, 0.55);
+  --glass-border: rgba(15, 23, 42, 0.08);
+  --glass-hover: rgba(15, 23, 42, 0.045);
+
+  /* Cobertura efectiva de blanco ~55%. Antes era ~65–86%, tan opaco que el
+     desenfocado de detrás no se apreciaba y el cristal parecía relleno liso.
+     El texto (#0f172a) sigue muy por encima del contraste mínimo. */
+  --liquid-bg:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.62),
+      rgba(255, 255, 255, 0.28) 48%,
+      rgba(255, 255, 255, 0.42)
+    ),
+    rgba(255, 255, 255, 0.22);
+  --liquid-border: rgba(255, 255, 255, 0.85);
+  --liquid-highlight: rgba(255, 255, 255, 0.95);
+
+  --card-bg: rgba(255, 255, 255, 0.96);
+  --card-border: rgba(226, 232, 240, 0.9);
+  --card-hover-border: rgba(148, 163, 184, 0.9);
+
+  --drawer-bg: rgba(255, 255, 255, 0.72);
+  /* En claro un velo negro ensucia el fondo; se usa uno frío y más suave. */
+  --scrim: rgba(15, 23, 42, 0.35);
+
+  --shadow-soft: 0 10px 30px -12px rgba(15, 23, 42, 0.12);
+  --shadow-glow: 0 0 22px rgba(59, 130, 246, 0.08);
+  --shadow-liquid:
+    0 22px 60px -38px rgba(15, 23, 42, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+
+  /* El cristal sólo se percibe si hay algo detrás que desenfocar, así que la
+     malla en claro no puede quedarse en un lavado casi blanco. */
+  --mesh-glow: rgba(255, 255, 255, 0.5);
+  --mesh-1: rgba(129, 140, 248, 0.34);
+  --mesh-2: rgba(232, 121, 249, 0.24);
+  --mesh-3: rgba(56, 189, 248, 0.22);
+  --mesh-4: rgba(253, 164, 116, 0.16);
+
+  --grain-opacity: 0.04;
+  --grain-blend: multiply;
+  --vignette: rgba(100, 116, 139, 0.16);
+
+  --svg-filter: invert(0);
+}

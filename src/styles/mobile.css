@@ -1,0 +1,324 @@
+/* ==========================================================================
+   Móvil y tablet (< 1024px)
+   --------------------------------------------------------------------------
+   El punto de corte debe coincidir con MOBILE_BREAKPOINT en
+   src/lib/breakpoints.js. Antes convivían tres valores distintos
+   (768 / 1023 / 1024) y el rango 769–1023px quedaba en tierra de nadie.
+
+   Alturas: se usa `100dvh` (dynamic viewport height). Con `100vh`, la barra
+   de direcciones de Safari iOS y Chrome Android hace que el alto declarado
+   supere al visible; como el body tiene `overflow: hidden`, los últimos
+   ~60–100px quedaban cortados y eran inalcanzables.
+   ========================================================================== */
+
+/* La cabecera móvil no existe en escritorio. */
+.mobile-header,
+.mobile-scrim {
+  display: none;
+}
+
+@media (max-width: 1023px) {
+  html,
+  body {
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  .portfolio {
+    position: relative;
+    height: 100dvh;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  /* ── Cabecera fija ──────────────────────────────────────────────────── */
+  .mobile-header {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 600;
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+    height: calc(var(--mobile-header-h) + env(safe-area-inset-top));
+    padding: env(safe-area-inset-top) var(--sp-4) 0;
+    background: var(--liquid-bg);
+    border-bottom: 1px solid var(--liquid-border);
+    backdrop-filter: var(--glass-filter);
+  }
+
+  .mobile-header__avatar {
+    flex-shrink: 0;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--glass-border);
+  }
+
+  .mobile-header__info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .mobile-header__name {
+    font-size: 0.98rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--foreground);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .mobile-header__role {
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+    white-space: nowrap;
+  }
+
+  .mobile-header__menu {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--r-md);
+    border: 1px solid var(--liquid-border);
+    background: var(--glass-bg);
+    color: var(--foreground);
+  }
+
+  /* ── Cajón lateral ──────────────────────────────────────────────────── */
+  .portfolio__sidebar {
+    position: fixed;
+    top: calc(var(--mobile-header-h) + env(safe-area-inset-top));
+    bottom: 0;
+    left: 0;
+    z-index: 500;
+    width: var(--drawer-w);
+    height: auto;
+    padding: 0;
+    background: var(--drawer-bg);
+    backdrop-filter: var(--drawer-filter);
+    border-right: 1px solid var(--liquid-border);
+    box-shadow: 4px 0 40px rgba(0, 0, 0, 0.35);
+    transform: translateX(-100%);
+    transition: transform var(--dur-slow) var(--ease-drawer);
+  }
+
+  .portfolio__sidebar.is-open {
+    transform: translateX(0);
+  }
+
+  .mobile-drawer {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: var(--sp-5) var(--sp-3)
+      calc(var(--sp-3) + env(safe-area-inset-bottom));
+  }
+
+  .mobile-drawer__nav {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-1);
+    flex: 1;
+  }
+
+  .mobile-drawer__item,
+  .mobile-drawer__action {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+    width: 100%;
+    /* 48px mínimo: objetivo táctil cómodo. */
+    min-height: 48px;
+    padding: 0.8rem 1rem;
+    border-radius: var(--r-md);
+    border: 1px solid transparent;
+    color: var(--muted-foreground);
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-align: left;
+    transition:
+      background-color var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out),
+      border-color var(--dur-fast) var(--ease-out);
+  }
+
+  .mobile-drawer__action {
+    font-size: 0.88rem;
+  }
+
+  .mobile-drawer__item:hover,
+  .mobile-drawer__action:hover,
+  .mobile-drawer__item.is-active {
+    background-color: var(--glass-hover);
+    color: var(--foreground);
+  }
+
+  .mobile-drawer__item.is-active {
+    border-color: var(--liquid-border);
+  }
+
+  .mobile-drawer__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 22px;
+  }
+
+  .mobile-drawer__actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-1);
+    padding-top: var(--sp-3);
+    margin-top: var(--sp-3);
+    border-top: 1px solid var(--glass-border);
+  }
+
+  /* Velo que oscurece sólo el contenido, nunca el propio cajón. */
+  .mobile-scrim {
+    position: fixed;
+    top: calc(var(--mobile-header-h) + env(safe-area-inset-top));
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 499;
+    background: var(--scrim);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--dur-base) var(--ease-out), visibility var(--dur-base);
+  }
+
+  .mobile-scrim.is-open {
+    display: block;
+    left: var(--drawer-w);
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* ── Panel de contenido ─────────────────────────────────────────────── */
+  .portfolio__content {
+    width: 100%;
+    height: 100dvh;
+    margin: 0;
+    padding: calc(var(--mobile-header-h) + env(safe-area-inset-top) + var(--sp-5))
+      var(--sp-4)
+      calc(var(--sp-8) + env(safe-area-inset-bottom));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .summary-stack {
+    gap: var(--sp-7);
+  }
+
+  /* ── Vista detallada en móvil ───────────────────────────────────────── */
+  .portfolio__content.is-detailed {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: calc(var(--sp-4) + env(safe-area-inset-bottom));
+    overflow: hidden;
+  }
+
+  .content-stack.is-expanded {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .content-stack.is-expanded .content-view {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .content-stack.is-expanded .content-card.is-expanded {
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* Ver la nota en layout.css: la regla no debe depender del modificador
+     `--detail`, que no todas las secciones emiten. */
+  .content-stack.is-expanded .content-card.is-expanded > .section-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: var(--sp-5);
+  }
+
+  /* ── Ajustes tipográficos y de densidad ─────────────────────────────── */
+  .section-header {
+    margin-bottom: var(--sp-4);
+  }
+
+  .section-divider {
+    margin-top: var(--sp-2);
+  }
+
+  .detail-title {
+    margin: var(--sp-6) 0 var(--sp-3);
+  }
+
+  .timeline {
+    margin-bottom: var(--sp-6);
+  }
+
+  .skills-grid {
+    grid-template-columns: repeat(auto-fit, minmax(74px, 1fr));
+    gap: var(--sp-4);
+  }
+
+  .skill-icon {
+    width: 56px;
+    height: 56px;
+    padding: 11px;
+  }
+
+  .expand-btn-wrapper {
+    justify-content: stretch;
+  }
+
+  .expand-btn-wrapper .specular-button {
+    width: 100%;
+  }
+
+  .project-showcase__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--sp-3);
+  }
+
+  .social-icons {
+    gap: var(--sp-3);
+  }
+}
+
+/* Móvil estrecho: reduce el raíl de padding para ganar ancho útil. */
+@media (max-width: 400px) {
+  .portfolio__content {
+    padding-left: var(--sp-3);
+    padding-right: var(--sp-3);
+  }
+
+  .content-card {
+    padding: var(--sp-5) var(--sp-4);
+  }
+
+  .role-date {
+    font-size: 0.75rem;
+  }
+}

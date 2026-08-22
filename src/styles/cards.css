@@ -1,0 +1,335 @@
+/* ==========================================================================
+   Cristal: tarjetas, dock, perfil
+   ========================================================================== */
+
+/* ── Tarjeta de sección ───────────────────────────────────────────────── */
+.glass-card {
+  position: relative;
+  width: 100%;
+  border-radius: var(--r-xl);
+  background: var(--liquid-bg);
+  border: 1px solid var(--liquid-border);
+  box-shadow: var(--shadow-liquid);
+  backdrop-filter: var(--glass-filter);
+  overflow: hidden;
+  transition:
+    border-color var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out);
+}
+
+/* Reflejo especular superior — la clave del look macOS.
+   Va en ::before para no repintar la tarjeta al hacer hover. */
+.glass-card::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 70% at 15% 0%, var(--liquid-highlight), transparent 34%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.16), transparent 30%);
+  opacity: 0.4;
+  transition: opacity var(--dur-base) var(--ease-out);
+}
+
+.content-card {
+  padding: clamp(1.5rem, 1rem + 2vw, 3rem);
+  scroll-margin-top: 5vh;
+}
+
+.content-card:not(.is-expanded):hover {
+  border-color: var(--card-hover-border);
+  box-shadow: var(--shadow-liquid), var(--shadow-glow);
+}
+
+.content-card:not(.is-expanded):hover::before {
+  opacity: 0.6;
+}
+
+.content-card.is-expanded {
+  box-shadow: var(--shadow-liquid), var(--shadow-glow);
+}
+
+/* ── Cabecera de sección ──────────────────────────────────────────────── */
+.section-header {
+  margin-bottom: var(--sp-5);
+}
+
+.section-divider {
+  display: block;
+  width: 44px;
+  height: 3px;
+  margin-top: var(--sp-3);
+  border-radius: var(--r-pill);
+  background: var(--foreground);
+  opacity: 0.8;
+}
+
+.section-body {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Sub-tarjetas (setup, certificaciones, idiomas) ───────────────────── */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+  gap: var(--sp-4);
+}
+
+.cards-grid--sm {
+  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+}
+
+.setup-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+  gap: var(--sp-4);
+}
+
+.setup-card,
+.cert-card,
+.lang-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding: var(--sp-5);
+  border-radius: var(--r-lg);
+  background: var(--glass-hover);
+  border: 1px solid var(--glass-border);
+  transition: border-color var(--dur-base) var(--ease-out);
+}
+
+.setup-card.is-wide {
+  grid-column: 1 / -1;
+}
+
+.setup-card h4,
+.cert-card h4 {
+  font-size: 1.02rem;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--foreground);
+}
+
+.setup-card p,
+.cert-detail {
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--muted-foreground);
+}
+
+.setup-note {
+  margin-top: var(--sp-2);
+  padding-left: var(--sp-3);
+  border-left: 2px solid var(--glass-border);
+  font-size: 0.85rem !important;
+}
+
+.cert-card:hover,
+.setup-card:hover {
+  border-color: var(--card-hover-border);
+}
+
+.cert-issuer {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+}
+
+/* ── Barras de idioma ─────────────────────────────────────────────────── */
+.lang-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+}
+
+.lang-name {
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--foreground);
+}
+
+.lang-level {
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+}
+
+.lang-bar {
+  width: 100%;
+  height: 6px;
+  border-radius: var(--r-pill);
+  background: var(--glass-border);
+  overflow: hidden;
+}
+
+.lang-bar-fill {
+  display: block;
+  height: 100%;
+  border-radius: var(--r-pill);
+  background: var(--foreground);
+}
+
+/* ── Dock estilo macOS ────────────────────────────────────────────────── */
+.dock-outer {
+  display: flex;
+  justify-content: center;
+}
+
+.dock-horizontal { margin-top: var(--sp-7); }
+
+.dock-panel {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 0.6rem;
+  border-radius: 26px;
+  background: var(--liquid-bg);
+  border: 1px solid var(--liquid-border);
+  box-shadow: var(--shadow-liquid);
+  backdrop-filter: var(--glass-filter);
+}
+
+.dock-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: var(--r-lg);
+  color: var(--muted-foreground);
+  transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+
+.dock-item:hover,
+.dock-item.is-active {
+  color: var(--foreground);
+  background: var(--glass-hover);
+}
+
+.dock-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dock-label {
+  position: absolute;
+  z-index: 99;
+  padding: 6px 10px;
+  border-radius: var(--r-sm);
+  background: var(--foreground);
+  color: var(--accent-inverse);
+  font-size: 0.76rem;
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: var(--shadow-soft);
+}
+
+/* ── Tarjeta de perfil ────────────────────────────────────────────────── */
+.profile-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 360px;
+  padding: var(--sp-6) var(--sp-4);
+  transform-style: preserve-3d;
+}
+
+.profile-card.is-compact {
+  padding: 0;
+  gap: var(--sp-3);
+}
+
+.profile-glow {
+  position: absolute;
+  top: 10%;
+  width: 210px;
+  height: 210px;
+  border-radius: 50%;
+  background: var(--spotlight-color);
+  filter: blur(45px);
+  pointer-events: none;
+}
+
+.profile-photo {
+  position: relative;
+  z-index: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid var(--glass-border);
+  box-shadow: var(--shadow-soft);
+  transform: translateZ(25px);
+}
+
+.profile-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-identity {
+  overflow: hidden;
+  text-align: center;
+}
+
+.profile-name {
+  margin-top: var(--sp-6);
+  font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem);
+  font-weight: 800;
+  color: var(--foreground);
+}
+
+.profile-role {
+  margin-top: var(--sp-1);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.cv-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-top: var(--sp-6);
+  padding: 0.75rem 2rem;
+  border-radius: var(--r-pill);
+  background: rgba(var(--foreground-rgb), 0.05);
+  border: 1px solid rgba(var(--foreground-rgb), 0.15);
+  color: var(--foreground);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  backdrop-filter: blur(8px);
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out);
+}
+
+.cv-button:hover {
+  background: var(--foreground);
+  border-color: var(--foreground);
+  color: var(--accent-inverse);
+}
+
+.cv-button.is-compact {
+  width: 48px;
+  height: 48px;
+  margin-top: 0;
+  padding: 0;
+  justify-content: center;
+}

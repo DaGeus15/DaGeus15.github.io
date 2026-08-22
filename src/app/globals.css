@@ -1,0 +1,18 @@
+/* ==========================================================================
+   Hoja de estilos raíz.
+
+   El orden importa: los tokens definen las variables, base resetea, layout
+   coloca la estructura, y luego los módulos de componentes. `mobile.css` va
+   al final porque sus media queries deben poder sobrescribir a los demás.
+
+   Para tocar el aspecto visual global (colores, blur, espaciado, radios),
+   editá `src/styles/tokens.css` — no hace falta buscar por todo el CSS.
+   ========================================================================== */
+
+@import "../styles/tokens.css";
+@import "../styles/base.css";
+@import "../styles/layout.css";
+@import "../styles/cards.css";
+@import "../styles/sections.css";
+@import "../styles/forms.css";
+@import "../styles/mobile.css";
