@@ -254,8 +254,8 @@
 .profile-glow {
   position: absolute;
   top: 10%;
-  width: 210px;
-  height: 210px;
+  width: 244px;
+  height: 244px;
   border-radius: 50%;
   background: var(--spotlight-color);
   filter: blur(45px);

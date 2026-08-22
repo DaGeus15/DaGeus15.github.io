@@ -54,16 +54,16 @@ export default function ProfileCard({ isCompact = false }) {
           transformStyle: "preserve-3d",
         }}
         whileHover={isCompact ? undefined : { scale: 1.03 }}
-        animate={{ width: isCompact ? 64 : 210, height: isCompact ? 64 : 210 }}
+        animate={{ width: isCompact ? 64 : 244, height: isCompact ? 64 : 244 }}
         transition={spring.layout}
       >
         <Image
           src={profile.avatar}
           alt={profile.name}
-          width={210}
-          height={210}
+          width={244}
+          height={244}
           priority
-          sizes="210px"
+          sizes="244px"
         />
       </motion.div>
 
