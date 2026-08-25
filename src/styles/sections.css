@@ -98,10 +98,12 @@
   height: 4rem;
   padding: 0.8rem;
   border-radius: var(--r-lg);
-  background: var(--liquid-bg);
+  /* Sin backdrop-filter: vive dentro de `.glass-card`, que ya es el material.
+     Un segundo cristal encima muestrea el desenfoque del padre, así que no
+     separa nada y sólo cuesta un repintado más. */
+  background: var(--fill-raised);
   border: 1px solid var(--liquid-border);
   box-shadow: var(--shadow-liquid);
-  backdrop-filter: blur(10px) saturate(var(--glass-saturate));
   transition:
     transform var(--dur-base) var(--ease-out),
     border-color var(--dur-base) var(--ease-out),
@@ -117,7 +119,14 @@
 .skill-item:hover .skill-icon {
   transform: translateY(-5px) scale(1.04);
   border-color: var(--accent);
-  background-color: var(--glass-hover);
+  background-color: var(--fill-raised-hover);
+}
+
+/* F-03: acuse de pulsación. En táctil no hay hover, así que este es el
+   único indicio de que el toque se registró. */
+.skill-item:active .skill-icon {
+  transform: translateY(-2px) scale(0.99);
+  transition-duration: 100ms;
 }
 
 .skill-name {
@@ -146,18 +155,27 @@
   height: 100%;
   padding: var(--sp-5);
   border-radius: var(--r-lg);
-  background: var(--liquid-bg);
+  /* Relleno, no cristal: está dentro de `.glass-card`. */
+  background: var(--fill-raised);
   border: 1px solid var(--liquid-border);
   box-shadow: var(--shadow-liquid);
-  backdrop-filter: blur(10px) saturate(var(--glass-saturate));
   transition:
     border-color var(--dur-base) var(--ease-out),
-    box-shadow var(--dur-base) var(--ease-out);
+    box-shadow var(--dur-base) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
 }
 
 .project-card:hover {
   border-color: var(--card-hover-border);
   box-shadow: var(--shadow-soft), var(--shadow-glow);
+}
+
+/* F-03: la tarjeta es grande, así que se hunde un punto en vez de escalar.
+   Sin `translateY` en hover a propósito: levantarla haría bailar la fila
+   entera de la rejilla y movería el objetivo bajo el cursor. */
+.project-card:active {
+  transform: scale(0.995);
+  transition-duration: 100ms;
 }
 
 .project-card__header {
@@ -388,7 +406,9 @@
 .spec-list dt {
   font-size: 0.74rem;
   font-weight: 700;
-  letter-spacing: 0.6px;
+  /* En `em`, no en px: la raíz crece en monitores grandes (ver base.css) y
+     un valor fijo se quedaría proporcionalmente cada vez más apretado. */
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--muted-foreground);
 }
@@ -509,6 +529,10 @@
 .repo-link:hover {
   color: var(--accent);
   border-bottom-color: var(--accent);
+}
+
+.repo-link:active {
+  opacity: 0.65;
 }
 
 .repo-link svg {

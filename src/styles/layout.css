@@ -110,7 +110,10 @@
   background: var(--liquid-bg);
   border: 1px solid var(--liquid-border);
   box-shadow: var(--shadow-liquid);
-  backdrop-filter: var(--glass-filter);
+  /* Control suelto sobre el fondo: vidrio fino. Cuando cae DENTRO de otra
+     superficie de cristal (la barra de secciones, el raíl compacto) pierde el
+     filtro y pasa a relleno — ver la regla al final de este bloque. */
+  backdrop-filter: var(--glass-thin);
   transition:
     background-color var(--dur-fast) var(--ease-out),
     border-color var(--dur-fast) var(--ease-out),
@@ -231,7 +234,8 @@
     background: var(--liquid-bg);
     border: 1px solid var(--liquid-border);
     box-shadow: var(--shadow-liquid);
-    backdrop-filter: var(--glass-filter);
+    /* El raíl es cromo: es la superficie más grande y tapa contenido. */
+    backdrop-filter: var(--glass-thick);
     transition: opacity var(--dur-shell) var(--ease-out);
     pointer-events: none;
   }
@@ -329,6 +333,24 @@
     box-shadow: none;
     backdrop-filter: none;
     padding: 0;
+  }
+
+  /* Nada de cristal sobre cristal: un control que cae dentro de una
+     superficie de material se resuelve con un relleno teñido. Apilar dos
+     `backdrop-filter` hace que el hijo muestree la salida ya desenfocada del
+     padre —no separa nada— y añade un segundo repintado por fotograma. */
+  .section-nav .icon-button,
+  .portfolio__sidebar.is-compact .icon-button,
+  .portfolio__sidebar.is-compact .theme-toggle-btn,
+  .portfolio__sidebar.is-compact .cv-button {
+    background: var(--fill-raised);
+    backdrop-filter: none;
+  }
+
+  .section-nav .icon-button:hover,
+  .portfolio__sidebar.is-compact .icon-button:hover,
+  .portfolio__sidebar.is-compact .theme-toggle-btn:hover {
+    background-color: var(--fill-raised-hover);
   }
 
   /* ── La tarjeta expandida ocupa el alto restante y scrollea por dentro ── */

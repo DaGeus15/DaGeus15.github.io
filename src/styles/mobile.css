@@ -45,7 +45,8 @@
     padding: env(safe-area-inset-top) var(--sp-4) 0;
     background: var(--liquid-bg);
     border-bottom: 1px solid var(--liquid-border);
-    backdrop-filter: var(--glass-filter);
+    /* Cromo fijo con el contenido pasando por debajo: vidrio grueso. */
+    backdrop-filter: var(--glass-thick);
   }
 
   .mobile-header__avatar {
@@ -77,7 +78,7 @@
   .mobile-header__role {
     font-size: 0.6rem;
     font-weight: 600;
-    letter-spacing: 1.4px;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--muted-foreground);
     white-space: nowrap;
@@ -151,7 +152,17 @@
     transition:
       background-color var(--dur-fast) var(--ease-out),
       color var(--dur-fast) var(--ease-out),
-      border-color var(--dur-fast) var(--ease-out);
+      border-color var(--dur-fast) var(--ease-out),
+      transform var(--dur-fast) var(--ease-out);
+  }
+
+  /* F-03: en táctil no hay hover. Sin esto, el menú entero no daba ninguna
+     señal de haber recibido el toque. */
+  .mobile-drawer__item:active,
+  .mobile-drawer__action:active {
+    transform: scale(0.98);
+    background-color: var(--glass-hover);
+    transition-duration: 100ms;
   }
 
   .mobile-drawer__action {

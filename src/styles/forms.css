@@ -20,12 +20,12 @@
   padding: 0.95rem 1.15rem;
   border-radius: var(--r-md);
   border: 1px solid var(--glass-border);
-  background: var(--glass-bg);
+  /* Relleno, no cristal: el formulario vive dentro de `.glass-card`. */
+  background: var(--fill-raised);
   color: var(--foreground);
   font-family: inherit;
   /* 16px evita que iOS haga zoom automático al enfocar el campo. */
   font-size: 1rem;
-  backdrop-filter: blur(8px);
   transition:
     border-color var(--dur-fast) var(--ease-out),
     box-shadow var(--dur-fast) var(--ease-out),
@@ -134,13 +134,15 @@
   padding: 0.7rem 1.5rem;
   border-radius: var(--r-pill);
   border: 1px solid var(--liquid-border);
-  background: var(--liquid-bg);
+  /* Relleno, no cristal. Este era el peor caso del apilado: `blur(20px)`
+     dentro de una tarjeta con `blur(20px)`, o sea material idéntico al padre
+     y diferenciación cero. */
+  background: var(--fill-raised);
   color: var(--foreground);
   font-size: 0.88rem;
   font-weight: 600;
   overflow: hidden;
   box-shadow: var(--shadow-liquid);
-  backdrop-filter: var(--glass-filter);
   transition:
     border-color var(--dur-fast) var(--ease-out),
     background-color var(--dur-fast) var(--ease-out),
@@ -193,7 +195,7 @@
   margin-bottom: var(--sp-4);
   font-size: 0.86rem;
   font-weight: 600;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.035em;
   color: var(--muted-foreground);
 }
 
@@ -209,18 +211,24 @@
   width: 3rem;
   height: 3rem;
   border-radius: var(--r-lg);
-  background: var(--liquid-bg);
+  /* Relleno, no cristal: está dentro de la tarjeta de Contacto. */
+  background: var(--fill-raised);
   border: 1px solid var(--liquid-border);
   box-shadow: var(--shadow-liquid);
-  backdrop-filter: blur(10px) saturate(var(--glass-saturate));
   transition:
     border-color var(--dur-fast) var(--ease-out),
-    background-color var(--dur-fast) var(--ease-out);
+    background-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
 }
 
 .social-icon:hover {
   border-color: var(--accent);
-  background-color: var(--glass-hover);
+  background-color: var(--fill-raised-hover);
+}
+
+.social-icon:active {
+  transform: scale(0.94);
+  transition-duration: 100ms;
 }
 
 .social-icon img {

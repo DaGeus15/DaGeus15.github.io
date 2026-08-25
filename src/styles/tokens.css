@@ -41,7 +41,26 @@
      lo que hace que el color del fondo "se filtre" y dé el efecto premium. */
   --glass-blur: 20px;
   --glass-saturate: 180%;
-  --glass-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+
+  /* Escala de material: el peso del vidrio codifica jerarquía. Cuanto más
+     grande la superficie, más grueso el cristal.
+
+       thin     controles sueltos sobre el fondo (botones de icono, CV)
+       regular  tarjetas y paneles apoyados en el fondo
+       thick    cromo que tapa contenido (raíl, cajón, cabecera móvil)
+
+     Se derivan de --glass-blur con `calc()` a propósito: así el
+     `--glass-blur: 0px` de `prefers-reduced-transparency` en base.css sigue
+     apagando los tres de una sola vez. */
+  --glass-thin: blur(calc(var(--glass-blur) * 0.6)) saturate(var(--glass-saturate));
+  --glass-regular: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  --glass-thick: blur(calc(var(--glass-blur) * 1.6)) saturate(var(--glass-saturate));
+
+  /* Nombre histórico del peso medio; lo usan las tarjetas y el dock. */
+  --glass-filter: var(--glass-regular);
+
+  /* El cajón es cromo: tapa el contenido y tiene que volverlo ilegible. */
+  --drawer-filter: var(--glass-thick);
 
   /* ── Acento derivado ────────────────────────────────────────────────────
      Cada tema define `--accent` / `--accent-rgb`; todo lo demás se calcula
@@ -142,11 +161,16 @@
   --card-border: rgba(226, 240, 243, 0.08);
   --card-hover-border: rgba(var(--accent-rgb), 0.55);
 
-  /* El cajón se superpone al contenido, así que lleva un desenfoque más
-     fuerte que el resto: convierte el texto de debajo en una mancha
-     ilegible y deja que el del menú se lea limpio. */
+  /* Relleno de lo que va DENTRO de una tarjeta de cristal. Nunca lleva
+     backdrop-filter propio: apilar cristal sobre cristal sólo lava el
+     contraste y paga un segundo repintado. Ver la nota en cards.css. */
+  --fill-raised: rgba(232, 244, 247, 0.055);
+  --fill-raised-hover: rgba(232, 244, 247, 0.09);
+
+  /* El cajón se superpone al contenido, así que lleva el vidrio grueso:
+     convierte el texto de debajo en una mancha ilegible y deja que el del
+     menú se lea limpio. El filtro sale de --glass-thick (tokens de arriba). */
   --drawer-bg: rgba(9, 16, 19, 0.78);
-  --drawer-filter: blur(32px) saturate(var(--glass-saturate));
   --scrim: rgba(3, 8, 10, 0.6);
 
   --shadow-soft: 0 10px 40px -12px rgba(0, 0, 0, 0.6);
@@ -226,6 +250,10 @@
      blanco, o sea invisible. */
   --liquid-border: rgba(var(--accent-rgb), 0.24);
   --liquid-highlight: rgba(255, 255, 255, 0.9);
+
+  /* Sobre el cristal claro, "elevado" es más blanco y más opaco, no menos. */
+  --fill-raised: rgba(255, 255, 255, 0.62);
+  --fill-raised-hover: rgba(255, 255, 255, 0.82);
 
   --card-bg: rgba(250, 249, 246, 0.96);
   --card-border: rgba(var(--accent-rgb), 0.16);

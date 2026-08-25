@@ -115,16 +115,23 @@ img {
 }
 
 /* ── Tipografía compartida ────────────────────────────────────────────── */
+/* Tracking negativo en el texto grande: las letras se leen cada vez más
+   sueltas a medida que crece el cuerpo, así que hay que apretarlas. El texto
+   corrido se queda cerca de cero (ver `.section-text`). */
 .section-title {
   font-size: clamp(1.65rem, 1.1rem + 2vw, 2.25rem);
   font-weight: 800;
   line-height: 1.15;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
   color: var(--foreground);
 }
 
 .subsection-title {
   font-size: 1.25rem;
   font-weight: 700;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
   color: var(--foreground);
   margin-bottom: var(--sp-3);
 }
@@ -135,6 +142,7 @@ img {
   gap: var(--sp-2);
   font-size: clamp(1.15rem, 0.95rem + 0.7vw, 1.4rem);
   font-weight: 700;
+  letter-spacing: -0.012em;
   color: var(--foreground);
   margin: var(--sp-7) 0 var(--sp-4);
 }

@@ -1,4 +1,5 @@
 import localFont from "next/font/local";
+import { MotionConfig } from "framer-motion";
 import { ThemeProvider, themeInitScript } from "@/lib/theme";
 import profile from "@/content/profile";
 import "./globals.css";
@@ -61,7 +62,16 @@ export default function RootLayout({ children }) {
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body className={monaSans.variable}>
-        <ThemeProvider>{children}</ThemeProvider>
+        {/* `reducedMotion="user"` es lo que respeta de verdad la preferencia
+            del sistema. La regla de `base.css` sólo acorta transiciones y
+            animaciones CSS, y framer-motion no usa ninguna de las dos: escribe
+            `transform` inline fotograma a fotograma, así que se le escapaba
+            entera (SplitText, stagger, Magnetic, Dock, Spotlight y el tilt del
+            retrato seguían moviéndose). Esto desactiva transform y layout en
+            todo el árbol y conserva opacidad y color. */}
+        <MotionConfig reducedMotion="user">
+          <ThemeProvider>{children}</ThemeProvider>
+        </MotionConfig>
       </body>
     </html>
   );

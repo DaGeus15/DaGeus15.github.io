@@ -26,6 +26,23 @@ Ver `README.md` para la estructura completa.
   nativa. Ver el bloque de escritorio en `src/styles/layout.css`.
 - Si cambiás `--dur-shell` en `tokens.css`, actualizá `SHELL_MS` en
   `src/lib/motion.js` (lo usa el reanclado del scroll al colapsar).
+- **Nunca apiles `backdrop-filter` sobre `backdrop-filter`.** Un cristal
+  dentro de otro muestrea la salida ya desenfocada del padre: no separa nada,
+  lava el contraste y paga un segundo repintado por fotograma. Llegó a haber
+  27 elementos así, y el peor era `.specular-button` —`blur(20px)` dentro de
+  una tarjeta con `blur(20px)`, material idéntico al padre—. La tarjeta
+  exterior es el material; lo de adentro va con `--fill-raised`. El peso del
+  vidrio codifica jerarquía y sale de la escala de `tokens.css`:
+  `--glass-thin` para controles sueltos, `--glass-regular` para tarjetas y
+  paneles, `--glass-thick` para el cromo que tapa contenido (raíl, cajón,
+  cabecera móvil). Los tres derivan de `--glass-blur` con `calc()` para que
+  `prefers-reduced-transparency` los siga apagando de una sola vez.
+- **El movimiento de framer-motion no lo apaga el CSS.** La regla de
+  `prefers-reduced-motion` en `base.css` sólo acorta transiciones y
+  animaciones CSS; framer-motion escribe `transform` inline fotograma a
+  fotograma y se le escapaba entero. Lo que lo cubre es el
+  `<MotionConfig reducedMotion="user">` de `layout.js`. No lo quites, y si
+  añadís otro árbol de React que anime, que cuelgue de ahí dentro.
 - **Nunca escribas `-webkit-backdrop-filter` a mano.** Lightning CSS (el
   compilador de CSS de Next 16) deduplica la pareja estándar + prefijada y se
   queda sólo con la prefijada, que los navegadores actuales ya no aplican:
