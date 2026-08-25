@@ -12,8 +12,8 @@ import { HOVER_QUERY } from "@/lib/breakpoints";
 export default function Spotlight() {
   const mouseX = useMotionValue(-1000);
   const mouseY = useMotionValue(-1000);
-  const x = useSpring(mouseX, spring.soft);
-  const y = useSpring(mouseY, spring.soft);
+  const x = useSpring(mouseX, spring.ambient);
+  const y = useSpring(mouseY, spring.ambient);
 
   useEffect(() => {
     // Sólo en dispositivos con puntero fino: en táctil no aporta nada

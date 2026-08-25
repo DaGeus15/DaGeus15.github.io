@@ -384,6 +384,58 @@
     padding-right: var(--sp-3);
     margin-right: calc(var(--sp-3) * -1);
   }
+
+  /* ── Desvanecido en el borde del scroll ─────────────────────────────────
+     El cuerpo desplaza dentro de una tarjeta con `overflow: hidden` y
+     esquinas redondeadas, así que el texto se cortaba en seco contra el
+     marco y nada indicaba que hubiera más abajo. El equivalente correcto no
+     es un divisor de 1px: es un desvanecido donde el contenido se encuentra
+     con el cromo.
+
+     Va detrás de `animation-timeline` a propósito, y no como máscara fija.
+     Una máscara estática sólo puede equivocarse en un extremo: si desvanece
+     abajo siempre, la última línea se ve recortada al llegar al final —justo
+     lo que hay que poder comprobar al añadir una sección—; y si desvanece
+     arriba siempre, difumina la primera línea en reposo. Atada al scroll,
+     cada borde aparece sólo cuando hay contenido más allá de él.
+
+     Donde no haya soporte no pasa nada: se queda como estaba, sin máscara.
+     Las custom properties necesitan @property para interpolar; sin registrar
+     saltarían de golpe en vez de fundirse. */
+  @supports (animation-timeline: scroll(self)) {
+    @property --edge-top {
+      syntax: "<length>";
+      inherits: false;
+      initial-value: 0px;
+    }
+
+    @property --edge-bottom {
+      syntax: "<length>";
+      inherits: false;
+      initial-value: 0px;
+    }
+
+    .content-stack.is-expanded .content-card.is-expanded > .section-body {
+      mask-image: linear-gradient(
+        to bottom,
+        transparent 0,
+        #000 var(--edge-top),
+        #000 calc(100% - var(--edge-bottom)),
+        transparent 100%
+      );
+      animation: section-scroll-edges linear both;
+      animation-timeline: scroll(self);
+    }
+
+    @keyframes section-scroll-edges {
+      /* arriba del todo: nada que desvanecer por encima */
+      0% { --edge-top: 0px; --edge-bottom: var(--sp-5); }
+      /* en cuanto se mueve, aparece el borde superior */
+      6%, 94% { --edge-top: var(--sp-4); --edge-bottom: var(--sp-5); }
+      /* al final: se retira el de abajo para no recortar la última línea */
+      100% { --edge-top: var(--sp-4); --edge-bottom: 0px; }
+    }
+  }
 }
 
 /* ==========================================================================

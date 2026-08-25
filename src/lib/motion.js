@@ -11,14 +11,40 @@
 /** Curva de salida principal — coincide con --ease-out en CSS. */
 export const EASE_OUT = [0.23, 1, 0.32, 1];
 
-/** Springs reutilizables. */
+/**
+ * Springs reutilizables, descritos con DOS parámetros en vez de tres.
+ *
+ *   bounce          cuánto sobrepasa. 0 = llega y se queda, sin rebote.
+ *                   ~0.2 = rebota un punto. Es 1 − ζ (razón de amortiguación).
+ *   visualDuration  cuánto tarda en PARECER que llegó, en segundos. No es la
+ *                   duración total: el grueso del recorrido pasa antes de ese
+ *                   tiempo y el rebote, si lo hay, después.
+ *
+ * `stiffness`/`damping`/`mass` describen lo mismo, pero no se pueden discutir:
+ * hay que resolver ζ = c / (2·√(k·m)) mentalmente para saber si algo rebota.
+ * Con estos dos, el valor se lee.
+ *
+ * Regla para el rebote: sólo lo lleva lo que venía de un gesto con inercia.
+ * El dock lo lleva porque el cursor lo atraviesa con velocidad; un panel que
+ * simplemente apareció, no — ahí el sobrepaso se lee como goma.
+ */
 export const spring = {
   /** Interacciones directas: hover, tap, magnetic. Respuesta inmediata. */
-  snappy: { type: "spring", stiffness: 400, damping: 30, mass: 0.6 },
+  snappy: { type: "spring", bounce: 0, visualDuration: 0.25 },
   /** Cambios de layout: expandir/colapsar tarjetas. */
-  layout: { type: "spring", stiffness: 300, damping: 32, mass: 0.9 },
-  /** Movimiento ambiental suave: spotlight, dock. */
-  soft: { type: "spring", stiffness: 150, damping: 20, mass: 0.5 },
+  layout: { type: "spring", bounce: 0, visualDuration: 0.35 },
+
+  /* Los tres de abajo eran un único preset `soft` con ζ = 1.16, es decir
+     SOBREamortiguado: se arrastraba hasta el destino. Servía a la vez al
+     spotlight, al dock y a la inclinación del retrato, que piden cosas
+     opuestas, así que se parte en tres. */
+
+  /** Fondo que va por detrás del cursor a propósito (spotlight). */
+  ambient: { type: "spring", bounce: 0, visualDuration: 0.5 },
+  /** Magnificación del dock. Rápido y con un punto de sobrepaso, como macOS. */
+  dock: { type: "spring", bounce: 0.18, visualDuration: 0.28 },
+  /** Inclinación 3D del retrato: tiene que ir pegada al cursor. */
+  tilt: { type: "spring", bounce: 0, visualDuration: 0.22 },
 };
 
 /** Transiciones basadas en duración, para fades y filtros. */

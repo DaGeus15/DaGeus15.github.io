@@ -20,8 +20,8 @@ export default function ProfileCard({ isCompact = false }) {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
-  const tiltX = useSpring(x, spring.soft);
-  const tiltY = useSpring(y, spring.soft);
+  const tiltX = useSpring(x, spring.tilt);
+  const tiltY = useSpring(y, spring.tilt);
   const rotateX = useTransform(tiltY, [-0.5, 0.5], [10, -10]);
   const rotateY = useTransform(tiltX, [-0.5, 0.5], [-10, 10]);
 

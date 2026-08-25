@@ -29,7 +29,7 @@ function DockItem({ item, mousePos, distance, magnification, baseItemSize, direc
     [-distance, 0, distance],
     [baseItemSize, magnification, baseItemSize],
   );
-  const size = useSpring(targetSize, springPresets.soft);
+  const size = useSpring(targetSize, springPresets.dock);
 
   return (
     <motion.button
