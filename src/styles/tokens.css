@@ -198,7 +198,7 @@
   --background: #f2efe9;
   --foreground: #12262c;
   --foreground-rgb: 18, 38, 44;
-  --muted-foreground: #55696e;
+  --muted-foreground: #4e6167;
 
   --spotlight-color: rgba(var(--accent-rgb), 0.08);
   --accent-inverse: #ffffff;

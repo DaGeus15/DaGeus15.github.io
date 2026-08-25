@@ -152,7 +152,8 @@ img {
 
 .section-text strong,
 .hobbies-list strong,
-.role-desc strong {
+.role-desc strong,
+.setup-card strong {
   color: var(--foreground);
   font-weight: 650;
 }
