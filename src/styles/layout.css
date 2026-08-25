@@ -103,8 +103,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   border-radius: var(--r-md);
   color: var(--foreground);
   background: var(--liquid-bg);
@@ -120,7 +120,7 @@
 .icon-button:hover,
 .theme-toggle-btn:hover {
   background-color: var(--glass-hover);
-  border-color: var(--liquid-highlight);
+  border-color: var(--accent);
   transform: translateY(-1px);
 }
 
@@ -132,21 +132,22 @@
 /* Variante pequeña para la fila de ajustes de la barra lateral. */
 .icon-button.is-small,
 .theme-toggle-btn.is-small {
-  width: 38px;
-  height: 38px;
+  width: 2.375rem;
+  height: 2.375rem;
   border-radius: var(--r-sm);
 }
 
 .icon-button-placeholder {
-  width: 44px;
+  width: 2.75rem;
 }
 
 .theme-toggle-icon {
   display: flex;
 }
 
-.theme-toggle-sun { color: #fbbf24; }
-.theme-toggle-moon { color: #6366f1; }
+/* El sol toma el cálido de la paleta; la luna, el petróleo del acento. */
+.theme-toggle-sun { color: var(--accent-warm); }
+.theme-toggle-moon { color: var(--accent); }
 
 /* ── Barra prev/inicio/siguiente del modo detallado ───────────────────── */
 .section-nav {
@@ -155,7 +156,7 @@
   justify-content: space-between;
   flex-shrink: 0;
   width: 100%;
-  height: 54px;
+  height: 3.375rem;
   padding: 0 var(--sp-3);
   border-radius: var(--r-xl);
   background: var(--liquid-bg);
@@ -363,13 +364,18 @@
   }
 }
 
-/* Pantallas muy anchas: la tarjeta no debería estirarse sin límite. */
-@media (min-width: 1800px) {
-  .portfolio.is-detailed .portfolio__content {
-    right: auto;
-    width: min(
-      calc(100vw - var(--frame-gap) * 3 - var(--rail-width)),
-      1500px
-    );
-  }
-}
+/* ==========================================================================
+   Nota sobre pantallas grandes
+   --------------------------------------------------------------------------
+   Aquí había un tope de 1500px con `right: auto`. Como el panel queda
+   anclado a la izquierda, todo lo que sobraba se acumulaba en un solo lado:
+   en un monitor de 1920 el marco medía 30px a la izquierda y 272px a la
+   derecha. Eso rompía justo la simetría que --frame-gap garantiza, y se leía
+   como un hueco vacío en vez de como un margen.
+
+   Ya no hay tope: el panel llega siempre a `--frame-gap` por los cuatro
+   lados. Lo que absorbe el ancho extra es la escala —`--frame-gap`,
+   `--rail-width` y el tamaño de raíz de `base.css` crecen con el viewport—
+   y las rejillas internas, que son `auto-fit` y añaden columnas solas.
+   La única excepción es el texto corrido: ver `--measure` en sections.css.
+   ========================================================================== */

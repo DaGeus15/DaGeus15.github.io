@@ -17,7 +17,9 @@
      también SHELL_MS en src/lib/motion.js. */
   --dur-shell: 0.44s;
 
-  /* ── Escala de espaciado ────────────────────────────────────────────── */
+  /* ── Escala de espaciado ────────────────────────────────────────────────
+     En `rem` a propósito: `base.css` sube el tamaño de raíz en pantallas
+     grandes, así que toda la escala crece con el monitor de una sola vez. */
   --sp-1: 0.25rem;
   --sp-2: 0.5rem;
   --sp-3: 0.75rem;
@@ -41,6 +43,18 @@
   --glass-saturate: 180%;
   --glass-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
 
+  /* ── Acento derivado ────────────────────────────────────────────────────
+     Cada tema define `--accent` / `--accent-rgb`; todo lo demás se calcula
+     aquí una sola vez. Las custom properties se resuelven en el momento de
+     uso, así que estas fórmulas ven el valor del tema activo. */
+  --accent-soft: rgba(var(--accent-rgb), 0.12);
+  --accent-line: rgba(var(--accent-rgb), 0.34);
+  --accent-gradient: linear-gradient(135deg, var(--accent), var(--accent-strong));
+  /* `--accent-gradient` es decorativo (divisores, barras). `--accent-fill` es
+     para superficies rellenas que llevan texto BLANCO encima: lo define cada
+     tema con tonos más oscuros, porque el índigo claro del tema oscuro sólo
+     da 3:1 contra blanco y no pasaría AA. */
+
   /* ── Armazón de escritorio ──────────────────────────────────────────────
      Los dos modos definen LOS MISMOS lados (top/right/bottom/left/width),
      de forma que pasar de uno a otro es una interpolación real y no un
@@ -51,139 +65,193 @@
   --sidebar-w: 360px;
   --sidebar-gap: 2rem;
 
-  /* modo detallado */
-  --frame-gap: 30px;
-  --rail-width: 88px;
+  /* modo detallado — fluidos.
+     Con valores fijos, un monitor de 24" dejaba el marco de 30px pegado a
+     los bordes y el raíl de 88px minúsculo. Los `clamp()` arrancan en el
+     valor de portátil (por debajo de ~1500px no cambia nada) y crecen
+     hasta un tope razonable. */
+  --frame-gap: clamp(30px, 2vw, 46px);
+  --rail-width: clamp(88px, 5.4vw, 116px);
+
+  /* Medida de lectura. El armazón llega de borde a borde, pero un párrafo de
+     175 caracteres por línea —lo que da un panel de 1700px— es ilegible: el
+     ojo pierde el salto de línea. Las rejillas sí llenan todo el ancho; sólo
+     el texto corrido se limita. */
+  --measure: 82ch;
 
   /* ── Alturas fijas ──────────────────────────────────────────────────── */
   --mobile-header-h: 64px;
   --drawer-w: 280px;
 }
 
+/* ── Paleta ─────────────────────────────────────────────────────────────
+   Los dos temas salen de la foto de perfil (`public/dayle.jpeg`), no de una
+   paleta inventada. Cuantizándola aparecen dos familias y nada más:
+
+     · petróleo/teal oscuro  (la ropa)      #1f282c #101a1c #293138  h≈190-210
+     · arena cálida          (la pared)     #a6998d #7a756a #8a7f72  h≈28-42
+
+   De ahí sale todo: el acento es el petróleo llevado a un tono utilizable,
+   el lienzo claro es la arena, y la malla del fondo combina los dos —frío
+   arriba, cálido abajo— igual que la propia foto. Por eso el retrato se
+   integra en la página en vez de flotar sobre ella.
+
+   Si algún día cambia la foto, volvé a cuantizarla antes de tocar esto.
+   ---------------------------------------------------------------------- */
+
 /* ── Tema oscuro (por defecto) ────────────────────────────────────────── */
 :root,
 [data-theme="dark"] {
   color-scheme: dark;
 
-  --background: #09090b;
-  --foreground: #f4f4f5;
-  --foreground-rgb: 244, 244, 245;
-  --muted-foreground: #a1a1aa;
+  /* El petróleo de la ropa, subido en luminosidad hasta que contrasta 6:1
+     contra el fondo. Es el color que resalta en toda la página. */
+  --accent: #4fb3cc;
+  --accent-rgb: 79, 179, 204;
+  --accent-strong: #2b90aa;
+  --accent-fill: linear-gradient(135deg, #14748f, #0e5a72);
+  /* La arena de la pared. Acento secundario, para el calor de la malla. */
+  --accent-warm: #c9ae8b;
 
-  --spotlight-color: rgba(99, 102, 241, 0.08);
-  --accent-inverse: #09090b;
-  --accent-glow: rgba(255, 255, 255, 0.15);
+  --background: #080e11;
+  --foreground: #eef2f2;
+  --foreground-rgb: 238, 242, 242;
+  --muted-foreground: #93a3a7;
 
-  --glass-bg: rgba(22, 22, 28, 0.55);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --glass-hover: rgba(255, 255, 255, 0.08);
+  --spotlight-color: rgba(var(--accent-rgb), 0.08);
+  --accent-inverse: #080e11;
+  --accent-glow: rgba(var(--accent-rgb), 0.28);
+
+  --glass-bg: rgba(16, 26, 30, 0.55);
+  --glass-border: rgba(226, 240, 243, 0.11);
+  --glass-hover: rgba(226, 240, 243, 0.08);
 
   /* Degradado del cristal: reflejo arriba-izquierda, cuerpo translúcido. */
   --liquid-bg:
     linear-gradient(
       145deg,
-      rgba(255, 255, 255, 0.09),
-      rgba(255, 255, 255, 0.025) 42%,
-      rgba(255, 255, 255, 0.055)
+      rgba(232, 244, 247, 0.09),
+      rgba(232, 244, 247, 0.025) 42%,
+      rgba(232, 244, 247, 0.055)
     ),
-    rgba(17, 17, 23, 0.62);
-  --liquid-border: rgba(255, 255, 255, 0.13);
+    rgba(12, 21, 25, 0.62);
+  --liquid-border: rgba(226, 240, 243, 0.14);
   --liquid-highlight: rgba(255, 255, 255, 0.3);
 
-  --card-bg: rgba(18, 18, 22, 0.94);
-  --card-border: rgba(255, 255, 255, 0.07);
-  --card-hover-border: rgba(255, 255, 255, 0.2);
+  --card-bg: rgba(12, 20, 24, 0.94);
+  --card-border: rgba(226, 240, 243, 0.08);
+  --card-hover-border: rgba(var(--accent-rgb), 0.55);
 
   /* El cajón se superpone al contenido, así que lleva un desenfoque más
      fuerte que el resto: convierte el texto de debajo en una mancha
      ilegible y deja que el del menú se lea limpio. */
-  --drawer-bg: rgba(14, 14, 19, 0.78);
+  --drawer-bg: rgba(9, 16, 19, 0.78);
   --drawer-filter: blur(32px) saturate(var(--glass-saturate));
-  --scrim: rgba(0, 0, 0, 0.55);
+  --scrim: rgba(3, 8, 10, 0.6);
 
-  --shadow-soft: 0 10px 40px -12px rgba(0, 0, 0, 0.55);
-  --shadow-glow: 0 0 28px rgba(99, 102, 241, 0.13);
+  --shadow-soft: 0 10px 40px -12px rgba(0, 0, 0, 0.6);
+  --shadow-glow: 0 0 28px rgba(var(--accent-rgb), 0.16);
   --shadow-liquid:
     0 18px 60px -35px rgba(0, 0, 0, 0.9),
-    inset 0 1px 0 rgba(255, 255, 255, 0.09);
+    inset 0 1px 0 rgba(226, 240, 243, 0.09);
 
-  /* Malla del fondo. Paleta fría con un acento cálido abajo a la izquierda:
-     el contraste de temperatura es lo que evita que se lea como un degradado
-     genérico. */
-  --mesh-glow: rgba(148, 163, 255, 0.1);
-  --mesh-1: rgba(79, 70, 229, 0.34);
-  --mesh-2: rgba(192, 38, 211, 0.2);
-  --mesh-3: rgba(14, 165, 233, 0.16);
-  --mesh-4: rgba(244, 114, 82, 0.1);
+  /* Malla del fondo: petróleo arriba, arena abajo. El contraste de
+     temperatura es lo que evita que se lea como un degradado genérico —y es
+     exactamente el que ya tiene la foto. */
+  --mesh-glow: rgba(150, 196, 208, 0.1);
+  --mesh-1: rgba(13, 108, 132, 0.4);
+  --mesh-2: rgba(24, 62, 84, 0.34);
+  --mesh-3: rgba(56, 160, 175, 0.18);
+  --mesh-4: rgba(198, 160, 116, 0.13);
 
   --grain-opacity: 0.055;
   --grain-blend: overlay;
-  --vignette: rgba(0, 0, 0, 0.55);
+  --vignette: rgba(2, 7, 9, 0.6);
 
   /* Iconos SVG monocromos (redes sociales) */
   --svg-filter: invert(1);
 }
 
-/* ── Tema claro ───────────────────────────────────────────────────────── */
+/* ── Tema claro ─────────────────────────────────────────────────────────
+   Regla que gobierna este bloque: NADA blanco sobre blanco.
+
+   La versión anterior era gris pizarra neutro (#f8fafc) con bordes y
+   reflejos en blanco puro. El resultado era plano por dos motivos a la vez:
+   los bordes desaparecían contra el relleno, y —más importante— detrás del
+   cristal no había color que desenfocar, así que `saturate()` no tenía nada
+   con lo que trabajar y el efecto no se percibía.
+
+   Ahora el lienzo es la arena cálida de la foto (no blanco de laboratorio)
+   y los bordes, sombras y estados llevan el mismo petróleo que resalta en
+   el tema oscuro. Los dos modos son la misma paleta a distinta luz.
+   ---------------------------------------------------------------------- */
 [data-theme="light"] {
   color-scheme: light;
 
-  --background: #f8fafc;
-  --foreground: #0f172a;
-  --foreground-rgb: 15, 23, 42;
-  --muted-foreground: #64748b;
+  --accent: #0e7490;
+  --accent-rgb: 14, 116, 144;
+  --accent-strong: #155e75;
+  --accent-fill: linear-gradient(135deg, #0e7490, #124e63);
+  --accent-warm: #b79a76;
 
-  --spotlight-color: rgba(59, 130, 246, 0.05);
+  /* Lienzo: la pared de la foto. Tinta: el petróleo de la ropa. */
+  --background: #f2efe9;
+  --foreground: #12262c;
+  --foreground-rgb: 18, 38, 44;
+  --muted-foreground: #55696e;
+
+  --spotlight-color: rgba(var(--accent-rgb), 0.08);
   --accent-inverse: #ffffff;
-  --accent-glow: rgba(15, 23, 42, 0.1);
+  --accent-glow: rgba(var(--accent-rgb), 0.22);
 
   /* Saturación algo mayor que en oscuro: sobre un fondo claro es lo que hace
      que el color del fondo difuminado se note a través del cristal. */
   --glass-saturate: 200%;
 
-  --glass-bg: rgba(255, 255, 255, 0.55);
-  --glass-border: rgba(15, 23, 42, 0.08);
-  --glass-hover: rgba(15, 23, 42, 0.045);
+  --glass-bg: rgba(255, 255, 255, 0.5);
+  --glass-border: rgba(var(--accent-rgb), 0.18);
+  --glass-hover: rgba(var(--accent-rgb), 0.07);
 
-  /* Cobertura efectiva de blanco ~55%. Antes era ~65–86%, tan opaco que el
-     desenfocado de detrás no se apreciaba y el cristal parecía relleno liso.
-     El texto (#0f172a) sigue muy por encima del contraste mínimo. */
+  /* Cobertura efectiva de blanco ~50%, y el cuerpo lleva un velo frío en vez
+     de blanco: lo que se ve a través del cristal sigue siendo color. */
   --liquid-bg:
     linear-gradient(
       145deg,
-      rgba(255, 255, 255, 0.62),
-      rgba(255, 255, 255, 0.28) 48%,
-      rgba(255, 255, 255, 0.42)
+      rgba(255, 255, 255, 0.6),
+      rgba(255, 255, 255, 0.22) 48%,
+      rgba(255, 255, 255, 0.38)
     ),
-    rgba(255, 255, 255, 0.22);
-  --liquid-border: rgba(255, 255, 255, 0.85);
-  --liquid-highlight: rgba(255, 255, 255, 0.95);
+    rgba(226, 238, 241, 0.24);
+  /* El borde es el cambio decisivo: antes era blanco al 85% sobre relleno
+     blanco, o sea invisible. */
+  --liquid-border: rgba(var(--accent-rgb), 0.24);
+  --liquid-highlight: rgba(255, 255, 255, 0.9);
 
-  --card-bg: rgba(255, 255, 255, 0.96);
-  --card-border: rgba(226, 232, 240, 0.9);
-  --card-hover-border: rgba(148, 163, 184, 0.9);
+  --card-bg: rgba(250, 249, 246, 0.96);
+  --card-border: rgba(var(--accent-rgb), 0.16);
+  --card-hover-border: rgba(var(--accent-rgb), 0.5);
 
-  --drawer-bg: rgba(255, 255, 255, 0.72);
-  /* En claro un velo negro ensucia el fondo; se usa uno frío y más suave. */
-  --scrim: rgba(15, 23, 42, 0.35);
+  --drawer-bg: rgba(247, 245, 240, 0.74);
+  /* En claro un velo negro ensucia el fondo; se usa el petróleo, más suave. */
+  --scrim: rgba(18, 38, 44, 0.35);
 
-  --shadow-soft: 0 10px 30px -12px rgba(15, 23, 42, 0.12);
-  --shadow-glow: 0 0 22px rgba(59, 130, 246, 0.08);
+  --shadow-soft: 0 10px 30px -12px rgba(18, 38, 44, 0.22);
+  --shadow-glow: 0 0 26px rgba(var(--accent-rgb), 0.18);
   --shadow-liquid:
-    0 22px 60px -38px rgba(15, 23, 42, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    0 22px 60px -36px rgba(18, 38, 44, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
 
   /* El cristal sólo se percibe si hay algo detrás que desenfocar, así que la
      malla en claro no puede quedarse en un lavado casi blanco. */
-  --mesh-glow: rgba(255, 255, 255, 0.5);
-  --mesh-1: rgba(129, 140, 248, 0.34);
-  --mesh-2: rgba(232, 121, 249, 0.24);
-  --mesh-3: rgba(56, 189, 248, 0.22);
-  --mesh-4: rgba(253, 164, 116, 0.16);
+  --mesh-glow: rgba(255, 252, 246, 0.6);
+  --mesh-1: rgba(56, 160, 180, 0.3);
+  --mesh-2: rgba(110, 165, 182, 0.24);
+  --mesh-3: rgba(14, 116, 144, 0.18);
+  --mesh-4: rgba(203, 174, 134, 0.32);
 
-  --grain-opacity: 0.04;
+  --grain-opacity: 0.045;
   --grain-blend: multiply;
-  --vignette: rgba(100, 116, 139, 0.16);
+  --vignette: rgba(60, 78, 84, 0.16);
 
   --svg-filter: invert(0);
 }

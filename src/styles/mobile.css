@@ -166,7 +166,9 @@
   }
 
   .mobile-drawer__item.is-active {
-    border-color: var(--liquid-border);
+    color: var(--accent);
+    background-color: var(--accent-soft);
+    border-color: var(--accent-line);
   }
 
   .mobile-drawer__icon {

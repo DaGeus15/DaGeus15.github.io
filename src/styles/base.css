@@ -15,6 +15,19 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
+/* Escala fluida en monitores grandes.
+   Toda la escala de espaciado y casi toda la tipografía están en `rem`, así
+   que subir el tamaño de raíz agranda la interfaz entera de una sola vez.
+   Sin esto, en un 24" el contenido se estiraba a lo ancho pero los textos,
+   los huecos y los iconos seguían siendo los de un portátil de 13".
+   Arranca en 1440px (16px, exactamente lo de ahora) y llega a 20px hacia
+   los 2300px. */
+@media (min-width: 1440px) {
+  html {
+    font-size: clamp(16px, calc(16px + (100vw - 1440px) * 0.0047), 20px);
+  }
+}
+
 body {
   min-height: 100dvh;
   background-color: var(--background);
@@ -54,14 +67,14 @@ img {
 
 /* Foco visible y coherente en todo el sitio (sólo con teclado). */
 :focus-visible {
-  outline: 2px solid var(--foreground);
+  outline: 2px solid var(--accent);
   outline-offset: 3px;
   border-radius: var(--r-sm);
 }
 
 ::selection {
-  background: var(--foreground);
-  color: var(--accent-inverse);
+  background: var(--accent);
+  color: #ffffff;
 }
 
 /* Sólo para lectores de pantalla. */
@@ -130,6 +143,7 @@ img {
   font-size: 1rem;
   line-height: 1.7;
   color: var(--muted-foreground);
+  max-width: var(--measure);
 }
 
 .section-text + .section-text {

@@ -51,6 +51,35 @@ Ver `README.md` para la estructura completa.
   offline; los assets viven en `public/`.
 - **Framer Motion es la única librería de animación.** No añadas GSAP, Three.js
   ni react-spring: ya estuvieron y se quitaron por peso y por quedar huérfanas.
+- **La paleta sale de la foto de perfil, no de la imaginación.** Los dos temas
+  se derivan de cuantizar `public/dayle.jpeg`: petróleo/teal de la ropa
+  (h≈190-210) y arena cálida de la pared (h≈28-42). El acento es el mismo tono
+  en ambos modos, sólo cambia la luminosidad. Si cambia la foto, volvé a
+  cuantizarla antes de tocar `tokens.css`.
+- **En tema claro, nada blanco sobre blanco.** Bordes, reflejos y estados
+  llevan el acento; el lienzo lleva matiz, no gris neutro. Un fondo sin color
+  deja a `saturate()` sin nada que hacer y el cristal desaparece aunque el
+  `backdrop-filter` esté bien puesto.
+- **`--accent` es para texto y bordes; `--accent-fill` para superficies con
+  texto blanco encima.** No los intercambies: el acento claro del tema oscuro
+  sólo da 3:1 contra blanco y no pasa AA.
+- **Los tamaños de componente van en `rem`, no en `px`.** Por encima de 1440px
+  `base.css` sube el tamaño de raíz, y eso es lo que hace que la interfaz
+  entera escale en un monitor grande. Un `44px` a pelo se queda quieto.
+- **No vuelvas a poner un tope de ancho con `right: auto` en el panel
+  detallado.** Lo hubo (1500px) y dejaba el marco en 30px a la izquierda y
+  272px a la derecha en un 1920: rompía justo la simetría que `--frame-gap`
+  garantiza. El ancho extra lo absorben la escala y las rejillas `auto-fit`;
+  el texto corrido se limita con `--measure`.
+- **`auto-fit` y un hijo con `grid-column: 1 / -1` no se llevan.** `auto-fit`
+  colapsa las pistas vacías, y un hijo que las cruza todas hace que ninguna lo
+  esté: en 1920 `.setup-grid` generaba cinco pistas para tres tarjetas. Si la
+  rejilla tiene una tarjeta ancha, declará las columnas explícitamente.
+- **El tema sigue al navegador por defecto.** `data-theme` es el tema aplicado y
+  `data-theme-source` dice si viene del sistema o de un override del visitante;
+  el botón sólo fija override, y al volver a coincidir con el sistema lo borra.
+  No añadas efectos: el script inline de `layout.js` deja los dos atributos
+  listos antes de hidratar.
 - Estado de puntero/scroll: usar motion values, no `useState` en handlers de
   `mousemove` (provoca un render de React por evento).
 - Evitar `setState` dentro de `useEffect` en el montaje; usar

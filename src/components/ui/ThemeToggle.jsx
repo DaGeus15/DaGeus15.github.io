@@ -7,13 +7,18 @@ import { tween } from "@/lib/motion";
 
 /** Botón de cambio de tema con el icono animado. */
 export default function ThemeToggle({ className = "", size = 18 }) {
-  const { theme, toggleTheme, isDark } = useTheme();
+  const { theme, toggleTheme, isDark, followsSystem } = useTheme();
 
   return (
     <button
       onClick={toggleTheme}
       className={`theme-toggle-btn ${className}`}
       aria-label={isDark ? "Cambiar a modo claro" : "Cambiar a modo oscuro"}
+      title={
+        followsSystem
+          ? `Modo ${isDark ? "oscuro" : "claro"}, siguiendo al navegador`
+          : `Modo ${isDark ? "oscuro" : "claro"} fijado — volvé a cambiarlo para seguir al navegador`
+      }
     >
       <AnimatePresence mode="wait" initial={false}>
         <motion.span

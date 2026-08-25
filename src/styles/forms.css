@@ -41,7 +41,7 @@
 .form-textarea:focus {
   outline: none;
   background: var(--background);
-  border-color: var(--foreground);
+  border-color: var(--accent);
   box-shadow: 0 0 0 3px var(--accent-glow);
 }
 
@@ -64,8 +64,8 @@
   margin-top: var(--sp-1);
   padding: 0.85rem 2rem;
   border-radius: var(--r-md);
-  background: var(--foreground);
-  color: var(--accent-inverse);
+  background: var(--accent-fill);
+  color: #ffffff;
   font-size: 0.94rem;
   font-weight: 600;
   box-shadow: var(--shadow-soft);
@@ -164,7 +164,7 @@
 }
 
 .specular-button:hover {
-  border-color: var(--foreground);
+  border-color: var(--accent);
   background-color: var(--glass-hover);
   transform: translateY(-2px);
 }
@@ -206,8 +206,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
+  width: 3rem;
+  height: 3rem;
   border-radius: var(--r-lg);
   background: var(--liquid-bg);
   border: 1px solid var(--liquid-border);
@@ -219,7 +219,7 @@
 }
 
 .social-icon:hover {
-  border-color: var(--foreground);
+  border-color: var(--accent);
   background-color: var(--glass-hover);
 }
 

@@ -61,8 +61,8 @@
   height: 3px;
   margin-top: var(--sp-3);
   border-radius: var(--r-pill);
-  background: var(--foreground);
-  opacity: 0.8;
+  background: var(--accent-gradient);
+  opacity: 0.9;
 }
 
 .section-body {
@@ -81,10 +81,23 @@
   grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
 }
 
+/* Ojo: aquí NO sirve `auto-fit`, a diferencia de `.cards-grid`.
+   `auto-fit` genera tantas pistas como quepan y colapsa las que quedan
+   vacías —pero `.setup-card.is-wide` ocupa `1 / -1`, así que ninguna pista
+   queda vacía nunca y no colapsa ninguna. En un monitor de 1920 salían
+   CINCO pistas para TRES tarjetas: las dos primeras encogidas a 300px y dos
+   huecos a la derecha. Con dos columnas explícitas, las tarjetas normales
+   ocupan la mitad del ancho cada una y la ancha cruza las dos. */
 .setup-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--sp-4);
+}
+
+@media (min-width: 1024px) {
+  .setup-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 .setup-card,
@@ -174,7 +187,7 @@
   display: block;
   height: 100%;
   border-radius: var(--r-pill);
-  background: var(--foreground);
+  background: var(--accent-gradient);
 }
 
 /* ── Dock estilo macOS ────────────────────────────────────────────────── */
@@ -208,10 +221,14 @@
   transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
 }
 
-.dock-item:hover,
-.dock-item.is-active {
+.dock-item:hover {
   color: var(--foreground);
   background: var(--glass-hover);
+}
+
+.dock-item.is-active {
+  color: var(--accent);
+  background: var(--accent-soft);
 }
 
 .dock-icon {
@@ -319,8 +336,8 @@
   margin-top: var(--sp-6);
   padding: 0.75rem 2rem;
   border-radius: var(--r-pill);
-  background: rgba(var(--foreground-rgb), 0.05);
-  border: 1px solid rgba(var(--foreground-rgb), 0.15);
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-line);
   color: var(--foreground);
   font-size: 0.82rem;
   font-weight: 600;
@@ -334,14 +351,14 @@
 }
 
 .cv-button:hover {
-  background: var(--foreground);
-  border-color: var(--foreground);
-  color: var(--accent-inverse);
+  background: var(--accent-fill);
+  border-color: transparent;
+  color: #ffffff;
 }
 
 .cv-button.is-compact {
-  width: 48px;
-  height: 48px;
+  width: 3rem;
+  height: 3rem;
   margin-top: 0;
   padding: 0;
   justify-content: center;

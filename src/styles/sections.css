@@ -18,7 +18,7 @@
 }
 
 .timeline-item:hover {
-  border-left-color: var(--foreground);
+  border-left-color: var(--accent);
 }
 
 .timeline-dot {
@@ -36,8 +36,9 @@
 }
 
 .timeline-item:hover .timeline-dot {
-  background: var(--foreground);
-  border-color: var(--foreground);
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-soft);
 }
 
 .timeline-header {
@@ -70,6 +71,7 @@
   font-size: 0.96rem;
   line-height: 1.65;
   color: var(--muted-foreground);
+  max-width: var(--measure);
 }
 
 /* ── Grid de tecnologías ──────────────────────────────────────────────── */
@@ -92,9 +94,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 64px;
-  height: 64px;
-  padding: 13px;
+  width: 4rem;
+  height: 4rem;
+  padding: 0.8rem;
   border-radius: var(--r-lg);
   background: var(--liquid-bg);
   border: 1px solid var(--liquid-border);
@@ -114,7 +116,7 @@
 
 .skill-item:hover .skill-icon {
   transform: translateY(-5px) scale(1.04);
-  border-color: var(--foreground);
+  border-color: var(--accent);
   background-color: var(--glass-hover);
 }
 
@@ -154,7 +156,7 @@
 }
 
 .project-card:hover {
-  border-color: var(--foreground);
+  border-color: var(--card-hover-border);
   box-shadow: var(--shadow-soft), var(--shadow-glow);
 }
 
@@ -248,7 +250,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--sp-2);
-  min-height: 44px;
+  min-height: 2.75rem;
   padding: 0.6rem 1.1rem;
   border-radius: var(--r-pill);
   border: 1px solid var(--glass-border);
@@ -263,9 +265,9 @@
 }
 
 .quick-nav__link:hover {
-  background-color: var(--glass-hover);
-  border-color: var(--foreground);
-  color: var(--foreground);
+  background-color: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .quick-nav__num {
@@ -425,6 +427,7 @@
 .hobbies-list li {
   position: relative;
   padding-left: var(--sp-5);
+  max-width: var(--measure);
   font-size: 0.95rem;
   line-height: 1.6;
   color: var(--muted-foreground);
@@ -438,7 +441,7 @@
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: var(--foreground);
+  background: var(--accent);
 }
 
 /* ── Botón "ver más" ──────────────────────────────────────────────────── */
@@ -504,7 +507,8 @@
 }
 
 .repo-link:hover {
-  border-bottom-color: var(--foreground);
+  color: var(--accent);
+  border-bottom-color: var(--accent);
 }
 
 .repo-link svg {
