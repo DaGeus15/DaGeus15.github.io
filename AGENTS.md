@@ -78,11 +78,31 @@ Ver `README.md` para la estructura completa.
   offline; los assets viven en `public/`.
 - **Framer Motion es la única librería de animación.** No añadas GSAP, Three.js
   ni react-spring: ya estuvieron y se quitaron por peso y por quedar huérfanas.
-- **La paleta sale de la foto de perfil, no de la imaginación.** Los dos temas
-  se derivan de cuantizar `public/dayle.jpeg`: petróleo/teal de la ropa
-  (h≈190-210) y arena cálida de la pared (h≈28-42). El acento es el mismo tono
-  en ambos modos, sólo cambia la luminosidad. Si cambia la foto, volvé a
-  cuantizarla antes de tocar `tokens.css`.
+- **La paleta sale de la foto, pero por complemento, no por copia.** Cuantizar
+  `public/dayle.jpeg` en OKLCH desmiente lo que decía aquí antes: la foto NO
+  tiene teal. La ropa y las sombras salen con croma 0.013-0.018, que es gris
+  neutro con un matiz frío imperceptible. La única familia con croma real es
+  la cálida de la piel y la pared, h≈55 con C 0.048-0.066. Por eso: los
+  lienzos son los neutros de la foto (claro cálido h≈85, oscuro frío h≈230),
+  el acento es el COMPLEMENTO del cálido (55+180=235, fijado en h=232 para
+  conservar un rastro de teal), y el cálido secundario es h=55 con el croma
+  que la foto tiene de verdad. h≈232 es además donde sRGB permite más croma
+  con contraste accesible, así que el principio y la gama coinciden. Un solo
+  tono para los dos temas: lo único que cambia es la L. Si cambia la foto,
+  volvé a cuantizar, sacá el tono con croma real y usá su complemento — no lo
+  elijas a ojo.
+- **Nada de degradados animados a pantalla completa.** El halo del cursor
+  reconstruía un `radial-gradient` en la propiedad `background` de un elemento
+  de 100vw × 100dvh en cada `mousemove`. Los degradados no se componen en GPU:
+  eso era repintar la pantalla entera en el hilo principal por fotograma, y
+  además invalidaba el `backdrop-filter` de las ocho superficies de cristal.
+  Ahora el degradado es estático y sólo se mueve su `transform`. La misma
+  regla mató la deriva perpetua de `.aurora__mesh`: esa capa es el fondo de
+  todos los cristales, así que animarla obligaba a recalcular los ocho
+  desenfoques para siempre, por un movimiento de ±1,5% en 48s que nadie ve.
+- **En el dock se anima `scale`, nunca `width`/`height`.** Ancho y alto
+  disparan layout en cada fotograma. El precio es que los vecinos no se
+  apartan como en macOS; con el hueco que hay, no se nota.
 - **En tema claro, nada blanco sobre blanco.** Bordes, reflejos y estados
   llevan el acento; el lienzo lleva matiz, no gris neutro. Un fondo sin color
   deja a `saturate()` sin nada que hacer y el cristal desaparece aunque el

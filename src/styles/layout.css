@@ -21,8 +21,17 @@
   transition: background-color var(--dur-slow) var(--ease-out);
 }
 
-/* Malla de color. Se dibuja algo más grande que la pantalla (inset negativo)
-   para que la deriva lenta nunca descubra un borde. */
+/* Malla de color.
+   Aquí había una deriva infinita de 48s (`aurora-drift`). Se quitó por coste,
+   no por gusto: esta capa es el FONDO de las ocho superficies con
+   `backdrop-filter`, así que mientras se movía obligaba a recalcular los ocho
+   desenfoques en cada fotograma, para siempre, incluso con la página quieta.
+   El movimiento era una traslación de ±1,5% repartida en 48 segundos —
+   imperceptible— y el coste era permanente. Sin animación, cada desenfoque se
+   rasteriza una vez y se queda en caché.
+
+   Se mantiene el inset negativo: cuesta cero y deja margen si algún día se
+   recupera el movimiento (por ejemplo, sólo mientras el puntero se mueve). */
 .aurora__mesh {
   position: absolute;
   inset: -12%;
@@ -33,8 +42,6 @@
     radial-gradient(52% 46% at 88% 82%, var(--mesh-2), transparent 68%),
     radial-gradient(42% 38% at 74% 22%, var(--mesh-3), transparent 66%),
     radial-gradient(46% 40% at 22% 88%, var(--mesh-4), transparent 68%);
-  animation: aurora-drift 48s infinite ease-in-out alternate;
-  will-change: transform;
 }
 
 /* Grano: sin él, un degradado tan amplio se ve a bandas en pantallas de 8 bits.
@@ -56,18 +63,35 @@
   background: radial-gradient(120% 90% at 50% 40%, transparent 55%, var(--vignette) 100%);
 }
 
-/* Deriva muy lenta y sólo por traslación: la capa se rasteriza una vez y el
-   compositor se limita a moverla. Sin `scale`, que forzaría re-rasterizar. */
-@keyframes aurora-drift {
-  from { transform: translate3d(-1.5%, -1%, 0); }
-  to { transform: translate3d(1.5%, 1.5%, 0); }
-}
-
+/* El halo del cursor. El degradado se pinta UNA vez en un círculo de tamaño
+   fijo y lo único que se anima es su `transform`, así que el trabajo por
+   fotograma es del compositor y no invalida ningún `backdrop-filter`.
+   Antes se reconstruía el degradado sobre un elemento de pantalla completa en
+   cada movimiento del ratón: ver la nota en `Spotlight.jsx`. */
 .spotlight {
   position: fixed;
   inset: 0;
   z-index: 0;
+  overflow: hidden;
   pointer-events: none;
+}
+
+.spotlight__halo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1100px;
+  height: 1100px;
+  /* Centrado en su propio origen: el `transform` lleva las coordenadas del
+     cursor tal cual, sin restarle la mitad en JS. */
+  margin: -550px 0 0 -550px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle closest-side,
+    var(--spotlight-color),
+    transparent 72%
+  );
+  will-change: transform;
 }
 
 /* ── Pila de contenido ────────────────────────────────────────────────── */

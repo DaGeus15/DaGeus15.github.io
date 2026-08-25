@@ -24,18 +24,26 @@ function DockItem({ item, mousePos, distance, magnification, baseItemSize, direc
       : val - rect.x - baseItemSize / 2;
   });
 
-  const targetSize = useTransform(
+  /* `scale`, no `width`/`height`. Animar ancho y alto dispara LAYOUT en cada
+     fotograma, y con el cursor encima son cuatro elementos recalculándose a
+     la vez sobre el hilo principal. `scale` es una transformación: la lleva
+     el compositor y no toca el layout.
+
+     A cambio, los vecinos ya no se apartan como en el dock de macOS —el
+     hueco de cada icono es fijo—. Con un crecimiento de 44→62 px sobre un
+     hueco de 8 px, los iconos apenas se rozan y el efecto se lee igual. */
+  const targetScale = useTransform(
     mouseDistance,
     [-distance, 0, distance],
-    [baseItemSize, magnification, baseItemSize],
+    [1, magnification / baseItemSize, 1],
   );
-  const size = useSpring(targetSize, springPresets.dock);
+  const scale = useSpring(targetScale, springPresets.dock);
 
   return (
     <motion.button
       ref={ref}
       type="button"
-      style={{ width: size, height: size }}
+      style={{ width: baseItemSize, height: baseItemSize, scale }}
       onHoverStart={() => isHovered.set(1)}
       onHoverEnd={() => isHovered.set(0)}
       onFocus={() => isHovered.set(1)}
