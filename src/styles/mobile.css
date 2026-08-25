@@ -111,12 +111,14 @@
     backdrop-filter: var(--drawer-filter);
     border-right: 1px solid var(--liquid-border);
     box-shadow: 4px 0 40px rgba(0, 0, 0, 0.35);
-    transform: translateX(-100%);
-    transition: transform var(--dur-slow) var(--ease-drawer);
-  }
+    /* Posición cerrada de ANTES de hidratar, y nada más. En cuanto el gesto
+       se engancha (`useDrawerGesture`), el transform lo escribe framer-motion
+       en el atributo `style`, que gana a esta regla.
 
-  .portfolio__sidebar.is-open {
-    transform: translateX(0);
+       Aquí había además una `transition`. Con ella el cajón no se podía
+       arrastrar, ni agarrar a media animación, ni revertir: una transición de
+       CSS no se deja interrumpir ni sabe nada de la velocidad del dedo. */
+    transform: translateX(-100%);
   }
 
   .mobile-drawer {
@@ -199,25 +201,38 @@
     border-top: 1px solid var(--glass-border);
   }
 
-  /* Velo que oscurece sólo el contenido, nunca el propio cajón. */
+  /* Velo que oscurece sólo el contenido, nunca el propio cajón.
+     El cajón es translúcido, así que el velo no puede pasar por debajo: su
+     borde izquierdo arranca donde termina el cajón y lo sigue durante el
+     arrastre. Eso lo mueve `scrimX` con un `transform` —no con `left`— para
+     que lo lleve el compositor.
+
+     La opacidad también sale de la posición del cajón, así que no lleva
+     `transition`: no hay nada que interpolar, el valor ya es continuo. */
   .mobile-scrim {
+    display: block;
     position: fixed;
     top: calc(var(--mobile-header-h) + env(safe-area-inset-top));
-    right: 0;
     bottom: 0;
     left: 0;
+    /* Ancho fijo en vez de `right: 0`: al desplazarlo hacia la derecha no
+       puede quedar una franja sin cubrir. El desbordamiento lo recorta el
+       `overflow-x: hidden` del body. */
+    width: 100%;
     z-index: 499;
     background: var(--scrim);
     opacity: 0;
-    visibility: hidden;
-    transition: opacity var(--dur-base) var(--ease-out), visibility var(--dur-base);
+  }
+
+  /* Sin cajón abierto no debe interceptar toques. No se puede resolver con
+     un selector de hermano: el velo va antes de `<main>` y el cajón vive
+     dentro, así que no son hermanos. */
+  .mobile-scrim {
+    pointer-events: none;
   }
 
   .mobile-scrim.is-open {
-    display: block;
-    left: var(--drawer-w);
-    opacity: 1;
-    visibility: visible;
+    pointer-events: auto;
   }
 
   /* ── Panel de contenido ─────────────────────────────────────────────── */

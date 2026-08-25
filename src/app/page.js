@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { motion } from "framer-motion";
 import Aurora from "@/components/backgrounds/Aurora";
 import Spotlight from "@/components/backgrounds/Spotlight";
 import Sidebar from "@/components/layout/Sidebar";
@@ -10,6 +11,7 @@ import { sectionIds } from "@/content/navigation";
 import useMediaQuery from "@/lib/useMediaQuery";
 import useMounted from "@/lib/useMounted";
 import useScrollSpy from "@/lib/useScrollSpy";
+import useDrawerGesture from "@/lib/useDrawerGesture";
 import { MOBILE_QUERY } from "@/lib/breakpoints";
 import { SHELL_MS } from "@/lib/motion";
 
@@ -19,6 +21,13 @@ export default function Home() {
 
   const [expandedSection, setExpandedSection] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // El cajón se arrastra; el velo lo acompaña. En escritorio no devuelve nada.
+  const { drawerProps, scrimX, scrimOpacity } = useDrawerGesture({
+    isOpen: isMenuOpen,
+    onOpenChange: setIsMenuOpen,
+    enabled: mounted && isMobile,
+  });
 
   const [activeSection, lockActive] = useScrollSpy(sectionIds, {
     rootSelector: ".content-pane",
@@ -83,8 +92,11 @@ export default function Home() {
 
       <MobileHeader isMenuOpen={isMenuOpen} onToggleMenu={() => setIsMenuOpen((o) => !o)} />
 
-      <div
+      {/* La opacidad y la posición salen de la `x` del cajón, así que el velo
+          se oscurece DURANTE el arrastre en lugar de al terminarlo. */}
+      <motion.div
         className={`mobile-scrim ${isMenuOpen ? "is-open" : ""}`}
+        style={{ x: scrimX, opacity: scrimOpacity }}
         onClick={() => setIsMenuOpen(false)}
         aria-hidden="true"
       />
@@ -93,9 +105,10 @@ export default function Home() {
         {/* Sin `layout`: la geometría del raíl la anima CSS. Con proyección
             de Framer, pasar de 360px en flujo a 88px fijo se traducía en un
             `scaleX` que aplastaba la foto y el dock. */}
-        <aside
+        <motion.aside
           id="mobile-drawer"
           className={`portfolio__sidebar ${isDetailed ? "is-compact" : ""} ${isMenuOpen ? "is-open" : ""}`}
+          {...drawerProps}
         >
           {/* Hasta que sabemos el ancho real renderizamos la variante de
               escritorio, que es la que coincide con el HTML estático. */}
@@ -114,7 +127,7 @@ export default function Home() {
               onToggleExpand={toggleExpand}
             />
           )}
-        </aside>
+        </motion.aside>
 
         <div className={`portfolio__content content-pane ${isDetailed ? "is-detailed" : ""}`}>
           <ContentArea

@@ -37,6 +37,16 @@ Ver `README.md` para la estructura completa.
   paneles, `--glass-thick` para el cromo que tapa contenido (raíl, cajón,
   cabecera móvil). Los tres derivan de `--glass-blur` con `calc()` para que
   `prefers-reduced-transparency` los siga apagando de una sola vez.
+- **El cajón móvil es un gesto, no una transición.** No le vuelvas a poner
+  `transition: transform` en `mobile.css`: una transición de CSS no se deja
+  agarrar a media animación, no se puede revertir y no sabe nada de la
+  velocidad del dedo. El `transform` lo escribe `useDrawerGesture` en el
+  atributo `style`. Lo único que queda en CSS es el `translateX(-100%)` de
+  antes de hidratar, para que no aparezca abierto en el primer pintado. Al
+  soltar se decide con `project()` por a dónde VA el gesto, no por dónde se
+  soltó, y la velocidad de soltado entra al muelle como velocidad inicial: sin
+  eso se nota la costura entre arrastrar y animar. Si cambiás `--drawer-w`,
+  cambiá también `DRAWER_WIDTH` en `src/lib/breakpoints.js`.
 - **El movimiento de framer-motion no lo apaga el CSS.** La regla de
   `prefers-reduced-motion` en `base.css` sólo acorta transiciones y
   animaciones CSS; framer-motion escribe `transform` inline fotograma a

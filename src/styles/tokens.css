@@ -100,6 +100,8 @@
 
   /* ── Alturas fijas ──────────────────────────────────────────────────── */
   --mobile-header-h: 64px;
+  /* Si cambiás esto, cambiá también DRAWER_WIDTH en src/lib/breakpoints.js:
+     el gesto de arrastre necesita el valor en JS. */
   --drawer-w: 280px;
 }
 

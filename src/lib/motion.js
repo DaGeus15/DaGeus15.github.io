@@ -45,7 +45,22 @@ export const spring = {
   dock: { type: "spring", bounce: 0.18, visualDuration: 0.28 },
   /** Inclinación 3D del retrato: tiene que ir pegada al cursor. */
   tilt: { type: "spring", bounce: 0, visualDuration: 0.22 },
+  /** Cajón móvil. Los valores que usa Apple para hojas y cajones. */
+  drawer: { type: "spring", bounce: 0.2, visualDuration: 0.3 },
 };
+
+/**
+ * Proyecta dónde acabaría algo soltado a `velocity` px/s.
+ *
+ * No es la fórmula de libro (v²/2a) sino un decaimiento exponencial, que es
+ * la que usan de verdad los sistemas con inercia. Sirve para decidir por a
+ * dónde VA un gesto en vez de por dónde se soltó: un toque corto y rápido
+ * cierra el cajón aunque apenas se haya movido, que es lo que espera la mano.
+ *
+ * `deceleration` 0.998 es el tacto del scroll normal; más bajo, más seco.
+ */
+export const project = (velocity, deceleration = 0.998) =>
+  (velocity / 1000) * (deceleration / (1 - deceleration));
 
 /** Transiciones basadas en duración, para fades y filtros. */
 export const tween = {
