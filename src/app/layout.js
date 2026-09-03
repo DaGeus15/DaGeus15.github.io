@@ -15,7 +15,7 @@ const SITE_URL = "https://dageus15.github.io";
 export const metadata = {
   metadataBase: new URL(SITE_URL),
   title: `${profile.name} | ${profile.role}`,
-  description: `Portafolio personal de ${profile.name}, ${profile.role}. Desarrollo full-stack, arquitectura cloud e Inteligencia Artificial.`,
+  description: `Portafolio personal de ${profile.name}, ${profile.role}. Desarrollo backend y full-stack con Spring Boot, NestJS e infraestructura cloud.`,
   keywords: ["Dayle Garcia", "Software Engineer", "Next.js", "NestJS", "Spring Boot", "Portafolio"],
   authors: [{ name: profile.name }],
   openGraph: {
@@ -24,7 +24,7 @@ export const metadata = {
     url: SITE_URL,
     siteName: `${profile.name} — Portafolio`,
     title: `${profile.name} | ${profile.role}`,
-    description: `Portafolio personal de ${profile.name}. Desarrollo full-stack, arquitectura cloud e IA.`,
+    description: `Portafolio personal de ${profile.name}. Desarrollo backend y full-stack con Spring Boot, NestJS e infraestructura cloud.`,
     // Dimensiones reales de la foto. Es un retrato, no el 1200x630 apaisado
     // que prefieren las redes: la vista previa saldrá recortada o en pequeño.
     // Para un enlace más vistoso habría que crear una imagen OG dedicada.
