@@ -180,8 +180,7 @@ export default function Projects({ isExpanded, onExpand }) {
       detail={
         <>
           <p className="section-text">
-            Fichas técnicas de los proyectos desarrollados, con su arquitectura, el
-            stack empleado y mi aportación en cada uno.
+            Fichas técnicas: arquitectura, stack y mi aportación en cada proyecto.
           </p>
 
           <nav className="quick-nav" aria-label="Ir a un proyecto">

@@ -88,6 +88,11 @@
   --shell-pad: 3rem;
   --sidebar-w: 360px;
   --sidebar-gap: 2rem;
+  /* Desplazamiento del panel de perfil hacia el centro en la vista resumida.
+     Antes pegaba a la izquierda (--shell-pad); ahora entra hacia el medio y
+     el contenido (la rueda) ocupa lo que queda a su derecha. Fluido: en un
+     portátil se mueve poco, en un monitor grande bastante más. */
+  --summary-inset: clamp(3rem, 13vw, 18rem);
 
   /* modo detallado — fluidos.
      Con valores fijos, un monitor de 24" dejaba el marco de 30px pegado a

@@ -245,7 +245,7 @@
   /* ── Vista resumida ─────────────────────────────────────────────────── */
   .portfolio__sidebar {
     z-index: 100;
-    left: var(--shell-pad);
+    left: var(--summary-inset);
     width: var(--sidebar-w);
     display: flex;
     flex-direction: column;
@@ -274,7 +274,7 @@
   }
 
   .portfolio__content {
-    left: calc(var(--shell-pad) + var(--sidebar-w) + var(--sidebar-gap));
+    left: calc(var(--summary-inset) + var(--sidebar-w) + var(--sidebar-gap));
     right: var(--shell-pad);
     padding: 15dvh var(--sp-6) 25dvh;
     overflow-y: auto;

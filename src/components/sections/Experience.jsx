@@ -54,10 +54,6 @@ function TechStack() {
   return (
     <>
       <h3 className="subsection-title">Tecnologías y Herramientas</h3>
-      <p className="section-text">
-        Estas son algunas de las tecnologías y herramientas que utilizo en mi día a día
-        para construir aplicaciones robustas.
-      </p>
       <SkillsGrid />
     </>
   );

@@ -45,7 +45,12 @@ export default function WheelItem({ children, containerRef }) {
   // El progreso crudo salta con cada muesca de la rueda; el muelle lo alisa.
   const p = useSpring(scrollYProgress, scrollSpring);
 
-  const rotateX = useTransform(p, [0, 0.5, 1], [9, 0, -9]);
+  // Convexa (se mira la rueda DESDE FUERA): los bordes se curvan hacia atrás,
+  // no hacia el espectador. Con rotateX positivo el borde superior se aleja,
+  // así que la tarjeta de abajo (progreso 0) va a valor negativo —su borde
+  // inferior se aleja— y la de arriba (progreso 1) a positivo. Invertir estos
+  // signos daría la rueda cóncava, vista desde dentro.
+  const rotateX = useTransform(p, [0, 0.5, 1], [-11, 0, 11]);
   const scale = useTransform(p, [0, 0.5, 1], [0.93, 1, 0.93]);
   const opacity = useTransform(p, [0, 0.16, 0.84, 1], [0.42, 1, 1, 0.42]);
   const blurPx = useTransform(p, [0, 0.2, 0.8, 1], [3, 0, 0, 3]);

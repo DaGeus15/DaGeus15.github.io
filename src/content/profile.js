@@ -12,13 +12,13 @@ export const profile = {
 
   /** Bio corta — se muestra en la vista resumida. */
   bioShort: [
-    "Soy estudiante de Ingeniería de Software con una gran pasión por el aprendizaje y el crecimiento profesional. Me caracterizo por mi capacidad de adaptabilidad, trabajo en equipo y resolución de problemas.",
-    "Mis áreas de interés e investigación activa incluyen el desarrollo web full-stack, la arquitectura cloud y la **Inteligencia Artificial y Visión por Computador**, campo donde aplico técnicas avanzadas de procesamiento digital de imágenes y entrenamiento de modelos de visión.",
+    "Desarrolladora de software centrada en el backend. Construyo APIs y servicios con **Spring Boot**, **NestJS** y Node.js, modelo bases de datos relacionales y despliego con **Docker**.",
+    "También trabajo el lado full-stack y la infraestructura cloud. Me mueve la arquitectura limpia y las buenas prácticas: pruebas, contenedores y código que otros puedan mantener.",
   ],
 
   /** Párrafos extra que sólo aparecen en la vista detallada. */
   bioExtra: [
-    "Además, gestiono mi propia infraestructura en servidores de Oracle Cloud, donde despliego y mantengo de forma autónoma mis proyectos personales.",
+    "Mantengo mi propia infraestructura en Oracle Cloud, donde despliego y administro mis proyectos de forma autónoma.",
   ],
 };
 
