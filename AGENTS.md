@@ -116,6 +116,15 @@ romperla en silencio.
   regla mató la deriva perpetua de `.aurora__mesh`: esa capa es el fondo de
   todos los cristales, así que animarla obligaba a recalcular los ocho
   desenfoques para siempre, por un movimiento de ±1,5% en 48s que nadie ve.
+- **Los proyectos de la vista resumida van en carril, no en rejilla.** Cinco
+  tarjetas en rejilla `auto-fit` caían en tres filas dentro del panel resumido
+  y estiraban la sección a 119vh —más alta que la pantalla—, y al estrecharse
+  el panel colapsaban a una columna y era peor. En carril (`.projects-grid` es
+  un flex con `overflow-x`) los cinco van siempre en una fila y la sección mide
+  lo que una tarjeta a cualquier ancho, del tamaño de las demás. No lo
+  vuelvas a rejilla: el desbordamiento se queda dentro del carril y la página
+  no se desplaza de lado. Si sumás secciones al resumen, medí que ninguna
+  tarjeta pase de ~85vh (probá a 1024, 1440 y 1920).
 - **La rueda de la vista resumida es perspectiva, no desenfoque.** Cada tarjeta
   del resumen gira como en una rueda al acercarse a los bordes del scroll
   (`WheelItem.jsx`). Lo que crea la ilusión de rueda es la INCLINACIÓN 3D

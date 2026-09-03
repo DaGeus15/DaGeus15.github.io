@@ -141,11 +141,37 @@
 }
 
 /* ── Tarjetas de proyecto (vista resumida) ────────────────────────────── */
+/* Carril horizontal, no rejilla. Antes eran cinco tarjetas en rejilla: en el
+   panel resumido caían en dos columnas y tres filas, y la tarjeta de la
+   sección se estiraba a 119vh —más alta que la pantalla—. Peor aún, al
+   estrecharse el panel la rejilla colapsaba a una columna y se hacía más alta
+   todavía. En carril, los cinco proyectos van SIEMPRE en una fila y la altura
+   es la de una sola tarjeta a cualquier ancho: la sección deja de ser gigante
+   y queda del tamaño de las demás sin ocultar ningún proyecto.
+
+   El desbordamiento horizontal se queda DENTRO del carril (overflow-x), así
+   que la página nunca se desplaza de lado. El scroll vertical de la rueda no
+   se ve afectado: como el carril no puede desplazarse en vertical, la rueda
+   del ratón sigue moviendo la página. */
 .projects-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+  display: flex;
   gap: var(--sp-4);
   margin-top: var(--sp-4);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: var(--sp-1);
+  /* Sitio para la barra fina sin que pise el contenido. */
+  padding-bottom: var(--sp-2);
+  /* Que arrastrar de lado no dispare el "atrás" del navegador. */
+  overscroll-behavior-x: contain;
+}
+
+.projects-grid .project-card {
+  /* Ancho fijo con un pelín de la siguiente asomando: el recorte anuncia que
+     hay más y se puede desplazar. `min()` la deja caber en panics estrechos. */
+  flex: 0 0 min(280px, 82%);
+  scroll-snap-align: start;
 }
 
 .project-card {
