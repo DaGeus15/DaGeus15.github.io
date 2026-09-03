@@ -40,3 +40,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Skills de Claude: herramienta de desarrollo, no parte del sitio.
+.claude/skills/

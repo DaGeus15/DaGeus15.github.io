@@ -11,6 +11,9 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
     "backup_cra/**",
+    // Los skills instalados en el proyecto no son código nuestro: traen sus
+    // propias plantillas de ejemplo que no cumplen nuestras reglas de lint.
+    ".claude/**",
   ]),
 ]);
 

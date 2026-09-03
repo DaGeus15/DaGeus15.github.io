@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import Aurora from "@/components/backgrounds/Aurora";
 import Spotlight from "@/components/backgrounds/Spotlight";
@@ -18,6 +18,9 @@ import { SHELL_MS } from "@/lib/motion";
 export default function Home() {
   const mounted = useMounted();
   const isMobile = useMediaQuery(MOBILE_QUERY);
+
+  // El contenedor de scroll de la vista resumida; lo lee la rueda (WheelItem).
+  const contentRef = useRef(null);
 
   const [expandedSection, setExpandedSection] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -129,11 +132,15 @@ export default function Home() {
           )}
         </motion.aside>
 
-        <div className={`portfolio__content content-pane ${isDetailed ? "is-detailed" : ""}`}>
+        <div
+          ref={contentRef}
+          className={`portfolio__content content-pane ${isDetailed ? "is-detailed" : ""}`}
+        >
           <ContentArea
             expandedSection={expandedSection}
             onExpand={handleExpand}
             onCollapse={handleCollapse}
+            scrollContainerRef={contentRef}
           />
         </div>
       </main>

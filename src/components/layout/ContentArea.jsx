@@ -6,6 +6,7 @@ import Experience from "@/components/sections/Experience";
 import Projects from "@/components/sections/Projects";
 import Contact from "@/components/sections/Contact";
 import SectionNav from "./SectionNav";
+import WheelItem from "./WheelItem";
 import { cardVariants } from "@/lib/motion";
 
 /**
@@ -34,7 +35,7 @@ const SECTION_COMPONENTS = {
  * `flex: 1` a mitad de altura cada una y la entrante aparecía debajo de la
  * saliente antes de saltar a su sitio.
  */
-export default function ContentArea({ expandedSection, onExpand, onCollapse }) {
+export default function ContentArea({ expandedSection, onExpand, onCollapse, scrollContainerRef }) {
   const isExpanded = expandedSection !== null;
   const ExpandedSection = isExpanded ? SECTION_COMPONENTS[expandedSection] : null;
 
@@ -62,7 +63,9 @@ export default function ContentArea({ expandedSection, onExpand, onCollapse }) {
               exit="exit"
             >
               {Object.entries(SECTION_COMPONENTS).map(([id, SectionComponent]) => (
-                <SectionComponent key={id} isExpanded={false} onExpand={() => onExpand(id)} />
+                <WheelItem key={id} containerRef={scrollContainerRef}>
+                  <SectionComponent isExpanded={false} onExpand={() => onExpand(id)} />
+                </WheelItem>
               ))}
             </motion.div>
           )}

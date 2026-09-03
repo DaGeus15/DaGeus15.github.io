@@ -50,6 +50,18 @@ export const spring = {
 };
 
 /**
+ * Suavizado del progreso de scroll para la rueda de la vista resumida.
+ *
+ * Excepción consciente al vocabulario bounce/visualDuration del resto: esto
+ * NO es un gesto con destino, es un seguidor continuo de un valor que cambia
+ * con la rueda del ratón. Para eso la forma natural es rigidez/amortiguación
+ * con un `restDelta` fino, que es como se afina un `useSpring` que persigue un
+ * valor vivo sin rebotar ni quedarse corto. Amortiguado del todo (sin
+ * sobrepaso): la rueda no debe rebotar al parar el scroll.
+ */
+export const scrollSpring = { stiffness: 140, damping: 32, mass: 0.35, restDelta: 0.0005 };
+
+/**
  * Proyecta dónde acabaría algo soltado a `velocity` px/s.
  *
  * No es la fórmula de libro (v²/2a) sino un decaimiento exponencial, que es

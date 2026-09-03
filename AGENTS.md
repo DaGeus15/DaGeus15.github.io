@@ -9,6 +9,16 @@ This version has breaking changes — APIs, conventions, and file structure may 
 Portafolio personal. Next.js 16 App Router, export estático a GitHub Pages.
 Ver `README.md` para la estructura completa.
 
+## Cómo leer estas reglas
+
+Casi ninguna es un "no animes" ni un "no toques". Son lo contrario: el
+movimiento es bienvenido, y bastante de lo que hay aquí explica CÓMO meterlo
+sin que cueste fotogramas —`transform`/`opacity` en vez de `width`/`filter`,
+todo colgando de `MotionConfig`, springs con vocabulario—. Son atajos a
+decisiones que ya se pagaron una vez, no un cerco. Si una regla te estorba
+para algo mejor, cambiala y actualizá su explicación; lo que no vale es
+romperla en silencio.
+
 ## Reglas
 
 - **El contenido no se escribe en los componentes.** Todo el texto y los datos
@@ -90,7 +100,13 @@ Ver `README.md` para la estructura completa.
   con contraste accesible, así que el principio y la gama coinciden. Un solo
   tono para los dos temas: lo único que cambia es la L. Si cambia la foto,
   volvé a cuantizar, sacá el tono con croma real y usá su complemento — no lo
-  elijas a ojo.
+  elijas a ojo. El cálido no es sólo un token declarado: se USA como segunda
+  temperatura para que la paleta se lea como una combinación y no como un
+  tema monocromo. Aparece en `--accent-gradient` (que va cool→warm, no
+  cool→cool), en la mitad cálida de la malla del fondo (`--mesh-2`/`--mesh-4`)
+  y en `--glow-warm`, el halo detrás del retrato. El frío sigue siendo el
+  acento de interfaz (bordes, foco, estados activos); el cálido es la capa
+  ambiental. Dos temperaturas con papeles claros, no una sola repetida.
 - **Nada de degradados animados a pantalla completa.** El halo del cursor
   reconstruía un `radial-gradient` en la propiedad `background` de un elemento
   de 100vw × 100dvh en cada `mousemove`. Los degradados no se componen en GPU:
@@ -100,6 +116,22 @@ Ver `README.md` para la estructura completa.
   regla mató la deriva perpetua de `.aurora__mesh`: esa capa es el fondo de
   todos los cristales, así que animarla obligaba a recalcular los ocho
   desenfoques para siempre, por un movimiento de ±1,5% en 48s que nadie ve.
+- **La rueda de la vista resumida es perspectiva, no desenfoque.** Cada tarjeta
+  del resumen gira como en una rueda al acercarse a los bordes del scroll
+  (`WheelItem.jsx`). Lo que crea la ilusión de rueda es la INCLINACIÓN 3D
+  (`rotateX`) más la escala y la opacidad —todo `transform`/`opacity`, que van
+  al compositor—, no el desenfoque. El progreso de scroll se alisa con un
+  `useSpring` (`scrollSpring` en `motion.js`) porque el valor crudo salta con
+  cada muesca de la rueda del ratón. Si tocás los rangos, mantené el mecanismo
+  en transform: es lo que sostiene los 60fps.
+- **El `blur` de la rueda es una excepción consciente y acotada.** Contradice
+  la regla de no animar `blur()` sobre algo con `backdrop-filter`, y lo hace a
+  propósito porque es el remate que se pidió expresamente. Se mantiene a raya:
+  tope de 3px, sólo cerca de los bordes, sólo cuatro tarjetas, y SÓLO en
+  punteros finos (`HOVER_QUERY`) —en móvil la rueda es puro transform—. Si
+  aparece jank, lo primero que se baja es este blur (una línea en
+  `WheelItem.jsx`), no los transforms. No amplíes el rango ni lo lleves a más
+  superficies.
 - **En el dock se anima `scale`, nunca `width`/`height`.** Ancho y alto
   disparan layout en cada fotograma. El precio es que los vecinos no se
   apartan como en macOS; con el hueco que hay, no se nota.

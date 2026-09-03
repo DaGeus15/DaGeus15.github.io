@@ -68,7 +68,12 @@
      uso, así que estas fórmulas ven el valor del tema activo. */
   --accent-soft: rgba(var(--accent-rgb), 0.12);
   --accent-line: rgba(var(--accent-rgb), 0.34);
-  --accent-gradient: linear-gradient(135deg, var(--accent), var(--accent-strong));
+  /* Cool → warm: el gradiente decorativo (divisores, barras de idioma, punto
+     activo) recorre los DOS extremos de temperatura de la foto en vez de
+     quedarse en un solo azul. Es lo que hace que la paleta se lea como una
+     combinación y no como un tema monocromo. Como es decorativo y no lleva
+     texto encima, no necesita contraste AA. */
+  --accent-gradient: linear-gradient(120deg, var(--accent), var(--accent-warm));
   /* `--accent-gradient` es decorativo (divisores, barras). `--accent-fill` es
      para superficies rellenas que llevan texto BLANCO encima: lo define cada
      tema con tonos más oscuros, porque el índigo claro del tema oscuro sólo
@@ -158,6 +163,7 @@
   --accent-fill: linear-gradient(135deg, #267da4, #006386);
   /* El tono real de la foto (h=55) con su croma real. 6:1 contra el fondo. */
   --accent-warm: #ac8871;
+  --accent-warm-rgb: 172, 136, 113;
 
   --background: #080e11;
   --foreground: #edf2f4;
@@ -165,6 +171,10 @@
   --muted-foreground: #94a3ab;
 
   --spotlight-color: rgba(var(--accent-rgb), 0.08);
+  /* El halo detrás del retrato es cálido, no frío: la calidez sale de la piel
+     y la pared de la propia foto, así que rodearla con el acento frío la
+     enfriaba. */
+  --glow-warm: rgba(var(--accent-warm-rgb), 0.20);
   --accent-inverse: #080e11;
   --accent-glow: rgba(var(--accent-rgb), 0.28);
 
@@ -209,11 +219,14 @@
   /* Malla del fondo: frío arriba, cálido abajo. El contraste de temperatura
      es el mismo que tiene la propia foto, y es lo que evita que se lea como
      un degradado genérico. */
-  --mesh-glow: rgba(148, 190, 214, 0.1);
-  --mesh-1: rgba(6, 99, 134, 0.4);
-  --mesh-2: rgba(22, 56, 88, 0.34);
-  --mesh-3: rgba(56, 148, 190, 0.18);
-  --mesh-4: rgba(172, 136, 113, 0.13);
+  --mesh-glow: rgba(150, 192, 214, 0.11);
+  --mesh-1: rgba(6, 99, 134, 0.40);
+  /* La mitad de abajo pasa a cálida: antes eran cuatro manchas frías con un
+     toque de arena. Ahora la temperatura cruza de frío (arriba) a cálido
+     (abajo), igual que la foto, y las dos familias se ven a la vez. */
+  --mesh-2: rgba(158, 116, 84, 0.26);
+  --mesh-3: rgba(56, 148, 190, 0.16);
+  --mesh-4: rgba(184, 132, 96, 0.22);
 
   --grain-opacity: 0.055;
   --grain-blend: overlay;
@@ -244,6 +257,7 @@
   --accent-fill: linear-gradient(135deg, #267da4, #006082);
   /* Antes #b79a76 daba 2.32:1 y NO pasaba el mínimo de 3:1 de un icono. */
   --accent-warm: #a17e67;
+  --accent-warm-rgb: 161, 126, 103;
 
   /* Lienzo: la pared de la foto. Tinta: el neutro frío, al tono del acento. */
   --background: #f2efe9;
@@ -252,6 +266,7 @@
   --muted-foreground: #4d606a;
 
   --spotlight-color: rgba(var(--accent-rgb), 0.08);
+  --glow-warm: rgba(var(--accent-warm-rgb), 0.22);
   --accent-inverse: #ffffff;
   --accent-glow: rgba(var(--accent-rgb), 0.22);
 
@@ -272,7 +287,10 @@
       rgba(255, 255, 255, 0.22) 48%,
       rgba(255, 255, 255, 0.38)
     ),
-    rgba(226, 238, 241, 0.24);
+    /* Velo cálido en vez de frío: sobre un lienzo de arena, un cristal con
+       tinte frío se leía como un parche azulado. Con la arena de la pared, la
+       superficie deja de verse como blanco de laboratorio. */
+    rgba(240, 231, 216, 0.30);
   /* El borde lleva el acento: en blanco sobre relleno blanco era invisible. */
   --liquid-border: rgba(var(--accent-rgb), 0.24);
   --liquid-highlight: rgba(255, 255, 255, 0.9);
@@ -297,11 +315,14 @@
 
   /* El cristal sólo se percibe si hay algo detrás que desenfocar, así que la
      malla en claro no puede quedarse en un lavado casi blanco. */
-  --mesh-glow: rgba(255, 252, 246, 0.6);
-  --mesh-1: rgba(56, 148, 190, 0.3);
-  --mesh-2: rgba(110, 158, 190, 0.24);
-  --mesh-3: rgba(0, 102, 138, 0.18);
-  --mesh-4: rgba(193, 160, 128, 0.32);
+  --mesh-glow: rgba(255, 250, 242, 0.6);
+  --mesh-1: rgba(56, 150, 185, 0.28);
+  /* Arriba-derecha pasa a cálido: la malla clara cruza de frío a cálido en
+     diagonal, así que el fondo tiene las dos familias en vez de un lavado
+     azul uniforme. */
+  --mesh-2: rgba(206, 168, 128, 0.32);
+  --mesh-3: rgba(0, 102, 138, 0.16);
+  --mesh-4: rgba(210, 172, 132, 0.36);
 
   --grain-opacity: 0.045;
   --grain-blend: multiply;

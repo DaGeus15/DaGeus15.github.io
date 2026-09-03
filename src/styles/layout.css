@@ -121,6 +121,15 @@
   gap: var(--sp-8);
 }
 
+/* Cada tarjeta de la pila resumida gira como en una rueda al acercarse a los
+   bordes del scroll. La inclinación 3D y la escala las escribe `WheelItem` en
+   el `style`; aquí sólo se declara que el elemento conserva su contexto 3D y
+   ocupa el ancho completo. Ver la nota en WheelItem.jsx. */
+.wheel-item {
+  width: 100%;
+  transform-style: preserve-3d;
+}
+
 /* ── Botones de icono reutilizables ───────────────────────────────────── */
 .icon-button,
 .theme-toggle-btn {
