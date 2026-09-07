@@ -107,11 +107,21 @@
    es lo que permite un fundido cruzado real sin posicionarlas en absoluto. */
 .content-view {
   display: grid;
+  /* `minmax(0, 1fr)`, no la columna `auto` implícita. Con `auto`, la columna
+     se dimensiona al MAX-CONTENT de su hijo más ancho: el carril de proyectos
+     "quiere" ~980px (sus cinco tarjetas), así que la columna crecía a 980,
+     desbordaba el panel y recortaba la tarjeta por la derecha —el botón "ver
+     más" quedaba cortado en pantallas de portátil—. `minmax(0, 1fr)` fija la
+     columna al ancho del panel y deja que el carril se desplace por dentro. */
+  grid-template-columns: minmax(0, 1fr);
   width: 100%;
 }
 
 .content-view > * {
   grid-area: 1 / 1;
+  /* Sin esto, `min-width: auto` deja que un hijo que no encoge (el carril)
+     vuelva a estirar la celda por encima del panel. */
+  min-width: 0;
 }
 
 /* Pila de tarjetas de la vista resumida. */
