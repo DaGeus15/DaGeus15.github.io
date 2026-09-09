@@ -111,6 +111,13 @@
      el texto corrido se limita. */
   --measure: 82ch;
 
+  /* Retrato de la barra lateral. Va atado al ALTO de la ventana, no a un
+     tamaño fijo: con 240x330px clavados, en un portátil de 768px la columna
+     (foto + nombre + rol + CV + dock + ajustes) no cabía y los botones de
+     tema y de vista quedaban fuera de la pantalla. */
+  --photo-h: clamp(11rem, 34dvh, 20.625rem);
+  --photo-w: calc(var(--photo-h) * 0.727); /* conserva el encuadre 240:330 */
+
   /* ── Alturas fijas ──────────────────────────────────────────────────── */
   --mobile-header-h: 64px;
   /* Si cambiás esto, cambiá también DRAWER_WIDTH en src/lib/breakpoints.js:

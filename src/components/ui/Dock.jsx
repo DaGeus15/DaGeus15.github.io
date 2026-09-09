@@ -99,6 +99,7 @@ export default function Dock({
   distance = 180,
   baseItemSize = 44,
   direction = "horizontal",
+  label = "",
 }) {
   const mousePos = useMotionValue(Infinity);
 
@@ -112,7 +113,7 @@ export default function Dock({
         className={`dock-panel ${className}`}
         style={{ flexDirection: direction === "vertical" ? "column" : "row" }}
         role="toolbar"
-        aria-label="Navegación principal"
+        aria-label={label}
       >
         {items.map((item) => (
           <DockItem

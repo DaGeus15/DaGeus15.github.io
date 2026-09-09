@@ -281,8 +281,8 @@
 .profile-glow {
   position: absolute;
   top: 8%;
-  width: 240px;
-  height: 320px;
+  width: var(--photo-w);
+  height: var(--photo-h);
   border-radius: 50%;
   background: var(--spotlight-color);
   filter: blur(45px);
@@ -295,16 +295,27 @@
 .profile-photo {
   position: relative;
   z-index: 1;
+  /* El tamaño lo pone el CSS, no `animate` de framer: antes iba clavado a
+     240x330px desde el JSX y no reaccionaba al alto de la ventana. Aquí el
+     cambio resumido ↔ compacto es una interpolación nativa. */
+  width: var(--photo-w);
+  height: var(--photo-h);
   border-radius: 26px;
   overflow: hidden;
   border: 4px solid var(--glass-border);
   box-shadow: var(--shadow-soft);
   transform: translateZ(25px);
+  transition:
+    width var(--dur-shell) var(--ease-out),
+    height var(--dur-shell) var(--ease-out),
+    border-radius var(--dur-shell) var(--ease-out);
 }
 
 /* En el raíl compacto el hueco es cuadrado, así que se encuadra la cara:
    con el recorte centrado por defecto se vería el torso. */
 .profile-card.is-compact .profile-photo {
+  width: 4rem;
+  height: 4rem;
   border-radius: 50%;
 }
 
@@ -384,10 +395,109 @@
   transition-duration: 100ms;
 }
 
+/* ── Menú de descarga del CV (ES / EN) ─────────────────────────────────
+   El botón no elige por el idioma de la interfaz: ofrece los dos. En el raíl
+   compacto el panel es estrecho, así que el menú se abre hacia la derecha en
+   vez de hacia abajo. */
+.cv-download {
+  position: relative;
+  display: inline-flex;
+}
+
+.cv-menu {
+  position: absolute;
+  top: calc(100% + var(--sp-2));
+  left: 50%;
+  translate: -50% 0;
+  z-index: 120;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 12.5rem;
+  padding: var(--sp-2);
+  border-radius: var(--r-lg);
+  background: var(--card-bg);
+  border: 1px solid var(--liquid-border);
+  box-shadow: var(--shadow-liquid), var(--shadow-soft);
+}
+
+.cv-download.is-compact .cv-menu {
+  top: 50%;
+  left: calc(100% + var(--sp-3));
+  translate: 0 -50%;
+}
+
+.cv-menu__item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  min-height: 2.5rem;
+  padding: 0 var(--sp-3);
+  border-radius: var(--r-sm);
+  color: var(--foreground);
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+}
+
+.cv-menu__item:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.cv-menu__item:active {
+  transform: scale(0.98);
+  transition-duration: 100ms;
+}
+
+.cv-menu__code {
+  flex-shrink: 0;
+  width: 1.75rem;
+  padding: 0.1rem 0;
+  border-radius: 5px;
+  background: var(--fill-raised);
+  border: 1px solid var(--liquid-border);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-align: center;
+}
+
 .cv-button.is-compact {
   width: 3rem;
   height: 3rem;
   margin-top: 0;
   padding: 0;
   justify-content: center;
+}
+
+/* ── Ventanas bajas ─────────────────────────────────────────────────────
+   En un portátil (~768px de alto) la columna de la barra lateral —foto,
+   nombre, rol, botón de CV, dock y ajustes— no cabía, y los botones de tema
+   y de cambio de vista quedaban por debajo del borde inferior. El retrato ya
+   encoge solo (--photo-h va en dvh); aquí se comprime además el ritmo
+   vertical, que es la otra mitad del problema. */
+@media (min-width: 1024px) and (max-height: 900px) {
+  .profile-card {
+    padding: var(--sp-3) var(--sp-4);
+  }
+
+  .profile-name {
+    margin-top: var(--sp-4);
+  }
+
+  .cv-button {
+    margin-top: var(--sp-4);
+  }
+
+  .dock-horizontal {
+    margin-top: var(--sp-4);
+  }
+
+  .sidebar-actions {
+    margin-top: var(--sp-3);
+  }
 }

@@ -133,14 +133,46 @@ romperla en silencio.
   `useSpring` (`scrollSpring` en `motion.js`) porque el valor crudo salta con
   cada muesca de la rueda del ratón. Si tocás los rangos, mantené el mecanismo
   en transform: es lo que sostiene los 60fps.
-- **El `blur` de la rueda es una excepción consciente y acotada.** Contradice
-  la regla de no animar `blur()` sobre algo con `backdrop-filter`, y lo hace a
-  propósito porque es el remate que se pidió expresamente. Se mantiene a raya:
-  tope de 3px, sólo cerca de los bordes, sólo cuatro tarjetas, y SÓLO en
-  punteros finos (`HOVER_QUERY`) —en móvil la rueda es puro transform—. Si
-  aparece jank, lo primero que se baja es este blur (una línea en
-  `WheelItem.jsx`), no los transforms. No amplíes el rango ni lo lleves a más
-  superficies.
+- **El `blur` de la rueda es una excepción consciente y acotada, y va FUERA
+  del render.** Contradice la regla de no animar `blur()` sobre algo con
+  `backdrop-filter`, y lo hace a propósito porque es el remate que se pidió.
+  Se mantiene a raya: tope de 3px, sólo cerca de los bordes, sólo cuatro
+  tarjetas, y SÓLO en punteros finos —en móvil la rueda es puro transform—.
+  Además se aplica a mano (`el.style.filter`) en un efecto, no en el `style` de
+  React: framer no resuelve un `useMotionTemplate` al renderizar en servidor,
+  así que la propiedad salía en cliente y no en servidor y rompía la
+  hidratación. Si aparece jank, lo primero que se baja es este blur.
+- **No ramifiques el ÁRBOL RENDERIZADO según `useReducedMotion()` ni según una
+  media query.** Valen distinto en el servidor que en el cliente, así que
+  devolver `<div>` en un caso y `<motion.div>` en otro descuadra la
+  hidratación; React avisa de que no va a corregir los atributos y deja
+  pegados los del servidor. Eso fue exactamente el bug de la rueda: el HTML
+  llegaba con las tarjetas ya atenuadas y borrosas y no se arreglaba hasta que
+  se hacía scroll. Renderizá siempre la misma estructura y apagá el efecto por
+  dentro (que el valor de reposo sea el estado neutro). Regla de bolsillo: el
+  peor caso de un efecto debe ser "no se nota", nunca "se ve roto".
+- **El progreso de scroll de la rueda se mide con rectángulos en vivo, no con
+  `useScroll`.** `useScroll` mide contenedor y objetivo al montar; si en ese
+  momento la foto y los iconos aún no han cargado, la medida queda mal y el
+  progreso se atasca. Un `getBoundingClientRect()` no puede quedar obsoleto, y
+  el `ResizeObserver` de `WheelItem` recalcula cuando algo cambia de tamaño.
+- **Todo el texto traducible vive en `src/content/copy.js`, en `es` y `en`.**
+  Lo que no se traduce —rutas, repos, stack, iconos, niveles de idioma— se
+  queda en su archivo de `src/content/` y se une en `src/lib/useContent.js`.
+  El cruce es POR CLAVE (`id` de proyecto, `key` de idioma), nunca por
+  posición, para que reordenar una lista no descoloque las traducciones. Los
+  componentes piden `useContent()` y no saben en qué idioma están.
+- **El HTML estático se genera en español, y por eso `getServerSnapshot`
+  devuelve siempre `es`.** React hidrata con ese valor —el del HTML— y sólo
+  después vuelve a renderizar con el idioma real del visitante; un efecto en
+  `LanguageProvider` avisa al store si difieren. Si hicieras que el snapshot
+  del servidor dependa del navegador, un visitante en inglés recibiría un texto
+  distinto al del HTML y React abortaría la hidratación.
+- **El tamaño del retrato lo pone el CSS (`--photo-h` en `dvh`), no `animate`
+  de framer.** Iba clavado a 240x330px en el JSX y en un portátil de 768px de
+  alto la barra lateral no cabía: los botones de tema, idioma y vista quedaban
+  fuera de pantalla. Junto con el bloque `@media (max-height: 900px)` de
+  `cards.css`, la columna se comprime en ventanas bajas.
 - **En el dock se anima `scale`, nunca `width`/`height`.** Ancho y alto
   disparan layout en cada fotograma. El precio es que los vecinos no se
   apartan como en macOS; con el hueco que hay, no se nota.

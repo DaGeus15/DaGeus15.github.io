@@ -4,7 +4,8 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { FiFolder, FiGithub } from "react-icons/fi";
 import Section from "./Section";
-import projects, { getLanguageColor } from "@/content/projects";
+import { getLanguageColor } from "@/content/projects";
+import useContent from "@/lib/useContent";
 import { staggerContainer, staggerItem, spring } from "@/lib/motion";
 
 const slug = (i) => `project-${i}`;
@@ -75,7 +76,7 @@ function ProjectCard({ project }) {
  * El layout de escritorio (contenido a la izquierda, captura a la derecha)
  * lo define `.project-showcase__body` en `sections.css`.
  */
-function ProjectShowcase({ project, index }) {
+function ProjectShowcase({ project, index, ui }) {
   return (
     <article className="project-showcase" id={slug(index)}>
       <header className="project-showcase__header">
@@ -95,7 +96,7 @@ function ProjectShowcase({ project, index }) {
       <div className={`project-showcase__body ${project.image ? "has-media" : ""}`}>
         <div className="project-showcase__cols">
           <div className="details-col">
-            <h4>Descripción del Sistema</h4>
+            <h4>{ui.systemDescription}</h4>
             {project.description.map((para, i) => (
               <p className="section-text" key={i}>
                 {para}
@@ -104,17 +105,17 @@ function ProjectShowcase({ project, index }) {
           </div>
 
           <div className="details-col">
-            <h4>Ficha Técnica</h4>
+            <h4>{ui.techSheet}</h4>
             <dl className="spec-list">
-              <dt>Lenguaje principal</dt>
+              <dt>{ui.mainLanguage}</dt>
               <dd>
                 <LangIndicator lang={project.lang} />
               </dd>
-              <dt>Mi rol</dt>
+              <dt>{ui.myRole}</dt>
               <dd>{project.role}</dd>
               {project.repo && (
                 <>
-                  <dt>Repositorio</dt>
+                  <dt>{ui.repository}</dt>
                   <dd>
                     <a
                       href={project.repo}
@@ -152,6 +153,9 @@ function ProjectShowcase({ project, index }) {
 }
 
 export default function Projects({ isExpanded, onExpand }) {
+  const { projects, ui, sectionCopy } = useContent();
+  const copy = sectionCopy.projects;
+
   const scrollTo = (e, id) => {
     e.preventDefault();
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -160,10 +164,10 @@ export default function Projects({ isExpanded, onExpand }) {
   return (
     <Section
       id="projects"
-      title="Proyectos Destacados"
+      title={copy.title}
       isExpanded={isExpanded}
       onExpand={onExpand}
-      expandLabel="Ver fichas técnicas completas"
+      expandLabel={copy.expand}
       summary={
         <motion.div
           className="projects-grid"
@@ -173,21 +177,19 @@ export default function Projects({ isExpanded, onExpand }) {
           viewport={{ once: true, margin: "-10% 0px" }}
         >
           {projects.map((p) => (
-            <ProjectCard project={p} key={p.title} />
+            <ProjectCard project={p} key={p.id} />
           ))}
         </motion.div>
       }
       detail={
         <>
-          <p className="section-text">
-            Fichas técnicas: arquitectura, stack y mi aportación en cada proyecto.
-          </p>
+          <p className="section-text">{ui.projectsIntro}</p>
 
-          <nav className="quick-nav" aria-label="Ir a un proyecto">
+          <nav className="quick-nav" aria-label={ui.goToProject}>
             {projects.map((p, i) => (
               <a
                 href={`#${slug(i)}`}
-                key={p.title}
+                key={p.id}
                 className="quick-nav__link"
                 onClick={(e) => scrollTo(e, slug(i))}
               >
@@ -199,7 +201,7 @@ export default function Projects({ isExpanded, onExpand }) {
 
           <div className="showcase-stack">
             {projects.map((p, i) => (
-              <ProjectShowcase project={p} index={i} key={p.title} />
+              <ProjectShowcase project={p} index={i} ui={ui} key={p.id} />
             ))}
           </div>
         </>

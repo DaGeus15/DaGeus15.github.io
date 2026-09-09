@@ -1,67 +1,129 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import {
   motion,
-  useScroll,
+  useMotionValue,
   useTransform,
   useSpring,
-  useMotionTemplate,
   useReducedMotion,
 } from "framer-motion";
 import { scrollSpring } from "@/lib/motion";
 import useMediaQuery from "@/lib/useMediaQuery";
 import { HOVER_QUERY } from "@/lib/breakpoints";
 
+/** 0 = el borde superior de la tarjeta toca el fondo del contenedor (entrando)
+ *  1 = su borde inferior toca el techo (saliendo). 0.5 = centrada. */
+const NEUTRO = 0.5;
+
 /**
  * Envuelve una tarjeta de la vista resumida y la hace girar como en una rueda
  * a medida que entra y sale por los bordes del área de scroll.
  *
  * El mecanismo de la "rueda" NO es el desenfoque —eso es sólo el remate—, sino
- * la perspectiva: cada tarjeta se inclina en X (el borde superior se aleja),
+ * la perspectiva: cada tarjeta se inclina en X (convexa, vista desde fuera),
  * encoge y se atenúa cuanto más lejos está del centro. Todo eso son
  * `transform` + `opacity`, que van al compositor y se sostienen a 60fps.
  *
- * El desenfoque sí es caro sobre una tarjeta con `backdrop-filter` (obliga a
- * recomponer el fondo), así que se limita a ~3px, sólo cerca de los bordes, y
- * SÓLO en dispositivos con puntero fino: en móvil la rueda es puro transform.
+ * El progreso se calcula midiendo rectángulos EN VIVO, no con `useScroll`.
+ * `useScroll` mide el contenedor y el objetivo una vez al montar: si en ese
+ * momento la geometría todavía no está asentada —la foto y los iconos aún no
+ * han cargado y cambian la altura de las tarjetas— la medida queda mal y el
+ * progreso se atasca en 0, que es el estado de "entrando": todas las tarjetas
+ * aparecían atenuadas, borrosas e inclinadas hasta que se hacía scroll. Un
+ * `getBoundingClientRect()` no puede quedar obsoleto, y con un ResizeObserver
+ * se recalcula solo cuando algo cambia de tamaño.
  *
- * `offset: ["start end", "end start"]` mide desde que el borde superior de la
- * tarjeta toca el fondo del contenedor (progreso 0, entrando) hasta que su
- * borde inferior toca el techo (progreso 1, saliendo); 0.5 es el centro.
+ * Además arranca en NEUTRO, así que si algo fallara el peor caso es "sin
+ * efecto", nunca "todo borroso".
  */
 export default function WheelItem({ children, containerRef }) {
   const ref = useRef(null);
   const reduce = useReducedMotion();
   const finePointer = useMediaQuery(HOVER_QUERY);
 
-  const { scrollYProgress } = useScroll({
-    container: containerRef,
-    target: ref,
-    offset: ["start end", "end start"],
-    layoutEffect: false,
-  });
+  const progress = useMotionValue(NEUTRO);
+  const p = useSpring(progress, scrollSpring);
 
-  // El progreso crudo salta con cada muesca de la rueda; el muelle lo alisa.
-  const p = useSpring(scrollYProgress, scrollSpring);
+  useEffect(() => {
+    const el = ref.current;
+    const container = containerRef?.current;
+    if (!el || !container || reduce) return;
 
-  // Convexa (se mira la rueda DESDE FUERA): los bordes se curvan hacia atrás,
-  // no hacia el espectador. Con rotateX positivo el borde superior se aleja,
-  // así que la tarjeta de abajo (progreso 0) va a valor negativo —su borde
-  // inferior se aleja— y la de arriba (progreso 1) a positivo. Invertir estos
-  // signos daría la rueda cóncava, vista desde dentro.
+    let primera = true;
+
+    const medir = () => {
+      const c = container.getBoundingClientRect();
+      const r = el.getBoundingClientRect();
+      const recorrido = c.height + r.height;
+      if (recorrido <= 0) return;
+      const avance = (c.bottom - r.top) / recorrido;
+      const v = avance < 0 ? 0 : avance > 1 ? 1 : avance;
+      progress.set(v);
+      // La primera medida es la buena de salida: sin salto animado desde
+      // NEUTRO hasta donde de verdad está la tarjeta.
+      if (primera) {
+        primera = false;
+        p.jump(v);
+      }
+    };
+
+    medir();
+
+    container.addEventListener("scroll", medir, { passive: true });
+    window.addEventListener("resize", medir);
+    // Coge el cambio de altura cuando cargan la foto y los iconos.
+    const ro = new ResizeObserver(medir);
+    ro.observe(el);
+    ro.observe(container);
+
+    return () => {
+      container.removeEventListener("scroll", medir);
+      window.removeEventListener("resize", medir);
+      ro.disconnect();
+    };
+  }, [containerRef, progress, p, reduce]);
+
   const rotateX = useTransform(p, [0, 0.5, 1], [-11, 0, 11]);
   const scale = useTransform(p, [0, 0.5, 1], [0.93, 1, 0.93]);
   const opacity = useTransform(p, [0, 0.16, 0.84, 1], [0.42, 1, 1, 0.42]);
-  const blurPx = useTransform(p, [0, 0.2, 0.8, 1], [3, 0, 0, 3]);
-  const filter = useMotionTemplate`blur(${blurPx}px)`;
 
-  // Reduced-motion: sin rueda. `useScroll` no anima transiciones CSS, así que
-  // MotionConfig no lo cubre; hay que apagarlo aquí a mano.
-  if (reduce) {
-    return <div className="wheel-item">{children}</div>;
-  }
+  /* El desenfoque NO va en el `style` de React. Framer no resuelve un
+     `useMotionTemplate` al renderizar en el servidor, así que la propiedad
+     `filter` salía en el cliente y no en el servidor: esa diferencia es la que
+     rompía la hidratación. Se aplica a mano después de hidratar, que además
+     lo deja fuera del árbol de React y no puede volver a descuadrarlo.
 
+     La rampa equivale a la de antes ([0,.2,.8,1] -> [3,0,0,3]): sin desenfoque
+     mientras la tarjeta está en el centro, y hasta 3px pegada a los bordes. */
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (reduce || !finePointer) {
+      el.style.filter = "";
+      return;
+    }
+    const pintar = (v) => {
+      const d = Math.abs(v - 0.5);
+      const px = d <= 0.3 ? 0 : ((d - 0.3) / 0.2) * 3;
+      el.style.filter = px > 0.01 ? `blur(${px.toFixed(2)}px)` : "";
+    };
+    pintar(p.get());
+    return p.on("change", pintar);
+  }, [p, reduce, finePointer]);
+
+  /* El árbol renderizado es SIEMPRE el mismo, pase lo que pase con
+     reduced-motion o con el tipo de puntero. Antes esto devolvía un `<div>`
+     pelado cuando `reduce` era cierto: como `useReducedMotion()` vale distinto
+     en el servidor que en el cliente, la hidratación no cuadraba y React
+     avisaba de que no iba a corregir los atributos —dejaba pegados los del
+     servidor—. Con el progreso arrancando en 0 (el código anterior) esos
+     atributos eran los del estado "entrando": todas las tarjetas atenuadas,
+     borrosas e inclinadas hasta que algo forzase a reescribir el estilo.
+
+     Ahora reduced-motion se respeta por otra vía: el efecto no se suscribe, el
+     progreso se queda en NEUTRO y eso ya es rotateX 0 / escala 1 / opacidad 1
+     / blur 0, es decir, exactamente "sin rueda". */
   return (
     <motion.div
       ref={ref}
@@ -72,7 +134,6 @@ export default function WheelItem({ children, containerRef }) {
         opacity,
         transformPerspective: 1100,
         transformOrigin: "center center",
-        ...(finePointer ? { filter } : null),
         willChange: "transform, opacity",
       }}
     >

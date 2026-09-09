@@ -4,9 +4,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FiMaximize2, FiMinimize2 } from "react-icons/fi";
 import Dock from "@/components/ui/Dock";
 import ThemeToggle from "@/components/ui/ThemeToggle";
+import LangToggle from "@/components/ui/LangToggle";
 import ProfileCard from "./ProfileCard";
 import navIcons from "./icons";
-import sections from "@/content/navigation";
+import useContent from "@/lib/useContent";
 import { cardEnter, cardExit } from "@/lib/motion";
 
 /**
@@ -18,6 +19,8 @@ import { cardEnter, cardExit } from "@/lib/motion";
  *                 centro, controles abajo
  */
 export default function Sidebar({ activeSection, onNavigate, isExpanded, onToggleExpand }) {
+  const { sections, ui } = useContent();
+
   const navItems = sections.map((section) => {
     const Icon = navIcons[section.icon];
     const isActive = activeSection === section.id;
@@ -48,15 +51,16 @@ export default function Sidebar({ activeSection, onNavigate, isExpanded, onToggl
             <ProfileCard isCompact />
           </div>
           <div className="sidebar-center">
-            <Dock items={navItems} direction="vertical" magnification={54} />
+            <Dock items={navItems} direction="vertical" magnification={54} label={ui.mainNav} />
           </div>
           <div className="sidebar-bottom">
+            <LangToggle className="is-small" />
             <ThemeToggle className="is-small" size={17} />
             <button
               className="icon-button"
               onClick={onToggleExpand}
-              aria-label="Volver a vista resumida"
-              title="Vista resumida"
+              aria-label={ui.backToSummary}
+              title={ui.summaryView}
             >
               <FiMinimize2 size={17} aria-hidden="true" />
             </button>
@@ -71,14 +75,15 @@ export default function Sidebar({ activeSection, onNavigate, isExpanded, onToggl
           exit={{ opacity: 0, transition: cardExit }}
         >
           <ProfileCard />
-          <Dock items={navItems} direction="horizontal" />
+          <Dock items={navItems} direction="horizontal" label={ui.mainNav} />
           <div className="sidebar-actions">
+            <LangToggle className="is-small" />
             <ThemeToggle className="is-small" size={17} />
             <button
               className="icon-button"
               onClick={onToggleExpand}
-              aria-label="Ver vista detallada"
-              title="Vista detallada"
+              aria-label={ui.seeDetailed}
+              title={ui.detailedView}
             >
               <FiMaximize2 size={17} aria-hidden="true" />
             </button>

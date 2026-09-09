@@ -3,10 +3,9 @@
 import { FiCpu, FiBookOpen } from "react-icons/fi";
 import Section from "./Section";
 import RichText from "@/lib/RichText";
-import profile from "@/content/profile";
-import { setup, hobbies } from "@/content/setup";
+import useContent from "@/lib/useContent";
 
-function Bio({ paragraphs }) {
+function Bio({ paragraphs, profile, ui }) {
   return (
     <>
       {paragraphs.map((text, i) => (
@@ -15,27 +14,35 @@ function Bio({ paragraphs }) {
         </p>
       ))}
       <p className="section-text">
-        <strong>Residencia:</strong> {profile.location} (Nacionalidad: {profile.nationality})
+        <strong>{ui.residence}</strong> {profile.location}{" "}
+        {ui.nationality(profile.nationality)}
       </p>
     </>
   );
 }
 
 export default function About({ isExpanded, onExpand }) {
+  const { profile, ui, setup, hobbies, sectionCopy } = useContent();
+  const copy = sectionCopy.about;
+
   return (
     <Section
       id="about"
-      title="Sobre Mí"
+      title={copy.title}
       isExpanded={isExpanded}
       onExpand={onExpand}
-      expandLabel="Ver más intereses y setup"
-      summary={<Bio paragraphs={profile.bioShort} />}
+      expandLabel={copy.expand}
+      summary={<Bio paragraphs={profile.bioShort} profile={profile} ui={ui} />}
       detail={
         <>
-          <Bio paragraphs={[...profile.bioShort, ...profile.bioExtra]} />
+          <Bio
+            paragraphs={[...profile.bioShort, ...profile.bioExtra]}
+            profile={profile}
+            ui={ui}
+          />
 
           <h3 className="detail-title">
-            <FiCpu size={18} aria-hidden="true" /> Mi Setup de Hardware
+            <FiCpu size={18} aria-hidden="true" /> {ui.hardwareSetup}
           </h3>
           <div className="setup-grid">
             {setup.map((card) => (
@@ -52,7 +59,7 @@ export default function About({ isExpanded, onExpand }) {
           </div>
 
           <h3 className="detail-title">
-            <FiBookOpen size={18} aria-hidden="true" /> Hobbies e Intereses
+            <FiBookOpen size={18} aria-hidden="true" /> {ui.hobbies}
           </h3>
           <ul className="hobbies-list">
             {hobbies.map((h) => (

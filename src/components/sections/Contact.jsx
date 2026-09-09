@@ -7,6 +7,7 @@ import { FiSend } from "react-icons/fi";
 import GlassCard from "@/components/ui/GlassCard";
 import Magnetic from "@/components/ui/Magnetic";
 import social, { WEB3FORMS_ACCESS_KEY } from "@/content/social";
+import useContent from "@/lib/useContent";
 import { cardVariants, tween } from "@/lib/motion";
 
 const checkVariants = {
@@ -19,6 +20,7 @@ const checkVariants = {
 };
 
 export default function Contact({ isExpanded = false }) {
+  const { ui, sectionCopy } = useContent();
   const [status, setStatus] = useState(null);
 
   // Ver la nota en Section.jsx: sólo anima cuando es hijo de AnimatePresence.
@@ -52,15 +54,13 @@ export default function Contact({ isExpanded = false }) {
     >
       <header className="section-header">
         <h2 className="section-title" id="contact-title">
-          Contacto
+          {sectionCopy.contact.title}
         </h2>
         <span className="section-divider" />
       </header>
 
       <div className="section-body">
-        <p className="section-text">
-          ¿Tienes un proyecto en mente o simplemente quieres saludar? ¡No dudes en escribirme!
-        </p>
+        <p className="section-text">{ui.contactIntro}</p>
 
         <AnimatePresence mode="wait">
           {status === "success" ? (
@@ -86,8 +86,8 @@ export default function Contact({ isExpanded = false }) {
                   variants={checkVariants} initial="hidden" animate="visible"
                 />
               </svg>
-              <h3>¡Mensaje enviado con éxito!</h3>
-              <p>Te responderé lo más pronto posible.</p>
+              <h3>{ui.successTitle}</h3>
+              <p>{ui.successBody}</p>
             </motion.div>
           ) : (
             <motion.form
@@ -100,21 +100,21 @@ export default function Contact({ isExpanded = false }) {
               transition={tween.fast}
             >
               <label className="form-field">
-                <span className="sr-only">Tu nombre</span>
-                <input type="text" name="name" placeholder="Tu Nombre" required className="form-input" autoComplete="name" />
+                <span className="sr-only">{ui.formName}</span>
+                <input type="text" name="name" placeholder={ui.formNamePlaceholder} required className="form-input" autoComplete="name" />
               </label>
               <label className="form-field">
-                <span className="sr-only">Tu correo electrónico</span>
-                <input type="email" name="email" placeholder="Tu Correo Electrónico" required className="form-input" autoComplete="email" />
+                <span className="sr-only">{ui.formEmail}</span>
+                <input type="email" name="email" placeholder={ui.formEmailPlaceholder} required className="form-input" autoComplete="email" />
               </label>
               <label className="form-field">
-                <span className="sr-only">Tu mensaje</span>
-                <textarea name="message" placeholder="¿Cómo puedo ayudarte?" required className="form-textarea" />
+                <span className="sr-only">{ui.formMessage}</span>
+                <textarea name="message" placeholder={ui.formMessagePlaceholder} required className="form-textarea" />
               </label>
 
               {status === "error" && (
                 <p className="form-error" role="alert">
-                  Hubo un error al enviar el mensaje. Inténtalo de nuevo.
+                  {ui.sendError}
                 </p>
               )}
 
@@ -122,12 +122,12 @@ export default function Contact({ isExpanded = false }) {
                 {status === "submitting" ? (
                   <>
                     <span className="spinner" aria-hidden="true" />
-                    Enviando…
+                    {ui.sending}
                   </>
                 ) : (
                   <>
                     <FiSend size={15} aria-hidden="true" />
-                    Enviar Mensaje
+                    {ui.send}
                   </>
                 )}
               </button>
@@ -136,7 +136,7 @@ export default function Contact({ isExpanded = false }) {
         </AnimatePresence>
 
         <footer className="social-links">
-          <p className="social-title">También puedes encontrarme en:</p>
+          <p className="social-title">{ui.findMeAt}</p>
           <ul className="social-icons">
             {social.map((item) => (
               <li key={item.name}>

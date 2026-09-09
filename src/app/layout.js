@@ -1,6 +1,7 @@
 import localFont from "next/font/local";
 import { MotionConfig } from "framer-motion";
 import { ThemeProvider, themeInitScript } from "@/lib/theme";
+import { LanguageProvider, langInitScript } from "@/lib/i18n";
 import profile from "@/content/profile";
 import "./globals.css";
 
@@ -60,6 +61,8 @@ export default function RootLayout({ children }) {
       <head>
         {/* Aplica el tema antes del primer paint para que no haya flash. */}
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        {/* Y el idioma: deja `lang` y `data-lang` puestos antes de hidratar. */}
+        <script dangerouslySetInnerHTML={{ __html: langInitScript }} />
       </head>
       <body className={monaSans.variable}>
         {/* `reducedMotion="user"` es lo que respeta de verdad la preferencia
@@ -70,7 +73,9 @@ export default function RootLayout({ children }) {
             retrato seguían moviéndose). Esto desactiva transform y layout en
             todo el árbol y conserva opacidad y color. */}
         <MotionConfig reducedMotion="user">
-          <ThemeProvider>{children}</ThemeProvider>
+          <LanguageProvider>
+            <ThemeProvider>{children}</ThemeProvider>
+          </LanguageProvider>
         </MotionConfig>
       </body>
     </html>

@@ -5,12 +5,11 @@ import { motion } from "framer-motion";
 import { FiGlobe, FiBookOpen } from "react-icons/fi";
 import Section from "./Section";
 import RichText from "@/lib/RichText";
-import experience from "@/content/experience";
 import skills from "@/content/skills";
-import { languages, certifications } from "@/content/education";
+import useContent from "@/lib/useContent";
 import { staggerContainer, staggerItem } from "@/lib/motion";
 
-function Timeline() {
+function Timeline({ experience }) {
   return (
     <ol className="timeline">
       {experience.map((role) => (
@@ -50,36 +49,39 @@ function SkillsGrid() {
   );
 }
 
-function TechStack() {
+function TechStack({ ui }) {
   return (
     <>
-      <h3 className="subsection-title">Tecnologías y Herramientas</h3>
+      <h3 className="subsection-title">{ui.techStack}</h3>
       <SkillsGrid />
     </>
   );
 }
 
 export default function Experience({ isExpanded, onExpand }) {
+  const { experience, languages, certifications, ui, sectionCopy } = useContent();
+  const copy = sectionCopy.experience;
+
   return (
     <Section
       id="experience"
-      title="Experiencia y Habilidades"
+      title={copy.title}
       isExpanded={isExpanded}
       onExpand={onExpand}
-      expandLabel="Ver todas las responsabilidades y tecnologías"
+      expandLabel={copy.expand}
       summary={
         <>
-          <Timeline />
-          <TechStack />
+          <Timeline experience={experience} />
+          <TechStack ui={ui} />
         </>
       }
       detail={
         <>
-          <Timeline />
-          <TechStack />
+          <Timeline experience={experience} />
+          <TechStack ui={ui} />
 
           <h3 className="detail-title">
-            <FiGlobe size={18} aria-hidden="true" /> Dominio de Idiomas
+            <FiGlobe size={18} aria-hidden="true" /> {ui.languagesTitle}
           </h3>
           <div className="cards-grid cards-grid--sm">
             {languages.map((lang) => (
@@ -94,7 +96,7 @@ export default function Experience({ isExpanded, onExpand }) {
                   aria-valuenow={lang.level}
                   aria-valuemin={0}
                   aria-valuemax={100}
-                  aria-label={`Nivel de ${lang.name}`}
+                  aria-label={lang.name}
                 >
                   <motion.span
                     className="lang-bar-fill"
@@ -109,7 +111,7 @@ export default function Experience({ isExpanded, onExpand }) {
           </div>
 
           <h3 className="detail-title">
-            <FiBookOpen size={18} aria-hidden="true" /> Certificaciones y Cursos
+            <FiBookOpen size={18} aria-hidden="true" /> {ui.certifications}
           </h3>
           <div className="cards-grid">
             {certifications.map((cert) => (

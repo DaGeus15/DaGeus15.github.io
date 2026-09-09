@@ -2,13 +2,15 @@
 
 import Image from "next/image";
 import { FiMenu, FiX, FiSun, FiMoon, FiMaximize2, FiMinimize2 } from "react-icons/fi";
-import sections from "@/content/navigation";
-import profile from "@/content/profile";
+import useContent from "@/lib/useContent";
 import navIcons from "./icons";
 import { useTheme } from "@/lib/theme";
+import LangToggle from "@/components/ui/LangToggle";
 
 /** Cabecera fija de móvil: avatar, nombre y botón de menú. */
 export function MobileHeader({ isMenuOpen, onToggleMenu }) {
+  const { profile, ui } = useContent();
+
   return (
     <header className="mobile-header">
       <Image
@@ -27,7 +29,7 @@ export function MobileHeader({ isMenuOpen, onToggleMenu }) {
       <button
         className="mobile-header__menu"
         onClick={onToggleMenu}
-        aria-label={isMenuOpen ? "Cerrar menú" : "Abrir menú"}
+        aria-label={isMenuOpen ? ui.closeMenu : ui.openMenu}
         aria-expanded={isMenuOpen}
         aria-controls="mobile-drawer"
       >
@@ -40,10 +42,11 @@ export function MobileHeader({ isMenuOpen, onToggleMenu }) {
 /** Contenido del cajón lateral de móvil. */
 export function MobileDrawer({ activeSection, onNavigate, isExpanded, onToggleExpand }) {
   const { isDark, toggleTheme } = useTheme();
+  const { sections, ui } = useContent();
 
   return (
     <div className="mobile-drawer">
-      <nav className="mobile-drawer__nav" aria-label="Navegación principal">
+      <nav className="mobile-drawer__nav" aria-label={ui.mainNav}>
         {sections.map((section) => {
           const Icon = navIcons[section.icon];
           const isActive = activeSection === section.id;
@@ -64,17 +67,18 @@ export function MobileDrawer({ activeSection, onNavigate, isExpanded, onToggleEx
       </nav>
 
       <div className="mobile-drawer__actions">
+        <LangToggle withLabel />
         <button className="mobile-drawer__action" onClick={toggleTheme}>
           <span className="mobile-drawer__icon">
             {isDark ? <FiSun size={17} aria-hidden="true" /> : <FiMoon size={17} aria-hidden="true" />}
           </span>
-          {isDark ? "Modo Claro" : "Modo Oscuro"}
+          {isDark ? ui.lightMode : ui.darkMode}
         </button>
         <button className="mobile-drawer__action" onClick={onToggleExpand}>
           <span className="mobile-drawer__icon">
             {isExpanded ? <FiMinimize2 size={17} aria-hidden="true" /> : <FiMaximize2 size={17} aria-hidden="true" />}
           </span>
-          {isExpanded ? "Vista Resumida" : "Vista Detallada"}
+          {isExpanded ? ui.summaryView : ui.detailedView}
         </button>
       </div>
     </div>

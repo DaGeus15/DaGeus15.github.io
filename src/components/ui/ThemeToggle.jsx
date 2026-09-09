@@ -3,22 +3,21 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { FiSun, FiMoon } from "react-icons/fi";
 import { useTheme } from "@/lib/theme";
+import useContent from "@/lib/useContent";
 import { tween } from "@/lib/motion";
 
 /** Botón de cambio de tema con el icono animado. */
 export default function ThemeToggle({ className = "", size = 18 }) {
   const { theme, toggleTheme, isDark, followsSystem } = useTheme();
+  const { ui } = useContent();
+  const modo = isDark ? ui.themeDark : ui.themeLight;
 
   return (
     <button
       onClick={toggleTheme}
       className={`theme-toggle-btn ${className}`}
-      aria-label={isDark ? "Cambiar a modo claro" : "Cambiar a modo oscuro"}
-      title={
-        followsSystem
-          ? `Modo ${isDark ? "oscuro" : "claro"}, siguiendo al navegador`
-          : `Modo ${isDark ? "oscuro" : "claro"} fijado — volvé a cambiarlo para seguir al navegador`
-      }
+      aria-label={isDark ? ui.toLightMode : ui.toDarkMode}
+      title={followsSystem ? ui.themeFollows(modo) : ui.themePinned(modo)}
     >
       <AnimatePresence mode="wait" initial={false}>
         <motion.span

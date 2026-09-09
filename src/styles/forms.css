@@ -184,6 +184,37 @@
   z-index: 1;
 }
 
+/* ── Selector de idioma ES/EN ──────────────────────────────────────────
+   Muestra el idioma AL QUE se cambia, así que se lee como una acción. En el
+   cajón móvil toma la forma de las demás filas de ajustes (`withLabel`). */
+.lang-toggle {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+}
+
+.lang-toggle__code {
+  display: block;
+  line-height: 1;
+}
+
+.mobile-drawer__action.lang-toggle {
+  gap: var(--sp-3);
+}
+
+.mobile-drawer__action.lang-toggle .lang-toggle__code {
+  width: 22px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.lang-toggle__label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
 /* ── Redes sociales ───────────────────────────────────────────────────── */
 .social-links {
   margin-top: var(--sp-8);

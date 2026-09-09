@@ -3,10 +3,9 @@
 import { useRef } from "react";
 import Image from "next/image";
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from "framer-motion";
-import { FiDownload } from "react-icons/fi";
-import Magnetic from "@/components/ui/Magnetic";
+import CvDownload from "@/components/ui/CvDownload";
 import SplitText from "@/components/ui/SplitText";
-import profile from "@/content/profile";
+import useContent from "@/lib/useContent";
 import { spring, tween } from "@/lib/motion";
 import { HOVER_QUERY } from "@/lib/breakpoints";
 
@@ -16,6 +15,7 @@ import { HOVER_QUERY } from "@/lib/breakpoints";
  * En modo compacto (vista detallada) se reduce a sólo la foto y el botón.
  */
 export default function ProfileCard({ isCompact = false }) {
+  const { profile } = useContent();
   const photoRef = useRef(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -54,8 +54,7 @@ export default function ProfileCard({ isCompact = false }) {
           transformStyle: "preserve-3d",
         }}
         whileHover={isCompact ? undefined : { scale: 1.03 }}
-        animate={{ width: isCompact ? 64 : 240, height: isCompact ? 64 : 330 }}
-        transition={spring.layout}
+        transition={spring.snappy}
       >
         <Image
           src={profile.avatar}
@@ -82,21 +81,7 @@ export default function ProfileCard({ isCompact = false }) {
         )}
       </AnimatePresence>
 
-      <Magnetic range={45} strength={0.3}>
-        <motion.a
-          href={profile.cv}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={`cv-button ${isCompact ? "is-compact" : ""}`}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.97 }}
-          transition={spring.snappy}
-          aria-label="Descargar CV"
-        >
-          <FiDownload size={isCompact ? 18 : 14} aria-hidden="true" />
-          {!isCompact && <span>Descargar CV</span>}
-        </motion.a>
-      </Magnetic>
+      <CvDownload isCompact={isCompact} />
     </div>
   );
 }
