@@ -48,11 +48,14 @@ export default function About({ isExpanded, onExpand }) {
             {setup.map((card) => (
               <article className={`setup-card ${card.wide ? "is-wide" : ""}`} key={card.title}>
                 <h4>{card.title}</h4>
-                {card.specs.map(([label, value]) => (
-                  <p key={label}>
-                    <strong>{label}:</strong> {value}
-                  </p>
-                ))}
+                <dl className="spec-sheet">
+                  {card.specs.map(([label, value]) => (
+                    <div className="spec-sheet__row" key={label}>
+                      <dt>{label}</dt>
+                      <dd>{value}</dd>
+                    </div>
+                  ))}
+                </dl>
                 {card.note && <p className="setup-note">{card.note}</p>}
               </article>
             ))}
@@ -61,13 +64,16 @@ export default function About({ isExpanded, onExpand }) {
           <h3 className="detail-title">
             <FiBookOpen size={18} aria-hidden="true" /> {ui.hobbies}
           </h3>
-          <ul className="hobbies-list">
+          <div className="cards-grid cards-grid--sm">
             {hobbies.map((h) => (
-              <li key={h.title}>
-                <strong>{h.title}:</strong> <RichText>{h.detail}</RichText>
-              </li>
+              <article className="hobby-card" key={h.title}>
+                <h4>{h.title}</h4>
+                <p>
+                  <RichText>{h.detail}</RichText>
+                </p>
+              </article>
             ))}
-          </ul>
+          </div>
         </>
       }
     />

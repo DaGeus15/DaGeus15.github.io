@@ -102,7 +102,8 @@
 
 .setup-card,
 .cert-card,
-.lang-card {
+.lang-card,
+.hobby-card {
   display: flex;
   flex-direction: column;
   gap: var(--sp-2);
@@ -117,8 +118,58 @@
   grid-column: 1 / -1;
 }
 
+/* ── Ficha de especificaciones ──────────────────────────────────────────
+   Antes cada dato era un párrafo suelto ("**Etiqueta:** valor"), así que la
+   tarjeta se leía como un volcado de texto: sin columnas, sin alineación y
+   sin ritmo. En dos columnas con un filete entre filas se lee como lo que es,
+   una ficha técnica — que además es como Apple presenta sus especificaciones.
+   La etiqueta va en versalita y el valor con el peso del texto normal, así la
+   jerarquía la marca el estilo y no un signo de dos puntos. */
+.spec-sheet {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+
+.spec-sheet__row {
+  display: grid;
+  grid-template-columns: minmax(0, auto) minmax(0, 1fr);
+  gap: var(--sp-1) var(--sp-4);
+  align-items: baseline;
+  padding: var(--sp-2) 0;
+  border-top: 1px solid var(--glass-border);
+}
+
+.spec-sheet__row:first-child {
+  padding-top: 0;
+  border-top: none;
+}
+
+.spec-sheet__row:last-child {
+  padding-bottom: 0;
+}
+
+.spec-sheet dt {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  white-space: nowrap;
+}
+
+.spec-sheet dd {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--foreground);
+  /* Los numeros de las specs se alinean mejor con cifras de ancho fijo. */
+  font-variant-numeric: tabular-nums;
+}
+
 .setup-card h4,
-.cert-card h4 {
+.cert-card h4,
+.hobby-card h4 {
   font-size: 1.02rem;
   font-weight: 700;
   line-height: 1.4;
@@ -126,6 +177,7 @@
 }
 
 .setup-card p,
+.hobby-card p,
 .cert-detail {
   font-size: 0.9rem;
   line-height: 1.55;
@@ -140,7 +192,8 @@
 }
 
 .cert-card:hover,
-.setup-card:hover {
+.setup-card:hover,
+.hobby-card:hover {
   border-color: var(--card-hover-border);
 }
 

@@ -184,7 +184,6 @@ export const copy = {
       },
       {
         title: "Entorno de desarrollo",
-        wide: true,
         specs: [
           ["Sistemas", "Dual boot: Windows 11 y Ubuntu para desarrollo."],
           [
@@ -417,7 +416,6 @@ export const copy = {
       },
       {
         title: "Development environment",
-        wide: true,
         specs: [
           ["Systems", "Dual boot: Windows 11 and Ubuntu for development."],
           ["Containers", "Docker and Docker Compose to reproduce deployment environments locally."],

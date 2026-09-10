@@ -48,7 +48,7 @@ export default function WheelItem({ children, containerRef }) {
   useEffect(() => {
     const el = ref.current;
     const container = containerRef?.current;
-    if (!el || !container || reduce) return;
+    if (!el || !container) return;
 
     let primera = true;
 
@@ -82,11 +82,25 @@ export default function WheelItem({ children, containerRef }) {
       window.removeEventListener("resize", medir);
       ro.disconnect();
     };
-  }, [containerRef, progress, p, reduce]);
+  }, [containerRef, progress, p]);
 
-  const rotateX = useTransform(p, [0, 0.5, 1], [-11, 0, 11]);
-  const scale = useTransform(p, [0, 0.5, 1], [0.93, 1, 0.93]);
-  const opacity = useTransform(p, [0, 0.16, 0.84, 1], [0.42, 1, 1, 0.42]);
+  /* Con `prefers-reduced-motion` la rueda NO se apaga del todo: se queda en un
+     desvanecido suave. Lo que marea de este efecto es la inclinación 3D y el
+     cambio de escala —el desplazamiento vestibular—, no que algo se atenúe;
+     la propia guía de movimiento reducido pide sustituir el desplazamiento
+     por fundidos, no eliminar toda respuesta. Así quien lo tenga activado
+     sigue viendo dónde está en la pila.
+
+     Los tres arrancan en el mismo sitio en NEUTRO (0 / 1 / 1) valga lo que
+     valga `reduce`, así que el HTML del servidor y el del cliente coinciden y
+     la hidratación no se descuadra. */
+  const inclinacion = reduce ? [0, 0, 0] : [-11, 0, 11];
+  const escala = reduce ? [1, 1, 1] : [0.93, 1, 0.93];
+  const desvanecido = reduce ? [0.55, 1, 1, 0.55] : [0.42, 1, 1, 0.42];
+
+  const rotateX = useTransform(p, [0, 0.5, 1], inclinacion);
+  const scale = useTransform(p, [0, 0.5, 1], escala);
+  const opacity = useTransform(p, [0, 0.16, 0.84, 1], desvanecido);
 
   /* El desenfoque NO va en el `style` de React. Framer no resuelve un
      `useMotionTemplate` al renderizar en el servidor, así que la propiedad

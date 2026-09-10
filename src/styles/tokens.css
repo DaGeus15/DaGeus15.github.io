@@ -274,11 +274,17 @@
   --accent-warm: #a17e67;
   --accent-warm-rgb: 161, 126, 103;
 
-  /* Lienzo: la pared de la foto. Tinta: el neutro frío, al tono del acento. */
-  --background: #f2efe9;
+  /* Lienzo: la pared de la foto. Tinta: el neutro frío, al tono del acento.
+     Un punto más profundo que antes (#f2efe9): con el lienzo casi blanco, las
+     tarjetas —que también son blancas— quedaban a 4 niveles de 255 del fondo
+     y todo se fundía en una mancha clara. */
+  --background: #ede7dc;
   --foreground: #13252f;
   --foreground-rgb: 19, 37, 47;
-  --muted-foreground: #4d606a;
+  /* Un punto más oscuro que antes (#4d606a) porque el lienzo también bajó de
+     claridad: el gris apagado le sigue el paso para mantener el texto
+     secundario con holgura sobre AA. */
+  --muted-foreground: #46575f;
 
   --spotlight-color: rgba(var(--accent-rgb), 0.08);
   --glow-warm: rgba(var(--accent-warm-rgb), 0.22);
@@ -295,26 +301,29 @@
 
   /* Cobertura efectiva de blanco ~50%, y el cuerpo lleva un velo frío en vez
      de blanco: lo que se ve a través del cristal sigue siendo color. */
+  /* Menos blanco y más tinte. Con 0.6/0.22/0.38 de blanco la tarjeta era una
+     superficie opaca y plana; bajando el blanco, el color de la malla se ve
+     A TRAVÉS del cristal y cada tarjeta toma un tono distinto según lo que
+     tenga detrás. Eso es lo que hace que se lea como vidrio y no como papel.
+     La separación con el fondo ya no la da la claridad, sino la sombra y el
+     filo de 1px — que es como funciona el material de Apple. */
   --liquid-bg:
     linear-gradient(
       145deg,
-      rgba(255, 255, 255, 0.6),
-      rgba(255, 255, 255, 0.22) 48%,
-      rgba(255, 255, 255, 0.38)
+      rgba(255, 255, 255, 0.46),
+      rgba(255, 255, 255, 0.14) 48%,
+      rgba(255, 255, 255, 0.28)
     ),
-    /* Velo cálido en vez de frío: sobre un lienzo de arena, un cristal con
-       tinte frío se leía como un parche azulado. Con la arena de la pared, la
-       superficie deja de verse como blanco de laboratorio. */
-    rgba(240, 231, 216, 0.30);
+    rgba(233, 222, 205, 0.42);
   /* El borde lleva el acento: en blanco sobre relleno blanco era invisible. */
   --liquid-border: rgba(var(--accent-rgb), 0.24);
   --liquid-highlight: rgba(255, 255, 255, 0.9);
 
   /* Sobre el cristal claro, "elevado" es más blanco y más opaco, no menos. */
-  --fill-raised: rgba(255, 255, 255, 0.62);
-  --fill-raised-hover: rgba(255, 255, 255, 0.82);
+  --fill-raised: rgba(255, 255, 255, 0.50);
+  --fill-raised-hover: rgba(255, 255, 255, 0.72);
 
-  --card-bg: rgba(250, 249, 246, 0.96);
+  --card-bg: rgba(247, 242, 234, 0.97);
   --card-border: rgba(var(--accent-rgb), 0.16);
   --card-hover-border: rgba(var(--accent-rgb), 0.5);
 
@@ -324,20 +333,28 @@
 
   --shadow-soft: 0 10px 30px -12px rgba(19, 37, 47, 0.22);
   --shadow-glow: 0 0 26px rgba(var(--accent-rgb), 0.18);
+  /* Dos sombras, no una: la de contacto (1px, muy cerca) asienta la tarjeta
+     sobre el lienzo y la difusa le da altura. Con una sola sombra amplia y
+     suave, en tema claro la tarjeta flotaba sin apoyarse en nada. El filo
+     superior blanco es la luz resbalando por el canto del vidrio. */
   --shadow-liquid:
-    0 22px 60px -36px rgba(19, 37, 47, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+    0 1px 2px rgba(19, 37, 47, 0.07),
+    0 14px 34px -18px rgba(19, 37, 47, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
 
   /* El cristal sólo se percibe si hay algo detrás que desenfocar, así que la
      malla en claro no puede quedarse en un lavado casi blanco. */
-  --mesh-glow: rgba(255, 250, 242, 0.6);
-  --mesh-1: rgba(56, 150, 185, 0.28);
+  /* Era 0.6: un velo casi blanco sobre el 70% superior de la pantalla que
+     blanqueaba el lienzo y dejaba al cristal sin nada que filtrar. Ahora es
+     una luz cenital suave, no un blanqueo. */
+  --mesh-glow: rgba(255, 247, 234, 0.22);
+  --mesh-1: rgba(56, 150, 185, 0.34);
   /* Arriba-derecha pasa a cálido: la malla clara cruza de frío a cálido en
      diagonal, así que el fondo tiene las dos familias en vez de un lavado
      azul uniforme. */
-  --mesh-2: rgba(206, 168, 128, 0.32);
-  --mesh-3: rgba(0, 102, 138, 0.16);
-  --mesh-4: rgba(210, 172, 132, 0.36);
+  --mesh-2: rgba(203, 162, 118, 0.40);
+  --mesh-3: rgba(0, 102, 138, 0.20);
+  --mesh-4: rgba(206, 166, 122, 0.44);
 
   --grain-opacity: 0.045;
   --grain-blend: multiply;
