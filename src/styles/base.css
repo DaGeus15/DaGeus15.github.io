@@ -218,16 +218,14 @@ img {
   }
 }
 
+/* Movimiento reducido: sólo se quita el scroll suave, que arrastra la página
+   entera hasta la sección pulsada. Antes también llevaba todas las
+   transiciones y animaciones CSS a 0.01ms, y eso dejaba sin respuesta los
+   hovers, el cambio de tema y el morfeo del armazón para cualquiera con
+   "Efectos de animación" apagado en Windows. Ver la nota de `MotionConfig`
+   en `layout.js`: se decide efecto a efecto, no en bloque. */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
-  }
-
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
   }
 }

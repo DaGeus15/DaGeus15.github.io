@@ -57,12 +57,17 @@ romperla en silencio.
   soltó, y la velocidad de soltado entra al muelle como velocidad inicial: sin
   eso se nota la costura entre arrastrar y animar. Si cambiás `--drawer-w`,
   cambiá también `DRAWER_WIDTH` en `src/lib/breakpoints.js`.
-- **El movimiento de framer-motion no lo apaga el CSS.** La regla de
-  `prefers-reduced-motion` en `base.css` sólo acorta transiciones y
-  animaciones CSS; framer-motion escribe `transform` inline fotograma a
-  fotograma y se le escapaba entero. Lo que lo cubre es el
-  `<MotionConfig reducedMotion="user">` de `layout.js`. No lo quites, y si
-  añadís otro árbol de React que anime, que cuelgue de ahí dentro.
+- **Movimiento reducido se decide efecto a efecto, no en bloque.** Hubo un
+  `<MotionConfig reducedMotion="user">` y una regla CSS que llevaba todas las
+  transiciones a 0.01ms. Juntos dejaban la página muerta para cualquiera con
+  "Efectos de animación" apagado en Windows —muy común, y el navegador lo
+  traduce a `prefers-reduced-motion`—, mientras el resto de sitios seguían
+  animando. Ahora `MotionConfig` va con `reducedMotion="never"` y `base.css`
+  sólo quita el scroll suave. La regla: lo que mueve la ESCENA (fondo que
+  gira, rueda 3D, inclinación con el puntero, paralaje) lee
+  `useReducedMotion()` y pasa a una versión suave —fundido, cambio de color,
+  un cometa más lento—; lo pequeño (hover, pulsación, dock, entradas de
+  pocos px) anima siempre. Nunca "quieto del todo": el peor caso es "suave".
 - **Nunca escribas `-webkit-backdrop-filter` a mano.** Lightning CSS (el
   compilador de CSS de Next 16) deduplica la pareja estándar + prefijada y se
   queda sólo con la prefijada, que los navegadores actuales ya no aplican:
@@ -126,10 +131,12 @@ romperla en silencio.
   nada. Lo que sigue prohibido es lo perpetuo: una deriva en bucle, un canvas
   o una escena WebGL que redibuja a 60fps. Por eso no hay Three.js aquí: la
   profundidad sale de `perspective` + `rotateX` en CSS y de capas pintadas una
-  sola vez que sólo cambian de `transform`. Con movimiento reducido las
-  amplitudes valen 0 (el fondo queda quieto): el movimiento de fondo a pantalla
-  completa es justo lo que marea, así que aquí no hay versión suave. Progreso
-  0 = transformaciones a cero, para que servidor y cliente hidraten igual.
+  sola vez que sólo cambian de `transform`. Con movimiento reducido el fondo no
+  gira ni se desplaza (eso es lo que marea): el campo frío se APAGA con el
+  scroll y deja el cálido, un cambio de color en su sitio; y los cometas de las
+  órbitas siguen avanzando al 40%, sin inclinación. Progreso 0 =
+  transformaciones a cero y opacidad 1, para que servidor y cliente hidraten
+  igual.
 - **Las órbitas son anillos partidos en dos capas, no un fondo.** Detrás de
   todo, las tarjetas las tapaban y no se veían. Cada anillo se pinta dos
   veces con las mismas transformaciones: la mitad lejana en `.orbits--back`

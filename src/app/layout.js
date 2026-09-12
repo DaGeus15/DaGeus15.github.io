@@ -65,14 +65,21 @@ export default function RootLayout({ children }) {
         <script dangerouslySetInnerHTML={{ __html: langInitScript }} />
       </head>
       <body className={monaSans.variable}>
-        {/* `reducedMotion="user"` es lo que respeta de verdad la preferencia
-            del sistema. La regla de `base.css` sólo acorta transiciones y
-            animaciones CSS, y framer-motion no usa ninguna de las dos: escribe
-            `transform` inline fotograma a fotograma, así que se le escapaba
-            entera (SplitText, stagger, Magnetic, Dock, Spotlight y el tilt del
-            retrato seguían moviéndose). Esto desactiva transform y layout en
-            todo el árbol y conserva opacidad y color. */}
-        <MotionConfig reducedMotion="user">
+        {/* `reducedMotion="never"`: el movimiento reducido NO se aplica en
+            bloque. Con "user" se apagaban todos los transform de framer —hover,
+            pulsación, dock, entradas, magnetismo— y, con "Efectos de animación"
+            desactivado en Windows (muy común, y que el navegador traduce a
+            `prefers-reduced-motion`), la página entera quedaba muerta mientras
+            cualquier otro sitio seguía animando.
+
+            Movimiento reducido pide quitar el movimiento GRANDE, el que
+            desplaza la escena (fondo que gira, rueda 3D, paralaje), no la
+            respuesta pequeña de un botón. Así que se decide efecto a efecto:
+            los que mueven la escena leen `useReducedMotion()` y cambian a su
+            versión suave (Aurora, Orbits, WheelItem); los pequeños animan
+            siempre. Si añadís un efecto que mueva media pantalla, que lea
+            `useReducedMotion()` también. */}
+        <MotionConfig reducedMotion="never">
           <LanguageProvider>
             <ThemeProvider>{children}</ThemeProvider>
           </LanguageProvider>

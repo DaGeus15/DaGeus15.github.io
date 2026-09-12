@@ -36,9 +36,16 @@ import { HOVER_QUERY } from "@/lib/breakpoints";
  * Nunca solas: un giro perpetuo mantendría recalculando los desenfoques que
  * tiene delante la mitad trasera, para siempre.
  *
- * Con movimiento reducido todo queda quieto (amplitudes a 0) sin cambiar el
- * árbol. Los valores de reposo son idénticos en servidor y cliente.
+ * Con movimiento reducido NO se quedan quietas, porque lo que se mueve aquí
+ * es pequeño: la pista es un círculo uniforme, así que girar el anillo sólo
+ * hace avanzar el cometa de luz por ella, como un indicador de carga. Lo que
+ * sí se quita es lo que mueve la escena entera: la inclinación con el
+ * puntero. Y el cometa va más despacio. Mismo árbol en los dos casos, y
+ * valores de reposo idénticos en servidor y cliente.
  */
+
+/** Fracción del giro que se conserva con movimiento reducido. */
+const REDUCED_SPIN = 0.4;
 
 /* Tamaño relativo al ancho de las tarjetas, sentido de giro y vueltas por
    recorrido completo. Sentidos alternos: los anillos se cruzan en vez de
@@ -54,7 +61,9 @@ const PLANE_TILT = 72;
 
 export default function Orbits({ progress, scrollRef }) {
   const reduce = useReducedMotion();
+  // `k` apaga la inclinación; `spin` sólo frena el cometa.
   const k = reduce ? 0 : 1;
+  const spin = reduce ? REDUCED_SPIN : 1;
 
   const backRef = useRef(null);
   const frontRef = useRef(null);
@@ -123,9 +132,9 @@ export default function Orbits({ progress, scrollRef }) {
   const tiltX = useTransform(py, (v) => PLANE_TILT - v * 5 * k);
   const tiltY = useTransform(px, (v) => v * 7 * k);
 
-  const inner = useTransform(progress, [0, 1], [0, RINGS[0].turn * k]);
-  const mid = useTransform(progress, [0, 1], [0, RINGS[1].turn * k]);
-  const outer = useTransform(progress, [0, 1], [0, RINGS[2].turn * k]);
+  const inner = useTransform(progress, [0, 1], [0, RINGS[0].turn * spin]);
+  const mid = useTransform(progress, [0, 1], [0, RINGS[1].turn * spin]);
+  const outer = useTransform(progress, [0, 1], [0, RINGS[2].turn * spin]);
   const rotations = [inner, mid, outer];
 
   const layer = (half, ref) => (
