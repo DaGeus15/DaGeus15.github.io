@@ -248,11 +248,20 @@
      cometa, no la línea. Frío en los dos interiores y cálido en el exterior,
      el mismo reparto de papeles que el resto de la paleta. La mitad delantera
      pasa por encima del texto, así que la pista no puede subir de aquí. */
-  --orbit-track: rgba(var(--accent-rgb), 0.13);
-  --orbit-tail: rgba(var(--accent-rgb), 0.34);
-  --orbit-tail-warm: rgba(var(--accent-warm-rgb), 0.34);
-  --orbit-head: rgba(150, 212, 240, 0.95);
-  --orbit-head-warm: rgba(222, 186, 160, 0.95);
+  --orbit-track: rgba(var(--accent-rgb), 0.2);
+  --orbit-tail: rgba(var(--accent-rgb), 0.5);
+  --orbit-tail-warm: rgba(var(--accent-warm-rgb), 0.5);
+  --orbit-head: rgba(190, 232, 250, 1);
+  --orbit-head-warm: rgba(240, 210, 186, 1);
+  --orbit-glow: rgba(82, 165, 205, 0.4);
+  --orbit-glow-warm: rgba(172, 136, 113, 0.4);
+
+  /* Estrellas: blanco frío, al tono del acento. El halo lleva el acento para
+     que brillen "en" la paleta y no como píxeles blancos sueltos. */
+  --star: rgba(214, 236, 246, 0.8);
+  --star-bright: rgba(236, 248, 253, 1);
+  --star-glow: rgba(150, 212, 240, 0.55);
+  --star-glow-soft: rgba(82, 165, 205, 0.22);
 
   --grain-opacity: 0.055;
   --grain-blend: overlay;
@@ -369,11 +378,21 @@
 
   /* En claro la cabeza es el acento a pleno, no un tono más claro: sobre
      arena, lo que se lee como luz es el color saturado. */
-  --orbit-track: rgba(var(--accent-rgb), 0.16);
-  --orbit-tail: rgba(var(--accent-rgb), 0.3);
-  --orbit-tail-warm: rgba(var(--accent-warm-rgb), 0.38);
-  --orbit-head: rgba(var(--accent-rgb), 0.85);
-  --orbit-head-warm: rgba(var(--accent-warm-rgb), 0.95);
+  --orbit-track: rgba(var(--accent-rgb), 0.24);
+  --orbit-tail: rgba(var(--accent-rgb), 0.5);
+  --orbit-tail-warm: rgba(var(--accent-warm-rgb), 0.55);
+  --orbit-head: rgba(var(--accent-rgb), 1);
+  --orbit-head-warm: rgba(var(--accent-warm-rgb), 1);
+  --orbit-glow: rgba(var(--accent-rgb), 0.28);
+  --orbit-glow-warm: rgba(var(--accent-warm-rgb), 0.3);
+
+  /* En claro no hay cielo nocturno: las estrellas son motas de tinta tenue,
+     polvo en la luz, y el titileo lleva el acento. Blancas sobre arena no se
+     verían. */
+  --star: rgba(19, 37, 47, 0.28);
+  --star-bright: rgba(var(--accent-rgb), 0.85);
+  --star-glow: rgba(var(--accent-rgb), 0.3);
+  --star-glow-soft: rgba(var(--accent-rgb), 0.1);
 
   --grain-opacity: 0.045;
   --grain-blend: multiply;

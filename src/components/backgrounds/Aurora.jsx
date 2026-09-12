@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion, useTransform } from "framer-motion";
+import Starfield from "@/components/backgrounds/Starfield";
 
 /**
  * Fondo ambiental que se mueve con el scroll.
@@ -47,6 +48,7 @@ export default function Aurora({ progress }) {
         className="aurora__field aurora__field--warm"
         style={{ rotate: warmRotate, y: warmY }}
       />
+      <Starfield progress={progress} />
       <div className="aurora__zenith" />
       <div className="aurora__grain" />
       <div className="aurora__vignette" />

@@ -68,6 +68,14 @@ romperla en silencio.
   `useReducedMotion()` y pasa a una versión suave —fundido, cambio de color,
   un cometa más lento—; lo pequeño (hover, pulsación, dock, entradas de
   pocos px) anima siempre. Nunca "quieto del todo": el peor caso es "suave".
+- **Ningún ancestro de un cristal puede llevar `will-change: opacity`
+  (ni `filter`, `mask`, `clip-path` u `opacity` < 1 en reposo).** Todos esos
+  convierten al ancestro en "backdrop root", y el `backdrop-filter` de dentro
+  sólo muestrea hasta él: deja de ver el fondo de la página y el cristal no
+  desenfoca nada. Pasó con `WheelItem` (`will-change: transform, opacity`):
+  todas las tarjetas del resumen dejaban ver las estrellas nítidas. Si hay que
+  animar opacidad en un envoltorio de cristal, que sea sólo durante el efecto
+  y sin `will-change` de opacidad.
 - **Nunca escribas `-webkit-backdrop-filter` a mano.** Lightning CSS (el
   compilador de CSS de Next 16) deduplica la pareja estándar + prefijada y se
   queda sólo con la prefijada, que los navegadores actuales ya no aplican:
@@ -128,8 +136,14 @@ romperla en silencio.
   tarjetas. Está permitido porque el coste —recalcular los
   `backdrop-filter` que tiene delante— sólo se paga mientras el visitante
   desplaza, que es cuando el movimiento se ve; con la página quieta no cuesta
-  nada. Lo que sigue prohibido es lo perpetuo: una deriva en bucle, un canvas
-  o una escena WebGL que redibuja a 60fps. Por eso no hay Three.js aquí: la
+  nada. Lo perpetuo sólo vale si es PEQUEÑO: los cometas de las órbitas giran
+  siempre, pero cada uno es una capa del tamaño de su arco que rota alrededor
+  del centro del anillo, y las pistas están quietas; así el daño por fotograma
+  detrás del cristal es un recorte de un par de cientos de px, no el anillo.
+  Las estrellas titilan con opacidad en `span` sueltos, no dentro del SVG. Lo
+  que sigue prohibido es mover en bucle una capa GRANDE (una deriva de la
+  malla, un anillo SVG entero girando, un canvas o una escena WebGL a 60fps).
+  Por eso no hay Three.js aquí: la
   profundidad sale de `perspective` + `rotateX` en CSS y de capas pintadas una
   sola vez que sólo cambian de `transform`. Con movimiento reducido el fondo no
   gira ni se desplaza (eso es lo que marea): el campo frío se APAGA con el

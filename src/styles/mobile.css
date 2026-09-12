@@ -358,15 +358,15 @@
    baja: en una columna estrecha la mitad delantera cruza más texto. */
 @media (max-width: 1023px) {
   .orbits__half--inner {
-    --d: calc(var(--orbit-w) * 1.2);
+    --d: calc(var(--orbit-w) * 1.25);
   }
 
   .orbits__half--mid {
-    --d: calc(var(--orbit-w) * 1.65);
+    --d: calc(var(--orbit-w) * 1.75);
   }
 
   .orbits__half--outer {
-    --d: calc(var(--orbit-w) * 2.2);
+    --d: calc(var(--orbit-w) * 2.35);
   }
 
   .orbits--front .orbits__track {

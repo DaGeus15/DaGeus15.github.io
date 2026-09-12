@@ -67,6 +67,100 @@
   background: radial-gradient(70% 45% at 50% -8%, var(--mesh-glow), transparent 70%);
 }
 
+/* ── Estrellas (Starfield.jsx) ────────────────────────────────────────────
+   Dentro de `.aurora`, detrás del cristal. Los planos son más altos que la
+   pantalla para que el paralaje del scroll no destape el borde de abajo. */
+.stars {
+  position: absolute;
+  inset: 0;
+  animation: stars-in 1.8s var(--ease-out) both;
+}
+
+.stars__plane {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 118%;
+  will-change: transform;
+}
+
+.stars__svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: var(--star);
+}
+
+.stars__twinkle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  margin: -1.5px 0 0 -1.5px;
+  border-radius: 50%;
+  background: var(--star-bright);
+  box-shadow:
+    0 0 6px 1px var(--star-glow),
+    0 0 16px 3px var(--star-glow-soft);
+  opacity: 0.25;
+  animation: star-twinkle 3.4s ease-in-out infinite alternate;
+  will-change: opacity;
+}
+
+/* Fugaces: parten arriba y cruzan en diagonal. El trazo es un degradado en
+   un rectángulo girado; se mueve con `transform`, que es del compositor. Cada
+   una tiene un ciclo largo con otro desfase: la mayor parte del ciclo está
+   apagada, así que se ve una cada pocos segundos, no un desfile. */
+.stars__shooting {
+  position: absolute;
+  width: 9rem;
+  height: 1.5px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, var(--star-bright));
+  opacity: 0;
+  rotate: 24deg;
+  will-change: transform, opacity;
+  animation: star-shoot 11s linear infinite;
+}
+
+.stars__shooting--1 {
+  top: 8%;
+  left: 12%;
+  animation-delay: 1.4s;
+}
+
+.stars__shooting--2 {
+  top: 4%;
+  left: 58%;
+  animation-duration: 14s;
+  animation-delay: 6s;
+}
+
+.stars__shooting--3 {
+  top: 30%;
+  left: 78%;
+  animation-duration: 17s;
+  animation-delay: 10.5s;
+}
+
+@keyframes stars-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes star-twinkle {
+  0% { opacity: 0.15; }
+  70% { opacity: 1; }
+  100% { opacity: 0.85; }
+}
+
+@keyframes star-shoot {
+  0% { opacity: 0; transform: translate(0, 0); }
+  2% { opacity: 1; }
+  8% { opacity: 0; transform: translate(26rem, 0); }
+  100% { opacity: 0; transform: translate(26rem, 0); }
+}
+
 /* ── Órbitas (Orbits.jsx) ─────────────────────────────────────────────────
    Dos capas idénticas dentro de `.portfolio`: `--back` bajo el contenido y
    `--front` sobre él (pero bajo la barra lateral, z 100, y el cajón, z 500).
@@ -87,6 +181,9 @@
   pointer-events: none;
   perspective: 1800px;
   perspective-origin: var(--orbit-cx) 30%;
+  /* Entrada: el sistema llega desde más cerca y se asienta. Es lo primero
+     que se ve al abrir la página. */
+  animation: orbits-in 1.6s var(--ease-out) both;
 }
 
 .orbits--back {
@@ -107,17 +204,17 @@
 }
 
 /* Diámetro de cada anillo respecto al ancho de las tarjetas: el interior pasa
-   justo por dentro de sus bordes, los otros dos las abrazan por fuera. */
+   justo por los bordes, los otros dos las abrazan por fuera. */
 .orbits__half--inner {
-  --d: calc(var(--orbit-w) * 0.9);
+  --d: calc(var(--orbit-w) * 1.02);
 }
 
 .orbits__half--mid {
-  --d: calc(var(--orbit-w) * 1.22);
+  --d: calc(var(--orbit-w) * 1.38);
 }
 
 .orbits__half--outer {
-  --d: calc(var(--orbit-w) * 1.55);
+  --d: calc(var(--orbit-w) * 1.8);
 }
 
 .orbits__half {
@@ -138,12 +235,12 @@
   height: calc(var(--d) / 2);
 }
 
+/* Caja del anillo: quieta. Sólo se mueven los cometas de dentro. */
 .orbits__ring {
   position: absolute;
   left: 0;
   width: var(--d);
   height: var(--d);
-  will-change: transform;
 }
 
 .orbits__half--back .orbits__ring {
@@ -161,42 +258,105 @@
   overflow: visible;
 }
 
-.orbits__svg circle {
+/* Las pistas se dibujan al entrar (trazo de 0 a 100) y luego se quedan
+   quietas para siempre: es un repintado de un par de segundos, una vez. */
+.orbits__track {
   fill: none;
+  stroke: var(--orbit-track);
+  stroke-width: 1.5;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: orbit-draw 1.8s var(--ease-out) forwards;
+}
+
+.orbits__track--inner { animation-delay: 0.15s; }
+.orbits__track--mid { animation-delay: 0.3s; }
+.orbits__track--outer { animation-delay: 0.45s; }
+
+/* El cometa vive en el centro del anillo con tamaño 0 y gira alrededor de él;
+   su contenido (arco y halo) se sale de la caja hacia el borde del anillo. */
+.orbits__comet {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  will-change: transform;
+  animation: stars-in 1s var(--ease-out) 1.1s both;
+}
+
+.orbits__arc {
+  position: absolute;
+  overflow: visible;
+}
+
+.orbits__arc path {
+  fill: none;
+  stroke-width: 3;
   stroke-linecap: round;
 }
 
-.orbits__track {
-  stroke: var(--orbit-track);
-  stroke-width: 1.2;
+.orbits__stop--tail {
+  stop-color: var(--orbit-tail);
+  stop-opacity: 0;
 }
 
-/* Estela: un 16% del perímetro. El plano tumbado aplasta el trazo en vertical
-   (cos 72° ≈ 0.31), por eso los grosores parecen gruesos en el CSS. */
-.orbits__tail {
-  stroke: var(--orbit-tail);
-  stroke-width: 2.5;
-  stroke-dasharray: 16 84;
+.orbits__stop--head {
+  stop-color: var(--orbit-head);
 }
 
-.orbits__tail.is-warm {
-  stroke: var(--orbit-tail-warm);
+.orbits__comet.is-warm .orbits__stop--tail {
+  stop-color: var(--orbit-tail-warm);
 }
 
-/* Cabeza: los últimos 4 puntos de la estela, en el extremo que va delante. */
-.orbits__head {
-  stroke: var(--orbit-head);
-  stroke-width: 4;
-  stroke-dasharray: 4 96;
-  stroke-dashoffset: -12;
+.orbits__comet.is-warm .orbits__stop--head {
+  stop-color: var(--orbit-head-warm);
 }
 
-.orbits__head.is-reverse {
-  stroke-dashoffset: 0;
+/* Halo de la cabeza: degradado radial pintado una vez, sin `filter`. */
+.orbits__glow {
+  position: absolute;
+  top: 0;
+  width: 3.5rem;
+  height: 3.5rem;
+  margin: -1.75rem 0 0 -1.75rem;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle closest-side,
+    var(--orbit-head) 0%,
+    var(--orbit-glow) 22%,
+    transparent 100%
+  );
 }
 
-.orbits__head.is-warm {
-  stroke: var(--orbit-head-warm);
+.orbits__comet.is-warm .orbits__glow {
+  background: radial-gradient(
+    circle closest-side,
+    var(--orbit-head-warm) 0%,
+    var(--orbit-glow-warm) 22%,
+    transparent 100%
+  );
+}
+
+@keyframes orbits-in {
+  from { opacity: 0; transform: scale(1.12); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes orbit-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+/* Movimiento reducido: la entrada no acerca la escena (sólo aparece), y no
+   hay fugaces. El titileo y los cometas siguen; ver Starfield/Orbits. */
+@media (prefers-reduced-motion: reduce) {
+  .orbits {
+    animation-name: stars-in;
+  }
+
+  .stars__shooting {
+    display: none;
+  }
 }
 
 /* Grano: sin él, un degradado tan amplio se ve a bandas en pantallas de 8 bits.

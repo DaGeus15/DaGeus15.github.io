@@ -148,7 +148,14 @@ export default function WheelItem({ children, containerRef }) {
         opacity,
         transformPerspective: 1100,
         transformOrigin: "center center",
-        willChange: "transform, opacity",
+        /* Sólo `transform`. `will-change: opacity` convierte el elemento en
+           "backdrop root": el `backdrop-filter` de la tarjeta de dentro deja
+           de ver el fondo de la página y sólo muestrea lo que hay dentro de
+           este envoltorio, o sea nada. Con él puesto, el cristal de TODAS las
+           tarjetas del resumen no desenfocaba: se veían las estrellas y las
+           órbitas nítidas a través. Una opacidad < 1 o un `filter` hacen lo
+           mismo, pero sólo en los bordes, donde la tarjeta ya está saliendo. */
+        willChange: "transform",
       }}
     >
       {children}
