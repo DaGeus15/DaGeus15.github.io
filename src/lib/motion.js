@@ -62,6 +62,14 @@ export const spring = {
 export const scrollSpring = { stiffness: 140, damping: 32, mass: 0.35, restDelta: 0.0005 };
 
 /**
+ * Seguidor del scroll para el FONDO. Mismo tipo de muelle que `scrollSpring`,
+ * pero bastante más pesado: el fondo va por detrás del contenido y llega un
+ * poco después, y ese retraso es lo que lo separa en profundidad. Si fuera
+ * pegado al scroll se leería como parte del contenido, no como un plano lejano.
+ */
+export const backdropSpring = { stiffness: 38, damping: 16, mass: 1, restDelta: 0.0005 };
+
+/**
  * Proyecta dónde acabaría algo soltado a `velocity` px/s.
  *
  * No es la fórmula de libro (v²/2a) sino un decaimiento exponencial, que es

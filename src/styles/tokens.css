@@ -243,6 +243,15 @@
   --mesh-3: rgba(56, 148, 190, 0.16);
   --mesh-4: rgba(184, 132, 96, 0.22);
 
+  /* Órbitas del fondo: arcos de luz que se apagan a lo largo del anillo. Frío en
+     los dos interiores y cálido en el exterior, el mismo reparto de papeles que
+     el resto de la paleta. La cola no llega a 0 para que el anillo completo se
+     intuya. Tenues a propósito: en los huecos entre tarjetas no deben competir
+     con el texto. */
+  --orbit-head: rgba(var(--accent-rgb), 0.6);
+  --orbit-head-warm: rgba(var(--accent-warm-rgb), 0.55);
+  --orbit-tail: rgba(var(--accent-rgb), 0.05);
+
   --grain-opacity: 0.055;
   --grain-blend: overlay;
   --vignette: rgba(2, 7, 9, 0.6);
@@ -355,6 +364,10 @@
   --mesh-2: rgba(203, 162, 118, 0.40);
   --mesh-3: rgba(0, 102, 138, 0.20);
   --mesh-4: rgba(206, 166, 122, 0.44);
+
+  --orbit-head: rgba(var(--accent-rgb), 0.5);
+  --orbit-head-warm: rgba(var(--accent-warm-rgb), 0.6);
+  --orbit-tail: rgba(var(--accent-rgb), 0.06);
 
   --grain-opacity: 0.045;
   --grain-blend: multiply;

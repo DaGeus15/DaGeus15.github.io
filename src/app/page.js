@@ -90,7 +90,7 @@ export default function Home() {
 
   return (
     <>
-      <Aurora />
+      <Aurora scrollRef={contentRef} expandedSection={expandedSection} />
       <Spotlight />
 
       <MobileHeader isMenuOpen={isMenuOpen} onToggleMenu={() => setIsMenuOpen((o) => !o)} />

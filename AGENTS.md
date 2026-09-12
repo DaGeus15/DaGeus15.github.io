@@ -116,6 +116,19 @@ romperla en silencio.
   regla mató la deriva perpetua de `.aurora__mesh`: esa capa es el fondo de
   todos los cristales, así que animarla obligaba a recalcular los ocho
   desenfoques para siempre, por un movimiento de ±1,5% en 48s que nadie ve.
+- **El fondo se mueve con el scroll, nunca solo.** `Aurora.jsx` gira dos
+  campos de color en sentidos opuestos y hace girar tres órbitas en un plano
+  inclinado según el progreso del scroll resumido (o la sección abierta en la
+  vista detallada). Está permitido porque el coste —recalcular los
+  `backdrop-filter` que tiene delante— sólo se paga mientras el visitante
+  desplaza, que es cuando el movimiento se ve; con la página quieta no cuesta
+  nada. Lo que sigue prohibido es lo perpetuo: una deriva en bucle, un canvas
+  o una escena WebGL que redibuja a 60fps. Por eso no hay Three.js aquí: la
+  profundidad sale de `perspective` + `rotateX` en CSS y de capas pintadas una
+  sola vez que sólo cambian de `transform`. Con movimiento reducido las
+  amplitudes valen 0 (el fondo queda quieto): el movimiento de fondo a pantalla
+  completa es justo lo que marea, así que aquí no hay versión suave. Progreso
+  0 = transformaciones a cero, para que servidor y cliente hidraten igual.
 - **Los proyectos de la vista resumida van en carril, no en rejilla.** Cinco
   tarjetas en rejilla `auto-fit` caían en tres filas dentro del panel resumido
   y estiraban la sección a 119vh —más alta que la pantalla—, y al estrecharse

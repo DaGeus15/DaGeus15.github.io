@@ -21,27 +21,127 @@
   transition: background-color var(--dur-slow) var(--ease-out);
 }
 
-/* Malla de color.
-   Aquí había una deriva infinita de 48s (`aurora-drift`). Se quitó por coste,
-   no por gusto: esta capa es el FONDO de las ocho superficies con
-   `backdrop-filter`, así que mientras se movía obligaba a recalcular los ocho
-   desenfoques en cada fotograma, para siempre, incluso con la página quieta.
-   El movimiento era una traslación de ±1,5% repartida en 48 segundos —
-   imperceptible— y el coste era permanente. Sin animación, cada desenfoque se
-   rasteriza una vez y se queda en caché.
+/* Malla de color, partida en dos campos que giran en sentidos opuestos con el
+   scroll (el giro lo escribe `Aurora.jsx` en `transform`).
 
-   Se mantiene el inset negativo: cuesta cero y deja margen si algún día se
-   recupera el movimiento (por ejemplo, sólo mientras el puntero se mueve). */
-.aurora__mesh {
+   Aquí hubo una deriva infinita de 48s (`aurora-drift`) que se quitó: esta
+   capa es el FONDO de las superficies con `backdrop-filter`, y moverla sin
+   parar obligaba a recalcular sus desenfoques en cada fotograma incluso con la
+   página quieta. La diferencia con el giro actual es cuándo se paga: sólo
+   mientras el visitante desplaza, que es justo cuando el movimiento se ve.
+
+   Cada campo es un CUADRADO de 130vmax centrado en la pantalla, no un
+   rectángulo con inset: un rectángulo girado deja las esquinas al aire. Con
+   130vmax cubre la pantalla girado hasta ~34° y desplazado ~10vh en cualquier
+   proporción, de 16:9 a un móvil en vertical.
+
+   Las manchas se colocan en vw/vh desde el CENTRO, no en % del cuadrado: así
+   caen en el mismo sitio de la pantalla sea cual sea su proporción. */
+.aurora__field {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 130vmax;
+  height: 130vmax;
+  margin: -65vmax 0 0 -65vmax;
+  will-change: transform;
+}
+
+.aurora__field--cool {
+  background:
+    radial-gradient(60vw 52vh at calc(50% - 47vw) calc(50% - 40vh), var(--mesh-1), transparent 68%),
+    radial-gradient(52vw 47vh at calc(50% + 30vw) calc(50% - 35vh), var(--mesh-3), transparent 66%);
+}
+
+.aurora__field--warm {
+  background:
+    radial-gradient(64vw 57vh at calc(50% + 47vw) calc(50% + 40vh), var(--mesh-2), transparent 68%),
+    radial-gradient(57vw 50vh at calc(50% - 35vw) calc(50% + 47vh), var(--mesh-4), transparent 68%);
+}
+
+/* Luz cenital: estática. Es la "lámpara" de la escena, y una luz que gira con
+   el decorado se lee como si se moviera la pantalla, no la escena. */
+.aurora__zenith {
   position: absolute;
   inset: -12%;
-  background:
-    /* luz cenital: da sensación de foco desde arriba */
-    radial-gradient(70% 45% at 50% -8%, var(--mesh-glow), transparent 70%),
-    radial-gradient(48% 42% at 12% 18%, var(--mesh-1), transparent 68%),
-    radial-gradient(52% 46% at 88% 82%, var(--mesh-2), transparent 68%),
-    radial-gradient(42% 38% at 74% 22%, var(--mesh-3), transparent 66%),
-    radial-gradient(46% 40% at 22% 88%, var(--mesh-4), transparent 68%);
+  background: radial-gradient(70% 45% at 50% -8%, var(--mesh-glow), transparent 70%);
+}
+
+/* ── Órbitas ──────────────────────────────────────────────────────────────
+   Tres anillos en un plano tumbado con perspectiva. Lo 3D sale gratis del
+   compositor: cada anillo es un SVG pintado una vez, y el plano inclinado lo
+   proyecta. Un anillo sólo gira sobre sí mismo (2D), pero dentro de un plano
+   inclinado ese giro se ve como una órbita: los cuerpos se acercan, crecen,
+   y se alejan. Sin canvas ni librería. */
+.aurora__orbits {
+  position: absolute;
+  inset: 0;
+  perspective: 2400px;
+  perspective-origin: 50% 20%;
+  will-change: transform;
+}
+
+.aurora__plane {
+  position: absolute;
+  top: 56%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  transform: rotateX(68deg);
+}
+
+.aurora__ring {
+  position: absolute;
+  will-change: transform;
+}
+
+.aurora__ring svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.aurora__ring--outer {
+  width: 118vmax;
+  height: 118vmax;
+  margin: -59vmax 0 0 -59vmax;
+}
+
+.aurora__ring--mid {
+  width: 82vmax;
+  height: 82vmax;
+  margin: -41vmax 0 0 -41vmax;
+}
+
+.aurora__ring--inner {
+  width: 50vmax;
+  height: 50vmax;
+  margin: -25vmax 0 0 -25vmax;
+}
+
+/* El color del trazo lo pone el degradado del SVG (atributo `stroke`); aquí
+   sólo el grosor. */
+.aurora__track {
+  fill: none;
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+}
+
+.aurora__track--dashed {
+  stroke-dasharray: 3 7;
+}
+
+.aurora__stop--head {
+  stop-color: var(--orbit-head);
+}
+
+.aurora__stop--head-warm {
+  stop-color: var(--orbit-head-warm);
+}
+
+.aurora__stop--tail {
+  stop-color: var(--orbit-tail);
 }
 
 /* Grano: sin él, un degradado tan amplio se ve a bandas en pantallas de 8 bits.
