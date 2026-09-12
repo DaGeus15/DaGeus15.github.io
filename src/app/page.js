@@ -4,6 +4,8 @@ import { useCallback, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import Aurora from "@/components/backgrounds/Aurora";
 import Spotlight from "@/components/backgrounds/Spotlight";
+import Orbits from "@/components/backgrounds/Orbits";
+import useBackdropProgress from "@/lib/useBackdropProgress";
 import Sidebar from "@/components/layout/Sidebar";
 import { MobileHeader, MobileDrawer } from "@/components/layout/MobileNav";
 import ContentArea from "@/components/layout/ContentArea";
@@ -24,6 +26,9 @@ export default function Home() {
 
   const [expandedSection, setExpandedSection] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // Un único progreso para toda la escena de fondo (colores y órbitas).
+  const sceneProgress = useBackdropProgress(contentRef, expandedSection);
 
   // El cajón se arrastra; el velo lo acompaña. En escritorio no devuelve nada.
   const { drawerProps, scrimX, scrimOpacity } = useDrawerGesture({
@@ -90,7 +95,7 @@ export default function Home() {
 
   return (
     <>
-      <Aurora scrollRef={contentRef} expandedSection={expandedSection} />
+      <Aurora progress={sceneProgress} />
       <Spotlight />
 
       <MobileHeader isMenuOpen={isMenuOpen} onToggleMenu={() => setIsMenuOpen((o) => !o)} />
@@ -105,6 +110,11 @@ export default function Home() {
       />
 
       <main className={`portfolio ${isDetailed ? "is-detailed" : ""}`}>
+        {/* Dentro de `.portfolio` a propósito: así la mitad trasera queda bajo
+            el contenido (z -1) y la delantera sobre él pero por debajo de la
+            barra lateral y del cajón móvil, que viven en este mismo contexto. */}
+        <Orbits progress={sceneProgress} scrollRef={contentRef} />
+
         {/* Sin `layout`: la geometría del raíl la anima CSS. Con proyección
             de Framer, pasar de 360px en flujo a 88px fijo se traducía en un
             `scaleX` que aplastaba la foto y el dock. */}

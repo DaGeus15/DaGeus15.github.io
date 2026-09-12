@@ -116,10 +116,11 @@ romperla en silencio.
   regla mató la deriva perpetua de `.aurora__mesh`: esa capa es el fondo de
   todos los cristales, así que animarla obligaba a recalcular los ocho
   desenfoques para siempre, por un movimiento de ±1,5% en 48s que nadie ve.
-- **El fondo se mueve con el scroll, nunca solo.** `Aurora.jsx` gira dos
-  campos de color en sentidos opuestos y hace girar tres órbitas en un plano
-  inclinado según el progreso del scroll resumido (o la sección abierta en la
-  vista detallada). Está permitido porque el coste —recalcular los
+- **La escena de fondo se mueve con el scroll, nunca sola.** Un único
+  progreso (`useBackdropProgress`: scroll resumido, o la sección abierta en la
+  detallada) mueve dos cosas: `Aurora.jsx` gira dos campos de color en
+  sentidos opuestos, y `Orbits.jsx` gira tres anillos alrededor de las
+  tarjetas. Está permitido porque el coste —recalcular los
   `backdrop-filter` que tiene delante— sólo se paga mientras el visitante
   desplaza, que es cuando el movimiento se ve; con la página quieta no cuesta
   nada. Lo que sigue prohibido es lo perpetuo: una deriva en bucle, un canvas
@@ -129,6 +130,21 @@ romperla en silencio.
   amplitudes valen 0 (el fondo queda quieto): el movimiento de fondo a pantalla
   completa es justo lo que marea, así que aquí no hay versión suave. Progreso
   0 = transformaciones a cero, para que servidor y cliente hidraten igual.
+- **Las órbitas son anillos partidos en dos capas, no un fondo.** Detrás de
+  todo, las tarjetas las tapaban y no se veían. Cada anillo se pinta dos
+  veces con las mismas transformaciones: la mitad lejana en `.orbits--back`
+  (z -1, bajo el contenido) y la cercana en `.orbits--front` (z 50, sobre el
+  contenido pero bajo la barra lateral y el cajón). Por eso las dos capas van
+  DENTRO de `.portfolio`: fuera, la delantera taparía el cajón móvil. La capa
+  delantera no encarece el cristal, porque `backdrop-filter` sólo muestrea lo
+  que tiene detrás. El centro y el ancho salen de medir el panel
+  (`--orbit-cx/cy/w`, escritos a mano fuera del render). El recorte de cada
+  mitad es `overflow: hidden`, que el compositor resuelve; no lo cambies por
+  `clip-path` ni `mask`. Se evaluó Three.js/R3F (~155 KB gzip), OGL (~8-29 KB)
+  y Spline (runtime + escena, CPU alta): para anillos y cometas, CSS 3D + SVG
+  da lo mismo con 0 KB. Si algún día hace falta geometría real (mallas,
+  luces, partículas por miles), la opción es OGL con render bajo demanda, no
+  Three.
 - **Los proyectos de la vista resumida van en carril, no en rejilla.** Cinco
   tarjetas en rejilla `auto-fit` caían en tres filas dentro del panel resumido
   y estiraban la sección a 119vh —más alta que la pantalla—, y al estrecharse

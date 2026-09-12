@@ -67,81 +67,136 @@
   background: radial-gradient(70% 45% at 50% -8%, var(--mesh-glow), transparent 70%);
 }
 
-/* ── Órbitas ──────────────────────────────────────────────────────────────
-   Tres anillos en un plano tumbado con perspectiva. Lo 3D sale gratis del
-   compositor: cada anillo es un SVG pintado una vez, y el plano inclinado lo
-   proyecta. Un anillo sólo gira sobre sí mismo (2D), pero dentro de un plano
-   inclinado ese giro se ve como una órbita: los cuerpos se acercan, crecen,
-   y se alejan. Sin canvas ni librería. */
-.aurora__orbits {
-  position: absolute;
+/* ── Órbitas (Orbits.jsx) ─────────────────────────────────────────────────
+   Dos capas idénticas dentro de `.portfolio`: `--back` bajo el contenido y
+   `--front` sobre él (pero bajo la barra lateral, z 100, y el cajón, z 500).
+   Cada una recorta su mitad de cada anillo con `overflow: hidden` en el
+   espacio del plano, que es un recorte rectangular que resuelve el
+   compositor. La mitad lejana del plano tumbado es la de ARRIBA.
+
+   El centro y el ancho de referencia (`--orbit-cx/cy/w`) los escribe
+   `Orbits.jsx` al medir el panel; estos son sólo los valores de antes de
+   hidratar. */
+.orbits {
+  --orbit-cx: 60%;
+  --orbit-cy: 50%;
+  --orbit-w: 60vw;
+
+  position: fixed;
   inset: 0;
-  perspective: 2400px;
-  perspective-origin: 50% 20%;
-  will-change: transform;
+  pointer-events: none;
+  perspective: 1800px;
+  perspective-origin: var(--orbit-cx) 30%;
 }
 
-.aurora__plane {
+.orbits--back {
+  z-index: -1;
+}
+
+.orbits--front {
+  z-index: 50;
+}
+
+.orbits__plane {
   position: absolute;
-  top: 56%;
-  left: 50%;
+  top: var(--orbit-cy);
+  left: var(--orbit-cx);
   width: 0;
   height: 0;
-  transform: rotateX(68deg);
-}
-
-.aurora__ring {
-  position: absolute;
   will-change: transform;
 }
 
-.aurora__ring svg {
+/* Diámetro de cada anillo respecto al ancho de las tarjetas: el interior pasa
+   justo por dentro de sus bordes, los otros dos las abrazan por fuera. */
+.orbits__half--inner {
+  --d: calc(var(--orbit-w) * 0.9);
+}
+
+.orbits__half--mid {
+  --d: calc(var(--orbit-w) * 1.22);
+}
+
+.orbits__half--outer {
+  --d: calc(var(--orbit-w) * 1.55);
+}
+
+.orbits__half {
+  position: absolute;
+  left: calc(var(--d) / -2);
+  width: var(--d);
+  overflow: hidden;
+}
+
+/* +1px de solape para que no quede una rendija en la costura. */
+.orbits__half--back {
+  top: calc(var(--d) / -2);
+  height: calc(var(--d) / 2 + 1px);
+}
+
+.orbits__half--front {
+  top: 0;
+  height: calc(var(--d) / 2);
+}
+
+.orbits__ring {
+  position: absolute;
+  left: 0;
+  width: var(--d);
+  height: var(--d);
+  will-change: transform;
+}
+
+.orbits__half--back .orbits__ring {
+  top: 0;
+}
+
+.orbits__half--front .orbits__ring {
+  top: calc(var(--d) / -2);
+}
+
+.orbits__svg {
   display: block;
   width: 100%;
   height: 100%;
   overflow: visible;
 }
 
-.aurora__ring--outer {
-  width: 118vmax;
-  height: 118vmax;
-  margin: -59vmax 0 0 -59vmax;
-}
-
-.aurora__ring--mid {
-  width: 82vmax;
-  height: 82vmax;
-  margin: -41vmax 0 0 -41vmax;
-}
-
-.aurora__ring--inner {
-  width: 50vmax;
-  height: 50vmax;
-  margin: -25vmax 0 0 -25vmax;
-}
-
-/* El color del trazo lo pone el degradado del SVG (atributo `stroke`); aquí
-   sólo el grosor. */
-.aurora__track {
+.orbits__svg circle {
   fill: none;
-  stroke-width: 1.5;
-  vector-effect: non-scaling-stroke;
+  stroke-linecap: round;
 }
 
-.aurora__track--dashed {
-  stroke-dasharray: 3 7;
+.orbits__track {
+  stroke: var(--orbit-track);
+  stroke-width: 1.2;
 }
 
-.aurora__stop--head {
-  stop-color: var(--orbit-head);
+/* Estela: un 16% del perímetro. El plano tumbado aplasta el trazo en vertical
+   (cos 72° ≈ 0.31), por eso los grosores parecen gruesos en el CSS. */
+.orbits__tail {
+  stroke: var(--orbit-tail);
+  stroke-width: 2.5;
+  stroke-dasharray: 16 84;
 }
 
-.aurora__stop--head-warm {
-  stop-color: var(--orbit-head-warm);
+.orbits__tail.is-warm {
+  stroke: var(--orbit-tail-warm);
 }
 
-.aurora__stop--tail {
-  stop-color: var(--orbit-tail);
+/* Cabeza: los últimos 4 puntos de la estela, en el extremo que va delante. */
+.orbits__head {
+  stroke: var(--orbit-head);
+  stroke-width: 4;
+  stroke-dasharray: 4 96;
+  stroke-dashoffset: -12;
+}
+
+.orbits__head.is-reverse {
+  stroke-dashoffset: 0;
+}
+
+.orbits__head.is-warm {
+  stroke: var(--orbit-head-warm);
 }
 
 /* Grano: sin él, un degradado tan amplio se ve a bandas en pantallas de 8 bits.
