@@ -185,7 +185,7 @@
   --foreground-rgb: 237, 242, 244;
   --muted-foreground: #94a3ab;
 
-  --spotlight-color: rgba(var(--accent-rgb), 0.08);
+  --spotlight-color: rgba(var(--accent-rgb), 0.13);
   /* El halo detrás del retrato es cálido, no frío: la calidez sale de la piel
      y la pared de la propia foto, así que rodearla con el acento frío la
      enfriaba. */
@@ -306,7 +306,7 @@
      secundario con holgura sobre AA. */
   --muted-foreground: #46575f;
 
-  --spotlight-color: rgba(var(--accent-rgb), 0.08);
+  --spotlight-color: rgba(var(--accent-rgb), 0.13);
   --glow-warm: rgba(var(--accent-warm-rgb), 0.22);
   --accent-inverse: #ffffff;
   --accent-glow: rgba(var(--accent-rgb), 0.22);

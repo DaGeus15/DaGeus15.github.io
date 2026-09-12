@@ -44,12 +44,18 @@ function generar(seed, n, rMin, rMax) {
   }));
 }
 
-const FAR = generar(7, 110, 0.5, 1.1);
-const NEAR = generar(23, 45, 0.9, 1.7);
-const TWINKLE = generar(91, 14, 0, 0).map((s, i) => ({
+const FAR = generar(7, 90, 0.5, 1.1);
+const NEAR = generar(23, 25, 0.9, 1.5);
+
+/* Las que titilan. Tres tamaños y, una de cada siete, destello en cruz: la
+   variedad es lo que hace que se lea como cielo y no como una rejilla de
+   puntos parpadeando a la vez. Duraciones y retrasos repartidos con
+   multiplicadores no enteros para que nunca coincidan dos en fase. */
+const TWINKLE = generar(91, 46, 0, 1).map((s, i) => ({
   ...s,
-  delay: `${((i * 0.73) % 5).toFixed(2)}s`,
-  dur: `${(2.6 + ((i * 1.37) % 2.8)).toFixed(2)}s`,
+  size: i % 7 === 0 ? "flare" : Number(s.r) > 0.55 ? "md" : "sm",
+  delay: `${((i * 0.83) % 6).toFixed(2)}s`,
+  dur: `${(1.8 + ((i * 1.37) % 3.4)).toFixed(2)}s`,
 }));
 
 export default function Starfield({ progress }) {
@@ -78,7 +84,7 @@ export default function Starfield({ progress }) {
         {TWINKLE.map((s, i) => (
           <span
             key={i}
-            className="stars__twinkle"
+            className={`stars__twinkle stars__twinkle--${s.size}`}
             style={{
               left: `${s.x}%`,
               top: `${s.y}%`,

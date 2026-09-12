@@ -113,7 +113,7 @@ export default function Home() {
         {/* Dentro de `.portfolio` a propósito: así la mitad trasera queda bajo
             el contenido (z -1) y la delantera sobre él pero por debajo de la
             barra lateral y del cajón móvil, que viven en este mismo contexto. */}
-        <Orbits progress={sceneProgress} scrollRef={contentRef} />
+        <Orbits progress={sceneProgress} scrollRef={contentRef} isDetailed={isDetailed} />
 
         {/* Sin `layout`: la geometría del raíl la anima CSS. Con proyección
             de Framer, pasar de 360px en flujo a 88px fijo se traducía en un

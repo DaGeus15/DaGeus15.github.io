@@ -161,7 +161,12 @@ romperla en silencio.
   que tiene detrás. El centro y el ancho salen de medir el panel
   (`--orbit-cx/cy/w`, escritos a mano fuera del render). El recorte de cada
   mitad es `overflow: hidden`, que el compositor resuelve; no lo cambies por
-  `clip-path` ni `mask`. Se evaluó Three.js/R3F (~155 KB gzip), OGL (~8-29 KB)
+  `clip-path` ni `mask`. Ese recorte es SÓLO para las pistas: los cometas van
+  fuera, enteros, con una copia por capa que se funde a la otra al cruzar de
+  delante a atrás (`is-away`). Dentro del recorte su halo se partía en los
+  extremos del anillo. En la vista detallada la tarjeta tapa casi toda la
+  pantalla, así que la capa delantera dibuja el anillo ENTERO (mitad lejana
+  al 50%) y los cometas van siempre delante; si no, se ven medios círculos. Se evaluó Three.js/R3F (~155 KB gzip), OGL (~8-29 KB)
   y Spline (runtime + escena, CPU alta): para anillos y cometas, CSS 3D + SVG
   da lo mismo con 0 KB. Si algún día hace falta geometría real (mallas,
   luces, partículas por miles), la opción es OGL con render bajo demanda, no

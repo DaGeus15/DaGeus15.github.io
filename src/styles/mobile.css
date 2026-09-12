@@ -354,22 +354,17 @@
 /* ── Órbitas en móvil ─────────────────────────────────────────────────────
    Con el ancho de las tarjetas de un teléfono (~360px) los anillos quedaban
    pequeños en mitad de la pantalla y se leían como ruido sobre los iconos.
-   Aquí se agrandan para que enmarquen la pantalla por los bordes, y la pista
-   baja: en una columna estrecha la mitad delantera cruza más texto. */
+   Aquí se agrandan para que enmarquen la pantalla por los bordes. */
 @media (max-width: 1023px) {
-  .orbits__half--inner {
+  .orbits__size--inner {
     --d: calc(var(--orbit-w) * 1.25);
   }
 
-  .orbits__half--mid {
+  .orbits__size--mid {
     --d: calc(var(--orbit-w) * 1.75);
   }
 
-  .orbits__half--outer {
+  .orbits__size--outer {
     --d: calc(var(--orbit-w) * 2.35);
-  }
-
-  .orbits--front .orbits__track {
-    stroke: transparent;
   }
 }

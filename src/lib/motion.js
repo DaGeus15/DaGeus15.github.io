@@ -39,8 +39,14 @@ export const spring = {
      spotlight, al dock y a la inclinación del retrato, que piden cosas
      opuestas, así que se parte en tres. */
 
-  /** Fondo que va por detrás del cursor a propósito (spotlight). */
+  /** Cosas de fondo que van por detrás del puntero a propósito (inclinación
+      de las órbitas). La pereza es lo que las sitúa lejos. */
   ambient: { type: "spring", bounce: 0, visualDuration: 0.5 },
+  /** Halo que sigue al cursor. Antes usaba `ambient` (0.5s) y se quedaba
+      atrás: una luz "del cursor" que llega medio segundo tarde se lee como
+      lag, no como profundidad. Con 0.14s va pegada y aún suaviza el temblor
+      del ratón. */
+  cursor: { type: "spring", bounce: 0, visualDuration: 0.14 },
   /** Magnificación del dock. Rápido y con un punto de sobrepaso, como macOS. */
   dock: { type: "spring", bounce: 0.18, visualDuration: 0.28 },
   /** Inclinación 3D del retrato: tiene que ir pegada al cursor. */

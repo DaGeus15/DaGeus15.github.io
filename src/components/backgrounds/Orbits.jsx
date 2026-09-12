@@ -72,7 +72,7 @@ const SCROLL_PUSH = 900;
 /** Grosor del arco del cometa, en px. Debe cuadrar con `.orbits__arc path`. */
 const ARC_STROKE = 3;
 
-export default function Orbits({ progress, scrollRef }) {
+export default function Orbits({ progress, scrollRef, isDetailed = false }) {
   const reduce = useReducedMotion();
   const k = reduce ? 0 : 1;
 
@@ -80,6 +80,7 @@ export default function Orbits({ progress, scrollRef }) {
   const frontRef = useRef(null);
   const angles = useRef(null);
   const comets = useRef(null);
+  const sides = useRef(null);
 
   // Puntero normalizado a -1…1 desde el centro de la pantalla.
   const pointerX = useMotionValue(0);
@@ -123,10 +124,10 @@ export default function Orbits({ progress, scrollRef }) {
           if (!layer) continue;
           for (const [name, value] of Object.entries(vars)) layer.style.setProperty(name, value);
           for (const ring of RINGS) {
-            const half = layer.querySelector(`.orbits__half--${ring.id}`);
-            if (!half) continue;
-            const radio = half.offsetWidth / 2;
-            half.querySelectorAll(".orbits__comet").forEach((comet, i) => {
+            const box = layer.querySelector(`.orbits__size--${ring.id} .orbits__comets`);
+            if (!box) continue;
+            const radio = box.offsetWidth / 2;
+            box.querySelectorAll(".orbits__comet").forEach((comet, i) => {
               construirArco(comet, radio, ring.comets[i].span, ring.speed < 0);
             });
           }
@@ -164,10 +165,11 @@ export default function Orbits({ progress, scrollRef }) {
       comets.current = RINGS.map((ring) =>
         ring.comets.map((_, ci) =>
           layers.map((l) =>
-            l.querySelector(`.orbits__half--${ring.id} .orbits__comet[data-comet="${ci}"]`),
+            l.querySelector(`.orbits__size--${ring.id} .orbits__comet[data-comet="${ci}"]`),
           ),
         ),
       );
+      sides.current = RINGS.map((ring) => ring.comets.map(() => null));
     }
 
     const velocidad = reduce ? 0 : Math.abs(progress.getVelocity());
@@ -181,8 +183,19 @@ export default function Orbits({ progress, scrollRef }) {
         const a = (angles.current[ri][ci] + paso) % 360;
         angles.current[ri][ci] = a;
         const t = `rotate(${a.toFixed(2)}deg)`;
-        for (const el of comets.current[ri][ci]) {
-          if (el) el.style.transform = t;
+        const [back, front] = comets.current[ri][ci];
+        if (back) back.style.transform = t;
+        if (front) front.style.transform = t;
+
+        // ¿Delante o detrás? La cabeza está a (R·cos a, R·sin a) en el plano, y
+        // la mitad cercana es la de y > 0. En la vista detallada, siempre
+        // delante: detrás de la tarjeta grande no se vería. Sólo se toca la
+        // clase cuando cambia de lado, no en cada fotograma.
+        const delante = isDetailed || Math.sin((a * Math.PI) / 180) > 0;
+        if (sides.current[ri][ci] !== delante) {
+          sides.current[ri][ci] = delante;
+          back?.classList.toggle("is-away", delante);
+          front?.classList.toggle("is-away", !delante);
         }
       });
     });
@@ -191,23 +204,45 @@ export default function Orbits({ progress, scrollRef }) {
   const tiltX = useTransform(py, (v) => PLANE_TILT - v * 5 * k);
   const tiltY = useTransform(px, (v) => v * 7 * k);
 
-  const layer = (half, ref) => (
-    <div ref={ref} className={`orbits orbits--${half}`} aria-hidden="true">
+  /* Cada capa lleva las DOS mitades de pista y el CSS decide cuál se ve: en
+     la vista resumida, la trasera en `--back` y la delantera en `--front`; en
+     la detallada (`is-detailed`) la tarjeta tapa casi toda la pantalla y la
+     mitad trasera desaparecía bajo el cristal —se veían medios círculos—, así
+     que `--front` muestra el anillo entero, con la mitad lejana más tenue.
+
+     Los cometas NO van dentro de las mitades recortadas. Recortados, su halo
+     se partía en los extremos del anillo: sobresalía del recorte lateral y
+     además quedaba medio encima y medio debajo de las tarjetas. Ahora cada
+     cometa se dibuja entero en una capa y, al cruzar de delante a atrás, se
+     funde a la otra copia (clase `is-away`, ver el bucle). */
+  const layer = (name, ref) => (
+    <div
+      ref={ref}
+      className={`orbits orbits--${name} ${isDetailed ? "is-detailed" : ""}`}
+      aria-hidden="true"
+    >
       <motion.div className="orbits__plane" style={{ rotateX: tiltX, rotateY: tiltY }}>
         {RINGS.map((ring) => (
-          <div key={ring.id} className={`orbits__half orbits__half--${half} orbits__half--${ring.id}`}>
-            <div className="orbits__ring">
-              <svg className="orbits__svg">
-                <circle
-                  cx="50%"
-                  cy="50%"
-                  r="49.6%"
-                  pathLength="100"
-                  className={`orbits__track orbits__track--${ring.id}`}
-                />
-              </svg>
+          <div key={ring.id} className={`orbits__system orbits__size--${ring.id}`}>
+            {["back", "front"].map((half) => (
+              <div key={half} className={`orbits__half orbits__half--${half}`}>
+                <div className="orbits__ring">
+                  <svg className="orbits__svg">
+                    <circle
+                      cx="50%"
+                      cy="50%"
+                      r="49.6%"
+                      pathLength="100"
+                      className={`orbits__track orbits__track--${ring.id}`}
+                    />
+                  </svg>
+                </div>
+              </div>
+            ))}
+
+            <div className="orbits__comets">
               {ring.comets.map((comet, ci) => {
-                const grad = `orbit-arc-${half}-${ring.id}-${ci}`;
+                const grad = `orbit-arc-${name}-${ring.id}-${ci}`;
                 return (
                   <div
                     key={ci}
