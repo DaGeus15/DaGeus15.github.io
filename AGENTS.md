@@ -7,258 +7,156 @@ This version has breaking changes — APIs, conventions, and file structure may 
 # Convenciones del proyecto
 
 Portafolio personal. Next.js 16 App Router, export estático a GitHub Pages.
-Ver `README.md` para la estructura completa.
+Estructura en `README.md`.
 
-## Cómo leer estas reglas
+Estas reglas no prohíben el movimiento ni el color: explican cómo meterlos sin
+perder fotogramas, sin romper la hidratación y sin perder el tono profesional.
+Cada una salió de un bug o de una decisión ya pagada. Si una te estorba para
+algo mejor, cambiala y actualizá su porqué; lo que no vale es romperla en
+silencio.
 
-Casi ninguna es un "no animes" ni un "no toques". Son lo contrario: el
-movimiento es bienvenido, y bastante de lo que hay aquí explica CÓMO meterlo
-sin que cueste fotogramas —`transform`/`opacity` en vez de `width`/`filter`,
-todo colgando de `MotionConfig`, springs con vocabulario—. Son atajos a
-decisiones que ya se pagaron una vez, no un cerco. Si una regla te estorba
-para algo mejor, cambiala y actualizá su explicación; lo que no vale es
-romperla en silencio.
+## Dirección
 
-## Reglas
+- **El sitio se lee como un documento técnico, no como una demo de efectos.**
+  Lo técnico es CONTENIDO (diagramas de arquitectura, métricas, metadatos en
+  mono), nunca disfraz (terminal falsa, texto verde sobre negro). El visitante
+  principal es un reclutador con 30 segundos: quién, qué hace y la prueba,
+  arriba y sin navegación que aprender.
+- **Una sola página, una sola forma de leerla**, más una página por proyecto
+  (`/[lang]/projects/[id]`). No vuelvas a meter modos de lectura ni "ver más"
+  que escondan contenido: lo que está oculto no se lee.
+- **Los hechos salen del CV** (`public/Dayle-Garcia-Fernandez-CV-*.pdf`). Si el
+  CV cambia, `content/` cambia con él; no inventes cifras ni herramientas.
 
-- **El contenido no se escribe en los componentes.** Todo el texto y los datos
-  van en `src/content/`. Los componentes sólo los consumen.
-- **Los valores de diseño no se escriben inline.** Colores, espaciado, radios,
-  blur y duraciones salen de `src/styles/tokens.css`.
-- **Las animaciones usan los presets** de `src/lib/motion.js`. No inventes
-  springs sueltos por componente.
-- **No uses la prop `layout` de Framer Motion en el armazón** (barra lateral,
-  panel de contenido, tarjetas de sección). La proyección de layout anima un
-  `scale` inverso, no `width`/`height`: como los hijos no llevan proyección
-  propia, el contenido se ve estirado durante la transición. La geometría del
-  armazón la anima CSS — los dos modos declaran los mismos lados sobre
-  elementos `position: fixed`, así que el cambio es interpolable de forma
-  nativa. Ver el bloque de escritorio en `src/styles/layout.css`.
-- Si cambiás `--dur-shell` en `tokens.css`, actualizá `SHELL_MS` en
-  `src/lib/motion.js` (lo usa el reanclado del scroll al colapsar).
-- **Nunca apiles `backdrop-filter` sobre `backdrop-filter`.** Un cristal
-  dentro de otro muestrea la salida ya desenfocada del padre: no separa nada,
-  lava el contraste y paga un segundo repintado por fotograma. Llegó a haber
-  27 elementos así, y el peor era `.specular-button` —`blur(20px)` dentro de
-  una tarjeta con `blur(20px)`, material idéntico al padre—. La tarjeta
-  exterior es el material; lo de adentro va con `--fill-raised`. El peso del
-  vidrio codifica jerarquía y sale de la escala de `tokens.css`:
-  `--glass-thin` para controles sueltos, `--glass-regular` para tarjetas y
-  paneles, `--glass-thick` para el cromo que tapa contenido (raíl, cajón,
-  cabecera móvil). Los tres derivan de `--glass-blur` con `calc()` para que
-  `prefers-reduced-transparency` los siga apagando de una sola vez.
-- **El cajón móvil es un gesto, no una transición.** No le vuelvas a poner
-  `transition: transform` en `mobile.css`: una transición de CSS no se deja
-  agarrar a media animación, no se puede revertir y no sabe nada de la
-  velocidad del dedo. El `transform` lo escribe `useDrawerGesture` en el
-  atributo `style`. Lo único que queda en CSS es el `translateX(-100%)` de
-  antes de hidratar, para que no aparezca abierto en el primer pintado. Al
-  soltar se decide con `project()` por a dónde VA el gesto, no por dónde se
-  soltó, y la velocidad de soltado entra al muelle como velocidad inicial: sin
-  eso se nota la costura entre arrastrar y animar. Si cambiás `--drawer-w`,
-  cambiá también `DRAWER_WIDTH` en `src/lib/breakpoints.js`.
-- **Movimiento reducido se decide efecto a efecto, no en bloque.** Hubo un
-  `<MotionConfig reducedMotion="user">` y una regla CSS que llevaba todas las
-  transiciones a 0.01ms. Juntos dejaban la página muerta para cualquiera con
-  "Efectos de animación" apagado en Windows —muy común, y el navegador lo
-  traduce a `prefers-reduced-motion`—, mientras el resto de sitios seguían
-  animando. Ahora `MotionConfig` va con `reducedMotion="never"` y `base.css`
-  sólo quita el scroll suave. La regla: lo que mueve la ESCENA (fondo que
-  gira, rueda 3D, inclinación con el puntero, paralaje) lee
-  `useReducedMotion()` y pasa a una versión suave —fundido, cambio de color,
-  un cometa más lento—; lo pequeño (hover, pulsación, dock, entradas de
-  pocos px) anima siempre. Nunca "quieto del todo": el peor caso es "suave".
-- **Ningún ancestro de un cristal puede llevar `will-change: opacity`
-  (ni `filter`, `mask`, `clip-path` u `opacity` < 1 en reposo).** Todos esos
-  convierten al ancestro en "backdrop root", y el `backdrop-filter` de dentro
-  sólo muestrea hasta él: deja de ver el fondo de la página y el cristal no
-  desenfoca nada. Pasó con `WheelItem` (`will-change: transform, opacity`):
-  todas las tarjetas del resumen dejaban ver las estrellas nítidas. Si hay que
-  animar opacidad en un envoltorio de cristal, que sea sólo durante el efecto
-  y sin `will-change` de opacidad.
-- **Nunca escribas `-webkit-backdrop-filter` a mano.** Lightning CSS (el
-  compilador de CSS de Next 16) deduplica la pareja estándar + prefijada y se
-  queda sólo con la prefijada, que los navegadores actuales ya no aplican:
-  el resultado es que el efecto cristal desaparece entero del build. Escribí
-  sólo `backdrop-filter` y dejá que el compilador añada los prefijos.
-- **El cuerpo de una sección expandida debe llevar `.section-body` como hijo
-  directo de la tarjeta**: de ahí cuelga el `overflow-y: auto` que la hace
-  desplazable. La tarjeta expandida tiene `overflow: hidden`, así que una
-  sección sin ese cuerpo queda recortada y sin forma de desplazarla. Es lo
-  que le pasaba a `Contact.jsx`, que construye su tarjeta sin pasar por
-  `Section.jsx`. Al añadir una sección nueva, probala expandida en una
-  ventana baja (~760px) y comprobá que se llega al final.
-- **AnimatePresence recibe un único hijo** en `ContentArea`, y todos los
-  hijos posibles caen en la misma celda de `.content-view`. No vuelvas a
-  pasarle una lista con `mode="popLayout"`: no saca la saliente del flujo,
-  las dos se reparten el `flex: 1` a media altura y la entrante aparece
-  debajo de la saliente.
-- **Un solo punto de corte responsive: 1024px.** Definido en
-  `src/lib/breakpoints.js` y replicado en `src/styles/mobile.css`. No
-  introduzcas 768px ni 1023px por separado.
-- **Alturas de viewport siempre en `dvh`**, nunca `vh`.
-- **Sin recursos de CDNs externos.** El sitio es estático y debe funcionar
-  offline; los assets viven en `public/`.
-- **Framer Motion es la única librería de animación.** No añadas GSAP, Three.js
-  ni react-spring: ya estuvieron y se quitaron por peso y por quedar huérfanas.
-- **La paleta sale de la foto, pero por complemento, no por copia.** Cuantizar
-  `public/dayle.jpeg` en OKLCH desmiente lo que decía aquí antes: la foto NO
-  tiene teal. La ropa y las sombras salen con croma 0.013-0.018, que es gris
-  neutro con un matiz frío imperceptible. La única familia con croma real es
-  la cálida de la piel y la pared, h≈55 con C 0.048-0.066. Por eso: los
-  lienzos son los neutros de la foto (claro cálido h≈85, oscuro frío h≈230),
-  el acento es el COMPLEMENTO del cálido (55+180=235, fijado en h=232 para
-  conservar un rastro de teal), y el cálido secundario es h=55 con el croma
-  que la foto tiene de verdad. h≈232 es además donde sRGB permite más croma
-  con contraste accesible, así que el principio y la gama coinciden. Un solo
-  tono para los dos temas: lo único que cambia es la L. Si cambia la foto,
-  volvé a cuantizar, sacá el tono con croma real y usá su complemento — no lo
-  elijas a ojo. El cálido no es sólo un token declarado: se USA como segunda
-  temperatura para que la paleta se lea como una combinación y no como un
-  tema monocromo. Aparece en `--accent-gradient` (que va cool→warm, no
-  cool→cool), en la mitad cálida de la malla del fondo (`--mesh-2`/`--mesh-4`)
-  y en `--glow-warm`, el halo detrás del retrato. El frío sigue siendo el
-  acento de interfaz (bordes, foco, estados activos); el cálido es la capa
-  ambiental. Dos temperaturas con papeles claros, no una sola repetida.
-- **Nada de degradados animados a pantalla completa.** El halo del cursor
-  reconstruía un `radial-gradient` en la propiedad `background` de un elemento
-  de 100vw × 100dvh en cada `mousemove`. Los degradados no se componen en GPU:
-  eso era repintar la pantalla entera en el hilo principal por fotograma, y
-  además invalidaba el `backdrop-filter` de las ocho superficies de cristal.
-  Ahora el degradado es estático y sólo se mueve su `transform`. La misma
-  regla mató la deriva perpetua de `.aurora__mesh`: esa capa es el fondo de
-  todos los cristales, así que animarla obligaba a recalcular los ocho
-  desenfoques para siempre, por un movimiento de ±1,5% en 48s que nadie ve.
-- **La escena de fondo se mueve con el scroll, nunca sola.** Un único
-  progreso (`useBackdropProgress`: scroll resumido, o la sección abierta en la
-  detallada) mueve dos cosas: `Aurora.jsx` gira dos campos de color en
-  sentidos opuestos, y `Orbits.jsx` gira tres anillos alrededor de las
-  tarjetas. Está permitido porque el coste —recalcular los
-  `backdrop-filter` que tiene delante— sólo se paga mientras el visitante
-  desplaza, que es cuando el movimiento se ve; con la página quieta no cuesta
-  nada. Lo perpetuo sólo vale si es PEQUEÑO: los cometas de las órbitas giran
-  siempre, pero cada uno es una capa del tamaño de su arco que rota alrededor
-  del centro del anillo, y las pistas están quietas; así el daño por fotograma
-  detrás del cristal es un recorte de un par de cientos de px, no el anillo.
-  Las estrellas titilan con opacidad en `span` sueltos, no dentro del SVG. Lo
-  que sigue prohibido es mover en bucle una capa GRANDE (una deriva de la
-  malla, un anillo SVG entero girando, un canvas o una escena WebGL a 60fps).
-  Por eso no hay Three.js aquí: la
-  profundidad sale de `perspective` + `rotateX` en CSS y de capas pintadas una
-  sola vez que sólo cambian de `transform`. Con movimiento reducido el fondo no
-  gira ni se desplaza (eso es lo que marea): el campo frío se APAGA con el
-  scroll y deja el cálido, un cambio de color en su sitio; y los cometas de las
-  órbitas siguen avanzando al 40%, sin inclinación. Progreso 0 =
-  transformaciones a cero y opacidad 1, para que servidor y cliente hidraten
-  igual.
-- **Las órbitas son anillos partidos en dos capas, no un fondo.** Detrás de
-  todo, las tarjetas las tapaban y no se veían. Cada anillo se pinta dos
-  veces con las mismas transformaciones: la mitad lejana en `.orbits--back`
-  (z -1, bajo el contenido) y la cercana en `.orbits--front` (z 50, sobre el
-  contenido pero bajo la barra lateral y el cajón). Por eso las dos capas van
-  DENTRO de `.portfolio`: fuera, la delantera taparía el cajón móvil. La capa
-  delantera no encarece el cristal, porque `backdrop-filter` sólo muestrea lo
-  que tiene detrás. El centro y el ancho salen de medir el panel
-  (`--orbit-cx/cy/w`, escritos a mano fuera del render). El recorte de cada
-  mitad es `overflow: hidden`, que el compositor resuelve; no lo cambies por
-  `clip-path` ni `mask`. Ese recorte es SÓLO para las pistas: los cometas van
-  fuera, enteros, con una copia por capa que se funde a la otra al cruzar de
-  delante a atrás (`is-away`). Dentro del recorte su halo se partía en los
-  extremos del anillo. En la vista detallada la tarjeta tapa casi toda la
-  pantalla, así que la capa delantera dibuja el anillo ENTERO (mitad lejana
-  al 50%) y los cometas van siempre delante; si no, se ven medios círculos. Se evaluó Three.js/R3F (~155 KB gzip), OGL (~8-29 KB)
-  y Spline (runtime + escena, CPU alta): para anillos y cometas, CSS 3D + SVG
-  da lo mismo con 0 KB. Si algún día hace falta geometría real (mallas,
-  luces, partículas por miles), la opción es OGL con render bajo demanda, no
-  Three.
-- **Los proyectos de la vista resumida van en carril, no en rejilla.** Cinco
-  tarjetas en rejilla `auto-fit` caían en tres filas dentro del panel resumido
-  y estiraban la sección a 119vh —más alta que la pantalla—, y al estrecharse
-  el panel colapsaban a una columna y era peor. En carril (`.projects-grid` es
-  un flex con `overflow-x`) los cinco van siempre en una fila y la sección mide
-  lo que una tarjeta a cualquier ancho, del tamaño de las demás. No lo
-  vuelvas a rejilla: el desbordamiento se queda dentro del carril y la página
-  no se desplaza de lado. Si sumás secciones al resumen, medí que ninguna
-  tarjeta pase de ~85vh (probá a 1024, 1440 y 1920).
-- **La rueda de la vista resumida es perspectiva, no desenfoque.** Cada tarjeta
-  del resumen gira como en una rueda al acercarse a los bordes del scroll
-  (`WheelItem.jsx`). Lo que crea la ilusión de rueda es la INCLINACIÓN 3D
-  (`rotateX`) más la escala y la opacidad —todo `transform`/`opacity`, que van
-  al compositor—, no el desenfoque. El progreso de scroll se alisa con un
-  `useSpring` (`scrollSpring` en `motion.js`) porque el valor crudo salta con
-  cada muesca de la rueda del ratón. Si tocás los rangos, mantené el mecanismo
-  en transform: es lo que sostiene los 60fps.
-- **El `blur` de la rueda es una excepción consciente y acotada, y va FUERA
-  del render.** Contradice la regla de no animar `blur()` sobre algo con
-  `backdrop-filter`, y lo hace a propósito porque es el remate que se pidió.
-  Se mantiene a raya: tope de 3px, sólo cerca de los bordes, sólo cuatro
-  tarjetas, y SÓLO en punteros finos —en móvil la rueda es puro transform—.
-  Además se aplica a mano (`el.style.filter`) en un efecto, no en el `style` de
-  React: framer no resuelve un `useMotionTemplate` al renderizar en servidor,
-  así que la propiedad salía en cliente y no en servidor y rompía la
-  hidratación. Si aparece jank, lo primero que se baja es este blur.
-- **No ramifiques el ÁRBOL RENDERIZADO según `useReducedMotion()` ni según una
-  media query.** Valen distinto en el servidor que en el cliente, así que
-  devolver `<div>` en un caso y `<motion.div>` en otro descuadra la
-  hidratación; React avisa de que no va a corregir los atributos y deja
-  pegados los del servidor. Eso fue exactamente el bug de la rueda: el HTML
-  llegaba con las tarjetas ya atenuadas y borrosas y no se arreglaba hasta que
-  se hacía scroll. Renderizá siempre la misma estructura y apagá el efecto por
-  dentro (que el valor de reposo sea el estado neutro). Regla de bolsillo: el
-  peor caso de un efecto debe ser "no se nota", nunca "se ve roto".
-- **El progreso de scroll de la rueda se mide con rectángulos en vivo, no con
-  `useScroll`.** `useScroll` mide contenedor y objetivo al montar; si en ese
-  momento la foto y los iconos aún no han cargado, la medida queda mal y el
-  progreso se atasca. Un `getBoundingClientRect()` no puede quedar obsoleto, y
-  el `ResizeObserver` de `WheelItem` recalcula cuando algo cambia de tamaño.
-- **Todo el texto traducible vive en `src/content/copy.js`, en `es` y `en`.**
-  Lo que no se traduce —rutas, repos, stack, iconos, niveles de idioma— se
-  queda en su archivo de `src/content/` y se une en `src/lib/useContent.js`.
-  El cruce es POR CLAVE (`id` de proyecto, `key` de idioma), nunca por
-  posición, para que reordenar una lista no descoloque las traducciones. Los
-  componentes piden `useContent()` y no saben en qué idioma están.
-- **El HTML estático se genera en español, y por eso `getServerSnapshot`
-  devuelve siempre `es`.** React hidrata con ese valor —el del HTML— y sólo
-  después vuelve a renderizar con el idioma real del visitante; un efecto en
-  `LanguageProvider` avisa al store si difieren. Si hicieras que el snapshot
-  del servidor dependa del navegador, un visitante en inglés recibiría un texto
-  distinto al del HTML y React abortaría la hidratación.
-- **El tamaño del retrato lo pone el CSS (`--photo-h` en `dvh`), no `animate`
-  de framer.** Iba clavado a 240x330px en el JSX y en un portátil de 768px de
-  alto la barra lateral no cabía: los botones de tema, idioma y vista quedaban
-  fuera de pantalla. Junto con el bloque `@media (max-height: 900px)` de
-  `cards.css`, la columna se comprime en ventanas bajas.
-- **En el dock se anima `scale`, nunca `width`/`height`.** Ancho y alto
-  disparan layout en cada fotograma. El precio es que los vecinos no se
-  apartan como en macOS; con el hueco que hay, no se nota.
-- **En tema claro, nada blanco sobre blanco.** Bordes, reflejos y estados
-  llevan el acento; el lienzo lleva matiz, no gris neutro. Un fondo sin color
-  deja a `saturate()` sin nada que hacer y el cristal desaparece aunque el
-  `backdrop-filter` esté bien puesto.
-- **`--accent` es para texto y bordes; `--accent-fill` para superficies con
-  texto blanco encima.** No los intercambies: el acento claro del tema oscuro
-  sólo da 3:1 contra blanco y no pasa AA.
-- **Los tamaños de componente van en `rem`, no en `px`.** Por encima de 1440px
-  `base.css` sube el tamaño de raíz, y eso es lo que hace que la interfaz
-  entera escale en un monitor grande. Un `44px` a pelo se queda quieto.
-- **No vuelvas a poner un tope de ancho con `right: auto` en el panel
-  detallado.** Lo hubo (1500px) y dejaba el marco en 30px a la izquierda y
-  272px a la derecha en un 1920: rompía justo la simetría que `--frame-gap`
-  garantiza. El ancho extra lo absorben la escala y las rejillas `auto-fit`;
-  el texto corrido se limita con `--measure`.
-- **`auto-fit` y un hijo con `grid-column: 1 / -1` no se llevan.** `auto-fit`
-  colapsa las pistas vacías, y un hijo que las cruza todas hace que ninguna lo
-  esté: en 1920 `.setup-grid` generaba cinco pistas para tres tarjetas. Si la
-  rejilla tiene una tarjeta ancha, declará las columnas explícitamente.
-- **El tema sigue al navegador por defecto.** `data-theme` es el tema aplicado y
-  `data-theme-source` dice si viene del sistema o de un override del visitante;
-  el botón sólo fija override, y al volver a coincidir con el sistema lo borra.
-  No añadas efectos: el script inline de `layout.js` deja los dos atributos
-  listos antes de hidratar.
-- Estado de puntero/scroll: usar motion values, no `useState` en handlers de
-  `mousemove` (provoca un render de React por evento).
-- Evitar `setState` dentro de `useEffect` en el montaje; usar
-  `useSyncExternalStore` (ver `lib/useMediaQuery.js`, `lib/useMounted.js`).
+## Contenido e idioma
+
+- **Nada de texto ni datos en los componentes.** Todo vive en `src/content/`.
+- **Lo traducible va en `copy.js` (`es` y `en`); lo demás, en su archivo**
+  (`projects.js`, `skills.js`, `experience.js`, `profile.js`…). Se unen en
+  `lib/content.js` **por clave** (`id`), nunca por posición.
+- **El idioma sale de la URL: `/es/` y `/en/` son HTML distintos.** No lo
+  detectes en el cliente ni lo guardes en estado: antes se generaba un único
+  HTML en español y se cambiaba tras hidratar, y el visitante en inglés veía el
+  español un instante y Google sólo indexaba una versión. Sólo la raíz
+  (`app/(root)/page.js`) mira el navegador, para redirigir. Es un segundo
+  layout raíz (grupo de rutas) porque el de `[lang]` necesita el idioma para
+  `<html lang>`.
+- **`lib/locales.js` y `lib/content.js` son módulos neutros** (sin
+  `"use client"`): los usan páginas y metadatos en el servidor. Una constante
+  importada desde un módulo `"use client"` llega al servidor como referencia
+  de cliente, no como valor.
+- **Las secciones son componentes de servidor** que reciben `t =
+  getContent(lang)`. Sólo hidratan las piezas interactivas (navegación, tema,
+  CV, formulario, tarjetas con halo, diagramas), que usan `useContent()`.
+  **No pases el objeto `ui` entero a un componente de cliente**: lleva
+  funciones y no se puede serializar; pasá las cadenas que use.
+- **El tema sigue al navegador.** `data-theme` es el aplicado y
+  `data-theme-source` dice si viene del sistema o del visitante; el script
+  inline del layout deja los dos listos antes de hidratar.
+
+## Diseño y tokens
+
+- **Colores, espaciado, radios y duraciones salen de `styles/tokens.css`.**
+  Tamaños en `rem` (`base.css` sube la raíz por encima de 1440px); alturas de
+  contenedor en `dvh`, nunca `vh`.
+- **Mona Sans para leer, mono del sistema para metadatos** (fechas, stack,
+  protocolos, índices). La mono marca lo que es dato frente a lo que es prosa;
+  no la uses para párrafos.
+- **La paleta sale de la foto por complemento, no por copia.** La única familia
+  con croma real en `public/dayle.jpeg` es la cálida (h≈55); el acento es su
+  complemento (h=232). Mismo tono en los dos temas; sólo cambia la L. Frío =
+  interfaz; cálido = ambiental (segundo resplandor, paquetes asíncronos). Si
+  cambia la foto, recuantizá en OKLCH; no elijas a ojo.
+- **`--tech-core/data/cloud` codifican datos**, la capa de cada tecnología. Van
+  en texto, bordes, halos y nodos de diagrama, nunca de relleno bajo texto. Se
+  aplican con `data-layer` (ver `bento.css`). Contraste ≥8:1 en oscuro, ≥5:1
+  en claro.
+- **`--accent` para texto y bordes; `--accent-fill` para superficies con texto
+  blanco.** El acento del tema oscuro sólo da 3:1 contra blanco.
+- **La profundidad la dan un borde de 1px y un cambio de luminosidad**, no
+  sombras grandes ni cristal. En claro, nada blanco sobre blanco.
+- **El retrato de la columna es un recorte aparte** (`dayle-avatar.jpg`, cara y
+  hombros). A 88px, el retrato entero en un cuadrado dejaba la cara diminuta.
+  Si cambia la foto, regenerá el recorte (con `sharp`, ya instalado).
+
+## Cristal
+
+- **Sólo la barra móvil lleva `backdrop-filter`**: es lo único que se desplaza
+  sobre contenido. Tarjetas y paneles son superficies opacas. Si añadís otro
+  cristal: nunca dentro de otro (muestrea la salida ya desenfocada), ningún
+  ancestro con `opacity` < 1, `filter`, `mask` o `will-change: opacity` (lo
+  convierte en backdrop root y deja de ver el fondo), y el peso sale de
+  `--glass-blur` para que `prefers-reduced-transparency` lo apague.
+- **No escribas `-webkit-backdrop-filter` ni `-webkit-mask` a mano.** Lightning
+  CSS se queda con la versión prefijada y el efecto desaparece del build.
+
+## Movimiento
+
+- **Framer Motion es la única librería de animación**, y los springs salen de
+  `lib/motion.js` (`bounce` + `visualDuration`). Sin GSAP, Three.js ni
+  react-spring. Nada rebota: no hay gestos con inercia.
+- **Sólo `transform` y `opacity` en lo que se anima por fotograma.** La línea
+  de la navegación y el subrayado del correo son `scaleX`, no `width` ni
+  `background-size`.
+- **Las entradas son CSS**, para que funcionen antes de hidratar y sin JS:
+  `.enter` (cascada al cargar, `--i` es el orden) y `.reveal` (ligada al scroll
+  con `animation-timeline: view()`; sin soporte, el contenido simplemente
+  está). No uses `initial={{ opacity: 0 }}` de framer para entradas: el HTML
+  sale invisible hasta que hidrata.
+- **Movimiento reducido se decide efecto a efecto.** `MotionConfig` va con
+  `reducedMotion="never"` y `base.css` sólo quita el scroll suave. Lo pequeño
+  (hover, entradas de pocos px, desplegables, latidos) anima siempre; lo que
+  se mueve en bucle y explica algo (los paquetes de los diagramas) va más
+  lento. Peor caso: "suave", nunca "quieto".
+- **Nada grande se mueve.** El fondo es estático: cuadrícula y resplandores
+  pintados una vez. Lo único que se mueve es la zona de la cuadrícula bajo el
+  cursor, un círculo desplazado por `transform` con su cuadrícula interior
+  desplazada al revés (ver `Backdrop.jsx`). Los halos de las tarjetas, igual.
+  Un degradado que se reconstruye por fotograma o una capa grande en bucle,
+  no.
+- **Lo perpetuo, sólo si es pequeño**: los latidos (`.live-dot`, el nodo del
+  puesto actual) y los paquetes SMIL de los diagramas, que además se pausan
+  fuera de pantalla. El pulso del CV suena tres veces y se calla.
+- **No ramifiques el árbol renderizado según `useReducedMotion()` o una media
+  query**, ni cambies atributos por ellos en el render: descuadra la
+  hidratación. Misma estructura siempre; el ajuste va en un efecto.
+- **Puntero y scroll con motion values**, no `useState` en `pointermove`. Nada
+  de `setState` en el montaje: `useSyncExternalStore`.
+- **El scroll-spy marca la sección que cruza una línea al 40% de la altura**,
+  no la de mayor proporción visible: una sección más alta que la pantalla
+  nunca tiene proporción alta y la navegación se quedaba una por detrás. Los
+  ids deben ser estables (constante de módulo).
+
+## Layout y CSS
+
+- **Un solo punto de corte de VENTANA: 1024px** (`lib/breakpoints.js`). Por
+  debajo, una columna y la barra móvil; por encima, la columna fija. Lo que
+  depende del ancho de un PANEL usa `@container` (ver `bento.css`).
+- **Un `@media` que sobrescribe una regla va DESPUÉS de ella.** Con la misma
+  especificidad gana la última: la barra móvil salió visible en escritorio y
+  los botones de tema duplicados en móvil por tener el `@media` delante. Cada
+  módulo lleva sus `@media` junto a lo que ajustan.
+- **La columna fija tiene que caber entera** a 1366×768, con el CV a la vista.
+  Si le añadís algo, compensalo en el bloque `max-height: 900px` de
+  `shell.css`.
+- **Columnas explícitas si hay tarjetas de dos tramos.** `auto-fit` no colapsa
+  pistas vacías cuando un hijo cruza varias.
+- **Los diagramas no se encogen hasta ser ilegibles**: en pantalla estrecha se
+  desplazan de lado dentro de su marco (`min-width` del SVG).
+- **Enlace estirado para tarjetas enlazables**: el `<a>` es el título y su
+  `::after` cubre la tarjeta. Nada de enlaces anidados; lo que tenga que ser
+  pulsable aparte va por encima con su propio `z-index`.
+- **El hover enciende, no revela.** Todo se ve sin hover; los estilos de hover
+  van bajo `(hover: hover) and (pointer: fine)` o se quedan pegados tras un
+  toque.
+- **Los desplegables son `grid-template-rows: 0fr → 1fr`**, sin medir alturas,
+  con `inert` en el cuerpo cerrado y el aire en márgenes de los hijos.
+
+## Dependencias
+
+- **Sin CDNs externos.** El sitio es estático y funciona offline; assets en
+  `public/`. Los iconos que faltan se generan como SVG local desde
+  `react-icons/si`.
 
 ## Antes de dar algo por terminado
 
@@ -267,5 +165,5 @@ npm run lint
 npm run build
 ```
 
-`next export` no existe en Next 16. `output: 'export'` hace que `next build`
-genere `out/`.
+`next export` no existe en Next 16: `output: 'export'` hace que `next build`
+genere `out/`. Con `trailingSlash` cada ruta sale como `ruta/index.html`.

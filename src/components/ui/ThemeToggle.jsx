@@ -6,33 +6,30 @@ import { useTheme } from "@/lib/theme";
 import useContent from "@/lib/useContent";
 import { tween } from "@/lib/motion";
 
-/** Botón de cambio de tema con el icono animado. */
-export default function ThemeToggle({ className = "", size = 18 }) {
+/** Cambio de tema. Sigue al navegador salvo que el visitante lo fije. */
+export default function ThemeToggle() {
   const { theme, toggleTheme, isDark, followsSystem } = useTheme();
   const { ui } = useContent();
-  const modo = isDark ? ui.themeDark : ui.themeLight;
+  const mode = isDark ? ui.themeDark : ui.themeLight;
 
   return (
     <button
+      type="button"
       onClick={toggleTheme}
-      className={`theme-toggle-btn ${className}`}
+      className="pref-btn"
       aria-label={isDark ? ui.toLightMode : ui.toDarkMode}
-      title={followsSystem ? ui.themeFollows(modo) : ui.themePinned(modo)}
+      title={followsSystem ? ui.themeFollows(mode) : ui.themePinned(mode)}
     >
       <AnimatePresence mode="wait" initial={false}>
         <motion.span
           key={theme}
-          initial={{ y: -8, opacity: 0, rotate: -40, scale: 0.9 }}
-          animate={{ y: 0, opacity: 1, rotate: 0, scale: 1 }}
-          exit={{ y: 8, opacity: 0, rotate: 40, scale: 0.9 }}
+          initial={{ y: -6, opacity: 0, rotate: -30 }}
+          animate={{ y: 0, opacity: 1, rotate: 0 }}
+          exit={{ y: 6, opacity: 0, rotate: 30 }}
           transition={tween.fast}
-          className="theme-toggle-icon"
+          className="pref-btn__icon"
         >
-          {isDark ? (
-            <FiSun size={size} className="theme-toggle-sun" />
-          ) : (
-            <FiMoon size={size} className="theme-toggle-moon" />
-          )}
+          {isDark ? <FiSun aria-hidden="true" /> : <FiMoon aria-hidden="true" />}
         </motion.span>
       </AnimatePresence>
     </button>

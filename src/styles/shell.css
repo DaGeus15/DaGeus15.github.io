@@ -1,0 +1,646 @@
+/* ==========================================================================
+   Armazón: fondo, columna fija, navegación, barra móvil, pie y caso de estudio
+   ========================================================================== */
+
+/* ── Fondo ──────────────────────────────────────────────────────────────
+   Estático: resplandores y cuadrícula se pintan una vez. Lo único que se
+   mueve es `.backdrop__lit` (con transform, ver Backdrop.jsx). La máscara va
+   en capas hermanas del contenido, nunca en un ancestro. */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.backdrop__glow {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(60rem 40rem at 8% -12%, var(--glow-cool), transparent 70%),
+    radial-gradient(52rem 38rem at 100% 112%, var(--glow-warm), transparent 70%);
+}
+
+.backdrop__grid,
+.backdrop__lit-grid {
+  background-image: radial-gradient(
+    circle,
+    var(--dot-color, var(--grid-dot)) var(--grid-dot-size),
+    transparent calc(var(--grid-dot-size) + 0.5px)
+  );
+  background-size: var(--grid-step) var(--grid-step);
+  background-position: 0 0;
+}
+
+/* La cuadrícula se desvanece hacia abajo y los lados: un papel que se
+   intuye, no una trama que compite con el texto. */
+.backdrop__grid {
+  position: absolute;
+  inset: 0;
+  mask-image: radial-gradient(130% 95% at 28% 0%, #000 25%, transparent 80%);
+}
+
+/* Círculo que sigue al cursor. Su esquina está a -R para que el transform
+   (x, y) deje su centro justo en el puntero. */
+.backdrop__lit {
+  position: absolute;
+  top: calc(var(--lit-radius) * -1);
+  left: calc(var(--lit-radius) * -1);
+  width: calc(var(--lit-radius) * 2);
+  height: calc(var(--lit-radius) * 2);
+  border-radius: 50%;
+  overflow: hidden;
+  mask-image: radial-gradient(closest-side, #000 15%, transparent);
+}
+
+/* Cuadrícula de la pantalla entera, desplazada al revés que el círculo: sus
+   puntos caen exactamente sobre los de la base. */
+.backdrop__lit-grid {
+  --dot-color: var(--grid-dot-lit);
+  position: absolute;
+  top: var(--lit-radius);
+  left: var(--lit-radius);
+  width: 100vw;
+  height: 100dvh;
+}
+
+/* ── Página ─────────────────────────────────────────────────────────────
+   Un solo punto de corte de ventana: 1024px (lib/breakpoints.js). */
+.page {
+  position: relative;
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding-inline: var(--page-gutter);
+}
+
+@media (min-width: 1024px) {
+  .page {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: clamp(3rem, 6vw, 6.5rem);
+  }
+
+  .intro {
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100dvh;
+    padding-block: clamp(2.5rem, 9dvh, 6rem) clamp(2rem, 6dvh, 3.5rem);
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+
+  .page__main {
+    padding-block: clamp(2.5rem, 9dvh, 6rem) var(--sp-8);
+  }
+}
+
+@media (max-width: 1023px) {
+  .intro {
+    padding-top: calc(var(--mobile-bar-h) + env(safe-area-inset-top) + var(--sp-8));
+    padding-bottom: var(--sp-9);
+  }
+
+  .page__main {
+    padding-bottom: var(--sp-8);
+  }
+}
+
+/* ── Columna fija ───────────────────────────────────────────────────── */
+.intro__id {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-6);
+}
+
+.intro__avatar {
+  width: 5.5rem;
+  height: 5.5rem;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--border-strong);
+  box-shadow: 0 0 0 4px var(--accent-soft);
+}
+
+.intro__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.intro__name {
+  font-size: clamp(2.1rem, 1.5rem + 1.8vw, 2.9rem);
+  font-weight: 650;
+  font-stretch: var(--display-stretch);
+  line-height: 1.06;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.intro__role {
+  margin-top: var(--sp-2);
+  color: var(--accent);
+  font-size: 1.05rem;
+  font-weight: 550;
+}
+
+.intro__pitch {
+  max-width: 28rem;
+  margin-top: var(--sp-4);
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.intro__facts {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-top: var(--sp-5);
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.intro__facts li {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.intro__facts svg {
+  flex-shrink: 0;
+  color: var(--accent);
+}
+
+.intro__nav {
+  margin-top: clamp(1.5rem, 6dvh, 3.5rem);
+}
+
+.intro__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-3);
+  margin-top: var(--sp-6);
+}
+
+.intro__links {
+  display: flex;
+  gap: var(--sp-1);
+}
+
+.intro__prefs {
+  display: flex;
+  gap: var(--sp-1);
+  margin-left: auto;
+}
+
+/* En móvil la navegación no hace falta (se lee de corrido) y el tema y el
+   idioma ya están en la barra. Va DESPUÉS de las reglas base: con la misma
+   especificidad, gana la última. */
+@media (max-width: 1023px) {
+  .intro__nav,
+  .intro__prefs {
+    display: none;
+  }
+}
+
+/* ── Navegación ─────────────────────────────────────────────────────────
+   La activa alarga la línea y el texto la sigue. Las dos cosas son
+   transform: en reposo la línea está a la mitad (scaleX .5) y la etiqueta
+   retrocede ese mismo trecho, así no queda un hueco. */
+.side-nav ol {
+  display: flex;
+  flex-direction: column;
+}
+
+.side-nav__link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: 0.35rem 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-weight: 550;
+  transition: color var(--dur-base) var(--ease-out);
+}
+
+.side-nav__line {
+  width: 3.5rem;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0.45);
+  transform-origin: left center;
+  transition:
+    transform var(--dur-slow) var(--ease-out),
+    background-color var(--dur-base) var(--ease-out);
+}
+
+.side-nav__label {
+  transform: translateX(-1.925rem);
+  transition: transform var(--dur-slow) var(--ease-out);
+}
+
+.side-nav__link:hover {
+  color: var(--foreground);
+}
+
+.side-nav__link:hover .side-nav__line {
+  transform: scaleX(0.7);
+}
+
+.side-nav__link:hover .side-nav__label {
+  transform: translateX(-1.05rem);
+}
+
+.side-nav__link.is-active {
+  color: var(--foreground);
+}
+
+.side-nav__link.is-active .side-nav__line {
+  transform: scaleX(1);
+  background: var(--accent);
+}
+
+.side-nav__link.is-active .side-nav__label {
+  transform: none;
+}
+
+/* Ventanas bajas (portátil de 768px): la columna fija tiene que caber
+   entera, con el CV a la vista, sin desplazarse. Se comprime el ritmo, no se
+   quita contenido. */
+@media (min-width: 1024px) and (max-height: 900px) {
+  .intro__id {
+    margin-bottom: var(--sp-4);
+  }
+
+  .intro__avatar {
+    width: 4.25rem;
+    height: 4.25rem;
+  }
+
+  .intro__name {
+    font-size: clamp(2rem, 1.5rem + 1.4vw, 2.6rem);
+  }
+
+  .intro__role {
+    margin-top: var(--sp-2);
+  }
+
+  .intro__pitch {
+    margin-top: var(--sp-3);
+    font-size: 0.95rem;
+  }
+
+  .intro__facts {
+    margin-top: var(--sp-4);
+  }
+
+  .intro__nav {
+    margin-top: var(--sp-5);
+  }
+
+  .side-nav__link {
+    padding-block: 0.25rem;
+  }
+
+  .intro__actions {
+    margin-top: var(--sp-4);
+  }
+}
+
+/* ── Botones ────────────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  height: 2.75rem;
+  padding: 0 1.2rem;
+  border-radius: var(--r-md);
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.btn--primary {
+  background: var(--accent-fill);
+  color: #ffffff;
+}
+
+.btn--primary:hover {
+  background: var(--accent-fill-hover);
+}
+
+.btn:active {
+  transform: scale(0.97);
+  transition-duration: 100ms;
+}
+
+.btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.icon-btn,
+.pref-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--r-md);
+  border: 1px solid transparent;
+  color: var(--muted);
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out);
+}
+
+.icon-btn:hover,
+.pref-btn:hover {
+  color: var(--foreground);
+  background: var(--surface-raised);
+  border-color: var(--border);
+}
+
+.icon-btn:active,
+.pref-btn:active {
+  transform: scale(0.95);
+}
+
+.icon-btn svg,
+.pref-btn svg {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.pref-btn.mono {
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+.pref-btn__icon {
+  display: grid;
+}
+
+/* ── CV ─────────────────────────────────────────────────────────────── */
+.cv-download {
+  position: relative;
+}
+
+.cv-button {
+  position: relative;
+}
+
+/* Pulso del CTA: tres latidos al terminar la entrada y silencio. Uno
+   perpetuo deja de leerse como "esto es lo importante" y pasa a ser ruido.
+   La sombra es estática; sólo se animan opacity y transform. */
+.cv-button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow:
+    0 0 0 1px var(--accent),
+    0 0 1.25rem 0.2rem var(--accent-glow);
+  opacity: 0;
+  animation: cv-pulse var(--dur-pulse) var(--ease-out) var(--pulse-delay) 3;
+}
+
+@keyframes cv-pulse {
+  from {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(1.12, 1.35);
+  }
+}
+
+/* Se abre hacia arriba: en escritorio el botón está al pie de la columna. */
+.cv-menu {
+  position: absolute;
+  bottom: calc(100% + var(--sp-2));
+  left: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 12rem;
+  padding: var(--sp-1);
+  border-radius: var(--r-md);
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+  transform-origin: bottom left;
+}
+
+.cv-menu__item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  min-height: 2.5rem;
+  padding: 0 var(--sp-3);
+  border-radius: var(--r-sm);
+  font-size: 0.86rem;
+  font-weight: 550;
+  white-space: nowrap;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+}
+
+.cv-menu__item:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.cv-menu__code {
+  width: 1.75rem;
+  padding: 0.1rem 0;
+  border-radius: 5px;
+  border: 1px solid var(--border-strong);
+  font-size: 0.66rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* ── Barra móvil: el único cristal que queda ────────────────────────── */
+.mobile-bar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: calc(var(--mobile-bar-h) + env(safe-area-inset-top));
+  padding: env(safe-area-inset-top) var(--page-gutter) 0;
+  border-bottom: 1px solid var(--border);
+  background: var(--bar-bg);
+  backdrop-filter: var(--glass-thick);
+}
+
+.mobile-bar__name {
+  font-size: 0.95rem;
+  font-weight: 650;
+  font-stretch: var(--display-stretch);
+}
+
+.mobile-bar__prefs {
+  display: flex;
+  gap: var(--sp-1);
+}
+
+/* Después de la regla base a propósito: con la misma especificidad, gana la
+   que va detrás. */
+@media (min-width: 1024px) {
+  .mobile-bar {
+    display: none;
+  }
+}
+
+/* ── Pie ────────────────────────────────────────────────────────────── */
+.site-footer {
+  margin-top: var(--sp-10);
+  padding-top: var(--sp-5);
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+/* ── Caso de estudio ────────────────────────────────────────────────── */
+.case {
+  position: relative;
+  max-width: 54rem;
+  margin-inline: auto;
+  padding: var(--sp-8) var(--page-gutter) var(--sp-8);
+}
+
+@media (max-width: 1023px) {
+  .case {
+    padding-top: calc(var(--mobile-bar-h) + env(safe-area-inset-top) + var(--sp-6));
+  }
+}
+
+.case__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--sp-8);
+}
+
+.case__prefs {
+  display: flex;
+  gap: var(--sp-1);
+}
+
+/* En móvil el idioma y el tema están en la barra. Después de la regla base. */
+@media (max-width: 1023px) {
+  .case__prefs {
+    display: none;
+  }
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 550;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.back-link svg {
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.back-link:hover {
+  color: var(--foreground);
+}
+
+.back-link:hover svg {
+  transform: translateX(-3px);
+}
+
+.case__head {
+  margin-bottom: var(--sp-7);
+}
+
+.case__title {
+  margin-top: var(--sp-4);
+  font-size: clamp(2rem, 1.4rem + 2.2vw, 3rem);
+  font-weight: 650;
+  font-stretch: var(--display-stretch);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.case__subtitle {
+  margin-top: var(--sp-3);
+  color: var(--muted);
+  font-size: 1.15rem;
+}
+
+.case__figure {
+  margin-bottom: var(--sp-6);
+}
+
+.case__section {
+  margin-top: var(--sp-8);
+}
+
+.next-project {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-top: var(--sp-10);
+  padding: var(--sp-6);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  transition:
+    border-color var(--dur-base) var(--ease-out),
+    background-color var(--dur-base) var(--ease-out);
+}
+
+.next-project:hover {
+  border-color: var(--accent-line);
+  background: var(--surface-hover);
+}
+
+.next-project__title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--foreground);
+  font-size: 1.35rem;
+  font-weight: 650;
+  font-stretch: var(--display-stretch);
+  letter-spacing: -0.01em;
+}
+
+.next-project__title svg {
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.next-project:hover .next-project__title svg {
+  transform: translateX(4px);
+}

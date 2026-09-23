@@ -15,16 +15,12 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
-/* Escala fluida en monitores grandes.
-   Toda la escala de espaciado y casi toda la tipografía están en `rem`, así
-   que subir el tamaño de raíz agranda la interfaz entera de una sola vez.
-   Sin esto, en un 24" el contenido se estiraba a lo ancho pero los textos,
-   los huecos y los iconos seguían siendo los de un portátil de 13".
-   Arranca en 1440px (16px, exactamente lo de ahora) y llega a 20px hacia
-   los 2300px. */
+/* Escala fluida en monitores grandes: toda la escala está en `rem`, así que
+   subir la raíz agranda la interfaz entera de una vez. 16px hasta 1440px y
+   hasta 19px hacia los 2300px. */
 @media (min-width: 1440px) {
   html {
-    font-size: clamp(16px, calc(16px + (100vw - 1440px) * 0.0047), 20px);
+    font-size: clamp(16px, calc(16px + (100vw - 1440px) * 0.0035), 19px);
   }
 }
 
@@ -32,10 +28,12 @@ body {
   min-height: 100dvh;
   background-color: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont,
-    "Segoe UI", Roboto, sans-serif;
+  font-family: var(--font-sans), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
   overflow-x: hidden;
   transition:
     background-color var(--dur-slow) var(--ease-out),
@@ -60,12 +58,22 @@ ol {
   list-style: none;
 }
 
-img {
+img,
+svg {
+  display: block;
   max-width: 100%;
+}
+
+img {
   height: auto;
 }
 
-/* Foco visible y coherente en todo el sitio (sólo con teclado). */
+strong {
+  color: var(--foreground);
+  font-weight: 650;
+}
+
+/* Foco visible y coherente (sólo con teclado). */
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
@@ -77,7 +85,6 @@ img {
   color: #ffffff;
 }
 
-/* Sólo para lectores de pantalla. */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -90,109 +97,110 @@ img {
   border: 0;
 }
 
+.skip-link {
+  position: fixed;
+  top: var(--sp-3);
+  left: var(--sp-3);
+  z-index: 200;
+  padding: var(--sp-2) var(--sp-4);
+  border-radius: var(--r-sm);
+  background: var(--accent-fill);
+  color: #ffffff;
+  font-weight: 600;
+  transform: translateY(-200%);
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.skip-link:focus-visible {
+  transform: none;
+}
+
 /* ── Scrollbars ───────────────────────────────────────────────────────── */
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--glass-border) transparent;
+  scrollbar-color: var(--border-strong) transparent;
 }
 
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+/* ── Texto compartido ─────────────────────────────────────────────────── */
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0;
 }
 
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: var(--glass-border);
-  border-radius: var(--r-pill);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background-color: var(--muted-foreground);
-}
-
-/* ── Tipografía compartida ────────────────────────────────────────────── */
-/* Tracking negativo en el texto grande: las letras se leen cada vez más
-   sueltas a medida que crece el cuerpo, así que hay que apretarlas. El texto
-   corrido se queda cerca de cero (ver `.section-text`). */
-.section-title {
-  font-size: clamp(1.65rem, 1.1rem + 2vw, 2.25rem);
-  font-weight: 800;
-  line-height: 1.15;
-  letter-spacing: -0.02em;
-  text-wrap: balance;
-  color: var(--foreground);
-}
-
-.subsection-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  text-wrap: balance;
-  color: var(--foreground);
-  margin-bottom: var(--sp-3);
-}
-
-.detail-title {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
-  font-size: clamp(1.15rem, 0.95rem + 0.7vw, 1.4rem);
-  font-weight: 700;
-  letter-spacing: -0.012em;
-  color: var(--foreground);
-  margin: var(--sp-7) 0 var(--sp-4);
-}
-
-.section-text {
-  font-size: 1rem;
-  line-height: 1.7;
-  color: var(--muted-foreground);
+.prose {
   max-width: var(--measure);
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.75;
 }
 
-.section-text + .section-text {
+.prose + .prose {
   margin-top: var(--sp-4);
 }
 
-.section-text strong,
-.hobbies-list strong,
-.role-desc strong,
-.setup-card strong {
+/* Enlace de texto: subrayado fino que se engrosa con el hover. */
+.text-link {
   color: var(--foreground);
-  font-weight: 650;
+  text-decoration: underline;
+  text-decoration-color: var(--accent-line);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    text-decoration-color var(--dur-fast) var(--ease-out);
 }
 
-/* Texto revelado carácter a carácter (SplitText). */
-.split-text {
-  display: block;
+.text-link:hover {
+  color: var(--accent);
+  text-decoration-color: currentColor;
 }
 
-.split-char {
-  display: inline-block;
-  white-space: pre;
-  will-change: transform, opacity;
+/* ── Entradas ─────────────────────────────────────────────────────────
+   Dos mecanismos, los dos en CSS para que funcionen antes de hidratar y sin
+   JavaScript:
+
+   · `.enter`: al cargar, en cascada (`--i` es la posición). Para la columna
+     fija, que está a la vista desde el primer fotograma.
+   · `.reveal`: ligado al scroll con `animation-timeline: view()`. Donde no
+     hay soporte (Firefox, por ahora) el contenido simplemente está: el peor
+     caso es "no se nota", nunca "no se ve".
+
+   Sólo opacity y transform, y pocos píxeles: es movimiento pequeño, así que
+   anima también con movimiento reducido (ver AGENTS.md). */
+.enter {
+  animation: enter 0.7s var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * var(--stagger) + 80ms);
 }
 
-/* ── Preferencias del sistema ─────────────────────────────────────────── */
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
 
-/* Sin backdrop-filter: caemos a fondos sólidos para mantener el contraste. */
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .glass-card,
-  .project-card,
-  .skill-icon,
-  .dock-panel,
-  .theme-toggle-btn,
-  .icon-button,
-  .social-icon,
-  .cv-button,
-  .section-nav,
-  .mobile-header {
-    background: var(--card-bg);
-    border-color: var(--card-border);
+@supports (animation-timeline: view()) {
+  .reveal {
+    animation: reveal linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 55%;
+  }
+}
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+
+/* Movimiento reducido: sólo se quita el scroll suave, que arrastra la página
+   entera. Los efectos que mueven la escena deciden su versión suave uno a
+   uno; lo pequeño anima siempre. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
 }
 
@@ -200,32 +208,5 @@ img {
   :root {
     --glass-blur: 0px;
     --glass-saturate: 100%;
-  }
-
-  .glass-card,
-  .project-card,
-  .skill-icon,
-  .dock-panel,
-  .theme-toggle-btn,
-  .icon-button,
-  .social-icon,
-  .cv-button,
-  .section-nav,
-  .form-input,
-  .form-textarea {
-    backdrop-filter: none;
-    background: var(--card-bg);
-  }
-}
-
-/* Movimiento reducido: sólo se quita el scroll suave, que arrastra la página
-   entera hasta la sección pulsada. Antes también llevaba todas las
-   transiciones y animaciones CSS a 0.01ms, y eso dejaba sin respuesta los
-   hovers, el cambio de tema y el morfeo del armazón para cualquiera con
-   "Efectos de animación" apagado en Windows. Ver la nota de `MotionConfig`
-   en `layout.js`: se decide efecto a efecto, no en bloque. */
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
   }
 }

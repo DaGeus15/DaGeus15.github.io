@@ -1,81 +1,69 @@
-"use client";
-
-import { FiCpu, FiBookOpen } from "react-icons/fi";
-import Section from "./Section";
+import { FiArrowUpRight } from "react-icons/fi";
+import SectionHeading from "./SectionHeading";
 import RichText from "@/lib/RichText";
-import useContent from "@/lib/useContent";
 
-function Bio({ paragraphs, profile, ui }) {
-  return (
-    <>
-      {paragraphs.map((text, i) => (
-        <p className="section-text" key={i}>
-          <RichText>{text}</RichText>
-        </p>
-      ))}
-      <p className="section-text">
-        <strong>{ui.residence}</strong> {profile.location}{" "}
-        {ui.nationality(profile.nationality)}
-      </p>
-    </>
-  );
-}
-
-export default function About({ isExpanded, onExpand }) {
-  const { profile, ui, setup, hobbies, sectionCopy } = useContent();
-  const copy = sectionCopy.about;
+/**
+ * Sobre mí: la bio breve y, debajo, la ficha de formación, certificaciones e
+ * idiomas. Sin hobbies ni hardware: no le dicen nada a quien contrata.
+ */
+export default function About({ t }) {
+  const { ui, education } = t;
 
   return (
-    <Section
-      id="about"
-      title={copy.title}
-      isExpanded={isExpanded}
-      onExpand={onExpand}
-      expandLabel={copy.expand}
-      summary={<Bio paragraphs={profile.bioShort} profile={profile} ui={ui} />}
-      detail={
-        <>
-          <Bio
-            paragraphs={[...profile.bioShort, ...profile.bioExtra]}
-            profile={profile}
-            ui={ui}
-          />
+    <section id="about" className="section" aria-labelledby="about-title">
+      <SectionHeading id="about" title={t.sections.about.title} />
 
-          <h3 className="detail-title">
-            <FiCpu size={18} aria-hidden="true" /> {ui.hardwareSetup}
-          </h3>
-          <div className="setup-grid">
-            {setup.map((card) => (
-              <article className={`setup-card ${card.wide ? "is-wide" : ""}`} key={card.title}>
-                <h4>{card.title}</h4>
-                <dl className="spec-sheet">
-                  {card.specs.map(([label, value]) => (
-                    <div className="spec-sheet__row" key={label}>
-                      <dt>{label}</dt>
-                      <dd>{value}</dd>
-                    </div>
-                  ))}
-                </dl>
-                {card.note && <p className="setup-note">{card.note}</p>}
-              </article>
-            ))}
-          </div>
+      <div className="reveal">
+        {t.profile.summary.map((text) => (
+          <p className="prose" key={text}>
+            <RichText>{text}</RichText>
+          </p>
+        ))}
+      </div>
 
-          <h3 className="detail-title">
-            <FiBookOpen size={18} aria-hidden="true" /> {ui.hobbies}
-          </h3>
-          <div className="cards-grid cards-grid--sm">
-            {hobbies.map((h) => (
-              <article className="hobby-card" key={h.title}>
-                <h4>{h.title}</h4>
-                <p>
-                  <RichText>{h.detail}</RichText>
+      <div className="facts reveal">
+        <div className="fact">
+          <h3 className="subhead">{ui.education}</h3>
+          <p className="fact__title">{education.degree}</p>
+          <p className="fact__meta">{education.school}</p>
+          <p className="fact__note">
+            <span className="mono">{ui.coursework}:</span> {education.coursework}
+          </p>
+        </div>
+
+        <div className="fact">
+          <h3 className="subhead">{ui.certifications}</h3>
+          <ul className="fact-list">
+            {t.certifications.map((cert) => (
+              <li key={cert.title}>
+                <p className="fact__title">
+                  {cert.url ? (
+                    <a href={cert.url} target="_blank" rel="noopener noreferrer" className="text-link">
+                      {cert.title}
+                      <FiArrowUpRight className="inline-icon" aria-hidden="true" />
+                    </a>
+                  ) : (
+                    cert.title
+                  )}
                 </p>
-              </article>
+                <p className="fact__meta mono">{cert.issuer}</p>
+              </li>
             ))}
-          </div>
-        </>
-      }
-    />
+          </ul>
+        </div>
+
+        <div className="fact">
+          <h3 className="subhead">{ui.languages}</h3>
+          <dl className="fact-list">
+            {t.languages.map((l) => (
+              <div key={l.name}>
+                <dt className="fact__title">{l.name}</dt>
+                <dd className="fact__meta mono">{l.level}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </div>
+    </section>
   );
 }

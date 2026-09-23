@@ -1,0 +1,111 @@
+/* ==========================================================================
+   Diagramas de arquitectura (ArchitectureDiagram.jsx)
+   ========================================================================== */
+
+.diagram {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  margin: 0;
+}
+
+/* Marco de plano: la misma cuadrícula del fondo, más fina. En pantallas
+   estrechas el diagrama no se encoge hasta ser ilegible: se desplaza de lado
+   dentro del marco. */
+.diagram__frame {
+  overflow-x: auto;
+  padding: var(--sp-3);
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  background-color: var(--background);
+  background-image: radial-gradient(circle, var(--grid-dot) 1px, transparent 1.5px);
+  background-size: 16px 16px;
+}
+
+.diagram__svg {
+  width: 100%;
+  min-width: 34rem;
+  height: auto;
+  overflow: visible;
+}
+
+.diagram__edge path {
+  fill: none;
+  stroke: var(--border-strong);
+  stroke-width: 1.25;
+}
+
+.diagram__edge.is-async path {
+  stroke-dasharray: 4 4;
+}
+
+.diagram__arrow {
+  fill: var(--muted);
+  opacity: 0.6;
+}
+
+.diagram__protocol {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  fill: var(--muted);
+}
+
+.diagram__node rect {
+  fill: var(--surface-raised);
+  stroke: var(--border-strong);
+  stroke-width: 1;
+}
+
+/* Los nodos con capa llevan su color en el borde y un velo muy leve dentro:
+   el mismo código de color que la rejilla del stack. */
+.diagram__node[data-layer] rect {
+  fill: color-mix(in srgb, var(--layer-color) 8%, var(--surface-raised));
+  stroke: color-mix(in srgb, var(--layer-color) 55%, transparent);
+}
+
+.diagram__label {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  fill: var(--foreground);
+}
+
+.diagram__tech {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  fill: var(--muted);
+}
+
+/* Paquetes: frío para lo síncrono (o el color de la capa de destino), cálido
+   para los eventos asíncronos. */
+.diagram__packet {
+  fill: var(--accent);
+}
+
+.diagram__packet[data-layer] {
+  fill: var(--layer-color);
+}
+
+.diagram__packet.is-async {
+  fill: var(--accent-warm);
+}
+
+.diagram__legend {
+  display: flex;
+  gap: var(--sp-4);
+  color: var(--muted);
+  font-size: 0.7rem;
+}
+
+.diagram__key::before {
+  content: "";
+  display: inline-block;
+  width: 1.4rem;
+  margin-right: 0.45rem;
+  vertical-align: middle;
+  border-top: 1.5px solid var(--muted);
+}
+
+.diagram__key.is-async::before {
+  border-top-style: dashed;
+}

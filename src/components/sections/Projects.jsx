@@ -1,211 +1,55 @@
-"use client";
-
-import Image from "next/image";
-import { motion } from "framer-motion";
-import { FiFolder, FiGithub } from "react-icons/fi";
-import Section from "./Section";
-import { getLanguageColor } from "@/content/projects";
-import useContent from "@/lib/useContent";
-import { staggerContainer, staggerItem, spring } from "@/lib/motion";
-
-const slug = (i) => `project-${i}`;
-
-/** En la tarjeta sólo caben unas pocas insignias; el stack completo va en la ficha. */
-const CARD_TECH_COUNT = 4;
-
-function TechBadges({ items, size }) {
-  return (
-    <ul className={`tech-badges ${size === "lg" ? "tech-badges--lg" : ""}`}>
-      {items.map((t) => (
-        <li className="tech-badge" key={t}>
-          {t}
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-function LangIndicator({ lang }) {
-  return (
-    <span className="lang-indicator">
-      <span
-        className="lang-dot"
-        style={{ backgroundColor: getLanguageColor(lang) }}
-        aria-hidden="true"
-      />
-      {lang}
-    </span>
-  );
-}
-
-function ProjectCard({ project }) {
-  const shown = project.tech.slice(0, CARD_TECH_COUNT);
-  const rest = project.tech.length - shown.length;
-
-  return (
-    <motion.article
-      className="project-card"
-      variants={staggerItem}
-      whileHover={{ y: -4 }}
-      transition={spring.snappy}
-    >
-      <header className="project-card__header">
-        <FiFolder size={18} className="repo-icon" aria-hidden="true" />
-        <div>
-          <h3 className="project-card__title">{project.title}</h3>
-          <p className="project-card__subtitle">{project.subtitle}</p>
-        </div>
-      </header>
-
-      <p className="project-card__desc">{project.summary}</p>
-
-      <footer className="project-card__footer">
-        <LangIndicator lang={project.lang} />
-        <div className="tech-badges-row">
-          <TechBadges items={shown} />
-          {rest > 0 && <span className="tech-more">+{rest}</span>}
-        </div>
-      </footer>
-    </motion.article>
-  );
-}
+import Link from "next/link";
+import { FiArrowUpRight } from "react-icons/fi";
+import SectionHeading from "./SectionHeading";
+import ProjectCard from "@/components/project/ProjectCard";
+import { projectPath } from "@/lib/locales";
 
 /**
- * Ficha detallada de un proyecto.
- *
- * El layout de escritorio (contenido a la izquierda, captura a la derecha)
- * lo define `.project-showcase__body` en `sections.css`.
+ * Proyectos: primero de la página, porque con un año de experiencia son la
+ * prueba más fuerte. Los destacados van grandes y en vertical, con su
+ * diagrama; el resto, en una lista compacta. Todos llevan a su caso de
+ * estudio.
  */
-function ProjectShowcase({ project, index, ui }) {
-  return (
-    <article className="project-showcase" id={slug(index)}>
-      <header className="project-showcase__header">
-        <div className="project-showcase__title-row">
-          <span className="project-showcase__index" aria-hidden="true">
-            {String(index + 1).padStart(2, "0")}
-          </span>
-          <FiFolder size={20} className="repo-icon" aria-hidden="true" />
-          <div>
-            <h3>{project.title}</h3>
-            <p className="project-showcase__subtitle">{project.subtitle}</p>
-          </div>
-        </div>
-        <TechBadges items={project.tech} size="lg" />
-      </header>
-
-      <div className={`project-showcase__body ${project.image ? "has-media" : ""}`}>
-        <div className="project-showcase__cols">
-          <div className="details-col">
-            <h4>{ui.systemDescription}</h4>
-            {project.description.map((para, i) => (
-              <p className="section-text" key={i}>
-                {para}
-              </p>
-            ))}
-          </div>
-
-          <div className="details-col">
-            <h4>{ui.techSheet}</h4>
-            <dl className="spec-list">
-              <dt>{ui.mainLanguage}</dt>
-              <dd>
-                <LangIndicator lang={project.lang} />
-              </dd>
-              <dt>{ui.myRole}</dt>
-              <dd>{project.role}</dd>
-              {project.repo && (
-                <>
-                  <dt>{ui.repository}</dt>
-                  <dd>
-                    <a
-                      href={project.repo}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="repo-link"
-                    >
-                      <FiGithub size={15} aria-hidden="true" />
-                      {project.repo.replace("https://github.com/", "")}
-                    </a>
-                  </dd>
-                </>
-              )}
-            </dl>
-          </div>
-        </div>
-
-        {/* Sin imagen no se pinta nada: un recuadro punteado vacío se lee como
-            una promesa incumplida, y el texto aprovecha mejor todo el ancho.
-            Basta con rellenar `image` en content/projects.js para recuperarla. */}
-        {project.image && (
-          <figure className="project-showcase__media">
-            <Image
-              src={project.image}
-              alt={`Captura de ${project.title}`}
-              width={720}
-              height={450}
-              className="project-shot"
-            />
-          </figure>
-        )}
-      </div>
-    </article>
-  );
-}
-
-export default function Projects({ isExpanded, onExpand }) {
-  const { projects, ui, sectionCopy } = useContent();
-  const copy = sectionCopy.projects;
-
-  const scrollTo = (e, id) => {
-    e.preventDefault();
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
+export default function Projects({ t }) {
+  const { ui, lang } = t;
+  const featured = t.projects.filter((p) => p.featured);
+  const others = t.projects.filter((p) => !p.featured);
 
   return (
-    <Section
-      id="projects"
-      title={copy.title}
-      isExpanded={isExpanded}
-      onExpand={onExpand}
-      expandLabel={copy.expand}
-      summary={
-        <motion.div
-          className="projects-grid"
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-10% 0px" }}
-        >
-          {projects.map((p) => (
-            <ProjectCard project={p} key={p.id} />
-          ))}
-        </motion.div>
-      }
-      detail={
-        <>
-          <p className="section-text">{ui.projectsIntro}</p>
+    <section id="projects" className="section" aria-labelledby="projects-title">
+      <SectionHeading
+        id="projects"
+        title={t.sections.projects.title}
+        intro={t.sections.projects.intro}
+      />
 
-          <nav className="quick-nav" aria-label={ui.goToProject}>
-            {projects.map((p, i) => (
-              <a
-                href={`#${slug(i)}`}
-                key={p.id}
-                className="quick-nav__link"
-                onClick={(e) => scrollTo(e, slug(i))}
-              >
-                <span className="quick-nav__num">{String(i + 1).padStart(2, "0")}</span>
-                <span>{p.short}</span>
-              </a>
-            ))}
-          </nav>
+      <ol className="project-stack">
+        {featured.map((project) => (
+          <li className="reveal" key={project.id}>
+            <ProjectCard project={project} ui={ui} lang={lang} />
+          </li>
+        ))}
+      </ol>
 
-          <div className="showcase-stack">
-            {projects.map((p, i) => (
-              <ProjectShowcase project={p} index={i} ui={ui} key={p.id} />
+      {others.length > 0 && (
+        <div className="project-others reveal">
+          <h3 className="subhead">{ui.otherProjects}</h3>
+          <ul className="project-list">
+            {others.map((p) => (
+              <li key={p.id}>
+                <Link href={projectPath(lang, p.id)} className="project-row">
+                  <span className="project-row__text">
+                    <span className="project-row__title">{p.title}</span>
+                    <span className="project-row__summary">{p.summary}</span>
+                  </span>
+                  <span className="project-row__tech mono">{p.tech.slice(0, 3).join(" · ")}</span>
+                  <FiArrowUpRight className="project-row__arrow" aria-hidden="true" />
+                </Link>
+              </li>
             ))}
-          </div>
-        </>
-      }
-    />
+          </ul>
+        </div>
+      )}
+    </section>
   );
 }

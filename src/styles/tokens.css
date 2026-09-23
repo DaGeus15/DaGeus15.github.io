@@ -1,25 +1,34 @@
 /* ==========================================================================
    Design tokens — la única fuente de verdad del aspecto visual.
-   Cambiá algo aquí y se propaga a todo el sitio.
    ========================================================================== */
 
 :root {
-  /* ── Easings ────────────────────────────────────────────────────────── */
+  /* ── Tipografía ─────────────────────────────────────────────────────
+     Mona Sans (local) para leer. Es variable también en anchura (75-125%):
+     los titulares van un punto expandidos, que es la voz propia de la fuente
+     y la separa del titular condensado y apretado de las plantillas. El
+     texto corrido se queda en 100%.
+
+     Mono del sistema SÓLO para datos: fechas, protocolos, etiquetas de
+     tecnología, cifras. Nunca para rótulos ni navegación. Pila del sistema a
+     propósito: cero bytes y en cada SO sale una mono cuidada. */
+  --display-stretch: 112%;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", "JetBrains Mono", Menlo, Consolas,
+    monospace;
+
+  /* ── Easings y duraciones ───────────────────────────────────────── */
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
-  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
-
-  /* ── Duraciones (macOS: nada por encima de ~0.45s) ──────────────────── */
   --dur-fast: 0.18s;
   --dur-base: 0.28s;
   --dur-slow: 0.42s;
-  /* Morfeo del armazón al cambiar resumen ↔ detalle. Si lo cambiás, cambiá
-     también SHELL_MS en src/lib/motion.js. */
-  --dur-shell: 0.44s;
+  /* Entrada de la columna fija al cargar: paso entre elementos. */
+  --stagger: 60ms;
+  /* Pulso del CTA del CV: tres latidos tras la entrada y se calla. */
+  --dur-pulse: 2.4s;
+  --pulse-delay: 1.2s;
 
-  /* ── Escala de espaciado ────────────────────────────────────────────────
-     En `rem` a propósito: `base.css` sube el tamaño de raíz en pantallas
-     grandes, así que toda la escala crece con el monitor de una sola vez. */
+  /* ── Espaciado (rem: `base.css` sube la raíz en monitores grandes) ── */
   --sp-1: 0.25rem;
   --sp-2: 0.5rem;
   --sp-3: 0.75rem;
@@ -28,375 +37,150 @@
   --sp-6: 2rem;
   --sp-7: 2.5rem;
   --sp-8: 3rem;
+  --sp-9: 4.5rem;
+  --sp-10: 6rem;
 
-  /* ── Radios ─────────────────────────────────────────────────────────── */
-  --r-sm: 10px;
-  --r-md: 14px;
-  --r-lg: 18px;
-  --r-xl: 24px;
+  /* ── Radios ─────────────────────────────────────────────────────── */
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 16px;
   --r-pill: 999px;
 
-  /* ── Cristal (liquid glass) ─────────────────────────────────────────── */
-  /* El look de macOS es blur moderado + saturación ALTA. La saturación es
-     lo que hace que el color del fondo "se filtre" y dé el efecto premium. */
-  --glass-blur: 20px;
-  --glass-saturate: 180%;
+  /* ── Medidas ────────────────────────────────────────────────────── */
+  --page-max: 78rem;
+  --page-gutter: clamp(1.25rem, 5vw, 4rem);
+  /* Línea de lectura: el texto corrido no pasa de aquí aunque el panel sí. */
+  --measure: 68ch;
+  --mobile-bar-h: 3.5rem;
 
-  /* Escala de material: el peso del vidrio codifica jerarquía. Cuanto más
-     grande la superficie, más grueso el cristal.
+  /* ── Fondo ──────────────────────────────────────────────────────── */
+  /* Cuadrícula de puntos: papel de ingeniería. Estática. */
+  --grid-step: 24px;
+  --grid-dot-size: 1px;
+  /* Radio de la zona de la cuadrícula que ilumina el cursor. */
+  --lit-radius: 11rem;
+  /* Halo de las tarjetas bento: un círculo pintado una vez que sólo se
+     mueve por transform. */
+  --glow-size: 16rem;
 
-       thin     controles sueltos sobre el fondo (botones de icono, CV)
-       regular  tarjetas y paneles apoyados en el fondo
-       thick    cromo que tapa contenido (raíl, cajón, cabecera móvil)
-
-     Se derivan de --glass-blur con `calc()` a propósito: así el
-     `--glass-blur: 0px` de `prefers-reduced-transparency` en base.css sigue
-     apagando los tres de una sola vez. */
-  --glass-thin: blur(calc(var(--glass-blur) * 0.6)) saturate(var(--glass-saturate));
-  --glass-regular: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-  --glass-thick: blur(calc(var(--glass-blur) * 1.6)) saturate(var(--glass-saturate));
-
-  /* Nombre histórico del peso medio; lo usan las tarjetas y el dock. */
-  --glass-filter: var(--glass-regular);
-
-  /* El cajón es cromo: tapa el contenido y tiene que volverlo ilegible. */
-  --drawer-filter: var(--glass-thick);
-
-  /* ── Acento derivado ────────────────────────────────────────────────────
-     Cada tema define `--accent` / `--accent-rgb`; todo lo demás se calcula
-     aquí una sola vez. Las custom properties se resuelven en el momento de
-     uso, así que estas fórmulas ven el valor del tema activo. */
-  --accent-soft: rgba(var(--accent-rgb), 0.12);
-  --accent-line: rgba(var(--accent-rgb), 0.34);
-  /* Cool → warm: el gradiente decorativo (divisores, barras de idioma, punto
-     activo) recorre los DOS extremos de temperatura de la foto en vez de
-     quedarse en un solo azul. Es lo que hace que la paleta se lea como una
-     combinación y no como un tema monocromo. Como es decorativo y no lleva
-     texto encima, no necesita contraste AA. */
-  --accent-gradient: linear-gradient(120deg, var(--accent), var(--accent-warm));
-  /* `--accent-gradient` es decorativo (divisores, barras). `--accent-fill` es
-     para superficies rellenas que llevan texto BLANCO encima: lo define cada
-     tema con tonos más oscuros, porque el índigo claro del tema oscuro sólo
-     da 3:1 contra blanco y no pasaría AA. */
-
-  /* ── Armazón de escritorio ──────────────────────────────────────────────
-     Los dos modos definen LOS MISMOS lados (top/right/bottom/left/width),
-     de forma que pasar de uno a otro es una interpolación real y no un
-     salto que haya que disimular con transformaciones. */
-
-  /* modo resumido */
-  --shell-pad: 3rem;
-  --sidebar-w: 360px;
-  --sidebar-gap: 2rem;
-  /* Desplazamiento del panel de perfil hacia el centro en la vista resumida.
-     Se basa en el ANCHO SOBRANTE, no en un porcentaje del viewport. Con `13vw`
-     un portátil de 1024-1366 perdía 130-180px por la izquierda y el contenido
-     quedaba tan estrecho que las tarjetas se estiraban a 168vh. Ahora hasta
-     1280px el panel casi no se mueve (--shell-pad), y sólo entra hacia el
-     centro cuando de verdad hay espacio de sobra: en un 1920 ronda los 250px.
-       1280 -> 48px   1440 -> ~99px   1536 -> ~130px   1920 -> ~253px */
-  --summary-inset: clamp(3rem, calc(3rem + (100vw - 1280px) * 0.32), 15rem);
-
-  /* modo detallado — fluidos.
-     Con valores fijos, un monitor de 24" dejaba el marco de 30px pegado a
-     los bordes y el raíl de 88px minúsculo. Los `clamp()` arrancan en el
-     valor de portátil (por debajo de ~1500px no cambia nada) y crecen
-     hasta un tope razonable. */
-  --frame-gap: clamp(30px, 2vw, 46px);
-  --rail-width: clamp(88px, 5.4vw, 116px);
-
-  /* Medida de lectura. El armazón llega de borde a borde, pero un párrafo de
-     175 caracteres por línea —lo que da un panel de 1700px— es ilegible: el
-     ojo pierde el salto de línea. Las rejillas sí llenan todo el ancho; sólo
-     el texto corrido se limita. */
-  --measure: 82ch;
-
-  /* Retrato de la barra lateral. Va atado al ALTO de la ventana, no a un
-     tamaño fijo: con 240x330px clavados, en un portátil de 768px la columna
-     (foto + nombre + rol + CV + dock + ajustes) no cabía y los botones de
-     tema y de vista quedaban fuera de la pantalla. */
-  --photo-h: clamp(11rem, 34dvh, 20.625rem);
-  --photo-w: calc(var(--photo-h) * 0.727); /* conserva el encuadre 240:330 */
-
-  /* ── Alturas fijas ──────────────────────────────────────────────────── */
-  --mobile-header-h: 64px;
-  /* Si cambiás esto, cambiá también DRAWER_WIDTH en src/lib/breakpoints.js:
-     el gesto de arrastre necesita el valor en JS. */
-  --drawer-w: 280px;
+  /* Cristal: sólo queda en la barra móvil, que sí tapa contenido. */
+  --glass-blur: 18px;
+  --glass-saturate: 170%;
+  --glass-thick: blur(var(--glass-blur)) saturate(var(--glass-saturate));
 }
 
 /* ── Paleta ─────────────────────────────────────────────────────────────
-   Derivada de la foto de perfil (`public/dayle.jpeg`), pero no como se creía.
+   Sale de la foto por complemento, no por copia. Cuantizando
+   `public/dayle.jpeg` en OKLCH, la única familia con croma real es la cálida
+   de la piel y la pared (h≈55). El acento es su complemento (h=232) y el
+   cálido secundario es h=55 con el croma real de la foto. Mismo tono en los
+   dos temas; sólo cambia la L. Si cambia la foto, recuantizá: no se elige a
+   ojo.
 
-   Cuantizando la foto en OKLCH aparece un dato que corrige la versión previa
-   de este comentario: LA FOTO NO TIENE TEAL. La familia de tonos fríos
-   (h 180-260) pesa 0% en croma real — la ropa y las sombras salen #2c323b,
-   #222b2f, #0e181a, todos con croma 0.013-0.018, que es gris neutro con un
-   matiz frío imperceptible, no petróleo.
+   Papeles: el frío es la interfaz (bordes, foco, activos, enlaces); el cálido
+   es ambiental (segundo resplandor del fondo, paquetes asíncronos de los
+   diagramas). Dos temperaturas con papeles claros, no un tema monocromo.
 
-   La ÚNICA familia con croma de verdad es la cálida: #b5886f (C 0.066),
-   #85614b (C 0.057), #c9a994 (C 0.048), #5a4839 (C 0.034). Tono medio h≈55.
+   Los lienzos son casi neutros a propósito: el fondo tiene que desaparecer
+   detrás del contenido. La profundidad la dan un borde de 1px y un cambio de
+   luminosidad, no sombras ni cristal. */
 
-   De ahí sale el sistema, y ahora por un principio explícito:
-
-     · Los LIENZOS son los neutros de la foto. El claro toma el matiz cálido
-       de la pared (h≈85, croma casi nulo); el oscuro, el frío de la ropa
-       (h≈230). Esto sí era correcto y se conserva.
-
-     · El ACENTO es el COMPLEMENTO del único tono real de la foto:
-       55 + 180 = 235, y se fija en h=232 para conservar un rastro del teal.
-       Un acento complementario es lo que hace que la piel y la pared del
-       retrato resalten en vez de competir con la interfaz. Además, h≈232 es
-       donde sRGB permite más croma con contraste accesible (C 0.104 frente a
-       0.087 en el teal anterior): principio de diseño y gama coinciden.
-
-     · El CÁLIDO secundario es el tono real de la foto, h=55, y con SU croma
-       (0.055, dentro del 0.048-0.066 medido). Sobrio a propósito: es el color
-       que ya aporta el retrato, la interfaz sólo lo acompaña.
-
-   Un solo tono de acento para los dos temas; lo único que cambia es la
-   luminosidad. Antes derivaba 6° entre modos (217 en oscuro, 223 en claro),
-   que es justo lo que este comentario decía que no pasaba.
-
-   Todos los pares están verificados contra WCAG AA, incluido el acento sobre
-   las superficies de cristal compuestas, no sólo sobre el fondo plano.
-
-   Si cambia la foto: volvé a cuantizar, sacá el tono con croma real, y el
-   acento es su complemento. No lo elijas a ojo.
-   ---------------------------------------------------------------------- */
-
-/* ── Tema oscuro (por defecto) ────────────────────────────────────────── */
 :root,
 [data-theme="dark"] {
   color-scheme: dark;
 
-  /* h=232, L subida hasta 7:1 contra el fondo. */
+  --background: #0a0e11;
+  --surface: #0f1519;
+  /* Lo elevado DENTRO de una superficie (etiquetas, iconos, campos). */
+  --surface-raised: #151d22;
+  --surface-hover: #131a1f;
+
+  --foreground: #e8eef1;
+  /* 7.4:1 contra el fondo: texto secundario con holgura sobre AA. */
+  --muted: #95a3ab;
+  /* Sólo decorativo (reglas, índices grandes): no pasa AA como texto. */
+  --faint: #3a464d;
+
+  --border: rgba(226, 240, 243, 0.08);
+  --border-strong: rgba(226, 240, 243, 0.15);
+
+  /* h=232, 7:1 contra el fondo. */
   --accent: #52a5cd;
   --accent-rgb: 82, 165, 205;
-  --accent-strong: #2980a7;
-  /* Superficies rellenas con texto BLANCO encima: 4.6:1 contra #fff. */
-  --accent-fill: linear-gradient(135deg, #267da4, #006386);
-  /* El tono real de la foto (h=55) con su croma real. 6:1 contra el fondo. */
+  /* Superficies con texto BLANCO encima: 4.6:1 contra #fff. */
+  --accent-fill: #1f739b;
+  --accent-fill-hover: #1a6589;
+  --accent-soft: rgba(var(--accent-rgb), 0.12);
+  --accent-line: rgba(var(--accent-rgb), 0.35);
+  --accent-glow: rgba(var(--accent-rgb), 0.3);
   --accent-warm: #ac8871;
   --accent-warm-rgb: 172, 136, 113;
 
-  --background: #080e11;
-  --foreground: #edf2f4;
-  --foreground-rgb: 237, 242, 244;
-  --muted-foreground: #94a3ab;
+  /* Capa semántica del stack: codifica DATOS, no marca (ver AGENTS.md).
+     Texto, bordes y halos; nunca relleno bajo texto. ≥8:1 sobre el fondo. */
+  --tech-core: #47d2e8;
+  --tech-data: #edb161;
+  --tech-cloud: #b8a6f5;
 
-  --spotlight-color: rgba(var(--accent-rgb), 0.13);
-  /* El halo detrás del retrato es cálido, no frío: la calidez sale de la piel
-     y la pared de la propia foto, así que rodearla con el acento frío la
-     enfriaba. */
-  --glow-warm: rgba(var(--accent-warm-rgb), 0.20);
-  --accent-inverse: #080e11;
-  --accent-glow: rgba(var(--accent-rgb), 0.28);
+  --grid-dot: rgba(226, 240, 243, 0.075);
+  --grid-dot-lit: rgba(var(--accent-rgb), 0.7);
+  /* Resplandores estáticos del fondo: frío arriba a la izquierda, cálido
+     abajo a la derecha. */
+  --glow-cool: rgba(var(--accent-rgb), 0.075);
+  --glow-warm: rgba(var(--accent-warm-rgb), 0.05);
 
-  --glass-bg: rgba(16, 26, 30, 0.55);
-  --glass-border: rgba(226, 240, 243, 0.11);
-  --glass-hover: rgba(226, 240, 243, 0.08);
+  --tile-sheen: rgba(255, 255, 255, 0.035);
+  --tile-wash: 0.09;
+  --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 24px 48px -32px rgba(0, 0, 0, 0.7);
 
-  /* Degradado del cristal: reflejo arriba-izquierda, cuerpo translúcido. */
-  --liquid-bg:
-    linear-gradient(
-      145deg,
-      rgba(232, 244, 247, 0.09),
-      rgba(232, 244, 247, 0.025) 42%,
-      rgba(232, 244, 247, 0.055)
-    ),
-    rgba(12, 21, 25, 0.62);
-  --liquid-border: rgba(226, 240, 243, 0.14);
-  --liquid-highlight: rgba(255, 255, 255, 0.3);
-
-  /* Relleno de lo que va DENTRO de una tarjeta de cristal. Nunca lleva
-     backdrop-filter propio: apilar cristal sobre cristal sólo lava el
-     contraste y paga un segundo repintado. Ver la nota en cards.css. */
-  --fill-raised: rgba(232, 244, 247, 0.055);
-  --fill-raised-hover: rgba(232, 244, 247, 0.09);
-
-  /* El cajón se superpone al contenido, así que lleva el vidrio grueso:
-     convierte el texto de debajo en una mancha ilegible y deja que el del
-     menú se lea limpio. El filtro sale de --glass-thick (tokens de arriba). */
-  --drawer-bg: rgba(9, 16, 19, 0.78);
-  --scrim: rgba(3, 8, 10, 0.6);
-
-  --card-bg: rgba(12, 20, 24, 0.94);
-  --card-border: rgba(226, 240, 243, 0.08);
-  --card-hover-border: rgba(var(--accent-rgb), 0.55);
-
-  --shadow-soft: 0 10px 40px -12px rgba(0, 0, 0, 0.6);
-  --shadow-glow: 0 0 28px rgba(var(--accent-rgb), 0.16);
-  --shadow-liquid:
-    0 18px 60px -35px rgba(0, 0, 0, 0.9),
-    inset 0 1px 0 rgba(226, 240, 243, 0.09);
-
-  /* Malla del fondo: frío arriba, cálido abajo. El contraste de temperatura
-     es el mismo que tiene la propia foto, y es lo que evita que se lea como
-     un degradado genérico. */
-  --mesh-glow: rgba(150, 192, 214, 0.11);
-  --mesh-1: rgba(6, 99, 134, 0.40);
-  /* La mitad de abajo pasa a cálida: antes eran cuatro manchas frías con un
-     toque de arena. Ahora la temperatura cruza de frío (arriba) a cálido
-     (abajo), igual que la foto, y las dos familias se ven a la vez. */
-  --mesh-2: rgba(158, 116, 84, 0.26);
-  --mesh-3: rgba(56, 148, 190, 0.16);
-  --mesh-4: rgba(184, 132, 96, 0.22);
-
-  /* Órbitas alrededor de las tarjetas. Pista casi invisible (sólo se intuye el
-     anillo), estela a media luz y cabeza intensa: lo que el ojo sigue es el
-     cometa, no la línea. Frío en los dos interiores y cálido en el exterior,
-     el mismo reparto de papeles que el resto de la paleta. La mitad delantera
-     pasa por encima del texto, así que la pista no puede subir de aquí. */
-  --orbit-track: rgba(var(--accent-rgb), 0.2);
-  --orbit-tail: rgba(var(--accent-rgb), 0.5);
-  --orbit-tail-warm: rgba(var(--accent-warm-rgb), 0.5);
-  --orbit-head: rgba(190, 232, 250, 1);
-  --orbit-head-warm: rgba(240, 210, 186, 1);
-  --orbit-glow: rgba(82, 165, 205, 0.4);
-  --orbit-glow-warm: rgba(172, 136, 113, 0.4);
-
-  /* Estrellas: blanco frío, al tono del acento. El halo lleva el acento para
-     que brillen "en" la paleta y no como píxeles blancos sueltos. */
-  --star: rgba(214, 236, 246, 0.8);
-  --star-bright: rgba(236, 248, 253, 1);
-  --star-glow: rgba(150, 212, 240, 0.55);
-  --star-glow-soft: rgba(82, 165, 205, 0.22);
-
-  --grain-opacity: 0.055;
-  --grain-blend: overlay;
-  --vignette: rgba(2, 7, 9, 0.6);
-
-  /* Iconos SVG monocromos (redes sociales) */
-  --svg-filter: invert(1);
+  --bar-bg: rgba(10, 14, 17, 0.72);
+  --danger: #f08a8a;
 }
 
 /* ── Tema claro ─────────────────────────────────────────────────────────
-   Regla que gobierna este bloque: NADA blanco sobre blanco.
-
-   El lienzo es la arena cálida de la pared de la foto, no blanco de
-   laboratorio: detrás del cristal tiene que haber color que desenfocar, o
-   `saturate()` no tiene con qué trabajar y el efecto no se percibe.
-
-   Sobre ese lienzo cálido, el acento frío del complemento separa por tono
-   además de por luminosidad. Es la misma paleta que el tema oscuro a otra
-   luz: mismo h=232, sólo cambia la L.
-   ---------------------------------------------------------------------- */
+   Lienzo: la arena de la pared de la foto, no blanco de laboratorio. Nada
+   blanco sobre blanco: las superficies se separan del lienzo por
+   luminosidad y un borde con el acento. */
 [data-theme="light"] {
   color-scheme: light;
 
-  /* 5.6:1 contra el lienzo. Antes era 4.67:1, que pasaba AA por poco. */
+  --background: #f4f1ec;
+  --surface: #fbfaf7;
+  --surface-raised: #f0ece5;
+  --surface-hover: #ffffff;
+
+  --foreground: #13252f;
+  --muted: #4a5a62;
+  --faint: #cfc8bd;
+
+  --border: rgba(19, 37, 47, 0.09);
+  --border-strong: rgba(19, 37, 47, 0.16);
+
+  /* 5.6:1 contra el lienzo. */
   --accent: #00668a;
   --accent-rgb: 0, 102, 138;
-  --accent-strong: #004b67;
-  --accent-fill: linear-gradient(135deg, #267da4, #006082);
-  /* Antes #b79a76 daba 2.32:1 y NO pasaba el mínimo de 3:1 de un icono. */
+  --accent-fill: #006386;
+  --accent-fill-hover: #00546f;
+  --accent-soft: rgba(var(--accent-rgb), 0.08);
+  --accent-line: rgba(var(--accent-rgb), 0.3);
+  --accent-glow: rgba(var(--accent-rgb), 0.22);
   --accent-warm: #a17e67;
   --accent-warm-rgb: 161, 126, 103;
 
-  /* Lienzo: la pared de la foto. Tinta: el neutro frío, al tono del acento.
-     Un punto más profundo que antes (#f2efe9): con el lienzo casi blanco, las
-     tarjetas —que también son blancas— quedaban a 4 niveles de 255 del fondo
-     y todo se fundía en una mancha clara. */
-  --background: #ede7dc;
-  --foreground: #13252f;
-  --foreground-rgb: 19, 37, 47;
-  /* Un punto más oscuro que antes (#4d606a) porque el lienzo también bajó de
-     claridad: el gris apagado le sigue el paso para mantener el texto
-     secundario con holgura sobre AA. */
-  --muted-foreground: #46575f;
+  /* ≥5:1 sobre el lienzo y sobre las superficies. */
+  --tech-core: #006b80;
+  --tech-data: #834d00;
+  --tech-cloud: #5e47a1;
 
-  --spotlight-color: rgba(var(--accent-rgb), 0.13);
-  --glow-warm: rgba(var(--accent-warm-rgb), 0.22);
-  --accent-inverse: #ffffff;
-  --accent-glow: rgba(var(--accent-rgb), 0.22);
+  --grid-dot: rgba(19, 37, 47, 0.1);
+  --grid-dot-lit: rgba(var(--accent-rgb), 0.6);
+  --glow-cool: rgba(var(--accent-rgb), 0.07);
+  --glow-warm: rgba(var(--accent-warm-rgb), 0.1);
 
-  /* Saturación algo mayor que en oscuro: sobre un fondo claro es lo que hace
-     que el color del fondo difuminado se note a través del cristal. */
-  --glass-saturate: 200%;
+  --tile-sheen: rgba(255, 255, 255, 0.6);
+  --tile-wash: 0.06;
+  --shadow-card: 0 1px 2px rgba(19, 37, 47, 0.05), 0 20px 40px -30px rgba(19, 37, 47, 0.3);
 
-  --glass-bg: rgba(255, 255, 255, 0.5);
-  --glass-border: rgba(var(--accent-rgb), 0.18);
-  --glass-hover: rgba(var(--accent-rgb), 0.07);
-
-  /* Cobertura efectiva de blanco ~50%, y el cuerpo lleva un velo frío en vez
-     de blanco: lo que se ve a través del cristal sigue siendo color. */
-  /* Menos blanco y más tinte. Con 0.6/0.22/0.38 de blanco la tarjeta era una
-     superficie opaca y plana; bajando el blanco, el color de la malla se ve
-     A TRAVÉS del cristal y cada tarjeta toma un tono distinto según lo que
-     tenga detrás. Eso es lo que hace que se lea como vidrio y no como papel.
-     La separación con el fondo ya no la da la claridad, sino la sombra y el
-     filo de 1px — que es como funciona el material de Apple. */
-  --liquid-bg:
-    linear-gradient(
-      145deg,
-      rgba(255, 255, 255, 0.46),
-      rgba(255, 255, 255, 0.14) 48%,
-      rgba(255, 255, 255, 0.28)
-    ),
-    rgba(233, 222, 205, 0.42);
-  /* El borde lleva el acento: en blanco sobre relleno blanco era invisible. */
-  --liquid-border: rgba(var(--accent-rgb), 0.24);
-  --liquid-highlight: rgba(255, 255, 255, 0.9);
-
-  /* Sobre el cristal claro, "elevado" es más blanco y más opaco, no menos. */
-  --fill-raised: rgba(255, 255, 255, 0.50);
-  --fill-raised-hover: rgba(255, 255, 255, 0.72);
-
-  --card-bg: rgba(247, 242, 234, 0.97);
-  --card-border: rgba(var(--accent-rgb), 0.16);
-  --card-hover-border: rgba(var(--accent-rgb), 0.5);
-
-  --drawer-bg: rgba(247, 245, 240, 0.74);
-  /* En claro un velo negro ensucia el fondo; se usa la tinta, más suave. */
-  --scrim: rgba(19, 37, 47, 0.35);
-
-  --shadow-soft: 0 10px 30px -12px rgba(19, 37, 47, 0.22);
-  --shadow-glow: 0 0 26px rgba(var(--accent-rgb), 0.18);
-  /* Dos sombras, no una: la de contacto (1px, muy cerca) asienta la tarjeta
-     sobre el lienzo y la difusa le da altura. Con una sola sombra amplia y
-     suave, en tema claro la tarjeta flotaba sin apoyarse en nada. El filo
-     superior blanco es la luz resbalando por el canto del vidrio. */
-  --shadow-liquid:
-    0 1px 2px rgba(19, 37, 47, 0.07),
-    0 14px 34px -18px rgba(19, 37, 47, 0.28),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9);
-
-  /* El cristal sólo se percibe si hay algo detrás que desenfocar, así que la
-     malla en claro no puede quedarse en un lavado casi blanco. */
-  /* Era 0.6: un velo casi blanco sobre el 70% superior de la pantalla que
-     blanqueaba el lienzo y dejaba al cristal sin nada que filtrar. Ahora es
-     una luz cenital suave, no un blanqueo. */
-  --mesh-glow: rgba(255, 247, 234, 0.22);
-  --mesh-1: rgba(56, 150, 185, 0.34);
-  /* Arriba-derecha pasa a cálido: la malla clara cruza de frío a cálido en
-     diagonal, así que el fondo tiene las dos familias en vez de un lavado
-     azul uniforme. */
-  --mesh-2: rgba(203, 162, 118, 0.40);
-  --mesh-3: rgba(0, 102, 138, 0.20);
-  --mesh-4: rgba(206, 166, 122, 0.44);
-
-  /* En claro la cabeza es el acento a pleno, no un tono más claro: sobre
-     arena, lo que se lee como luz es el color saturado. */
-  --orbit-track: rgba(var(--accent-rgb), 0.24);
-  --orbit-tail: rgba(var(--accent-rgb), 0.5);
-  --orbit-tail-warm: rgba(var(--accent-warm-rgb), 0.55);
-  --orbit-head: rgba(var(--accent-rgb), 1);
-  --orbit-head-warm: rgba(var(--accent-warm-rgb), 1);
-  --orbit-glow: rgba(var(--accent-rgb), 0.28);
-  --orbit-glow-warm: rgba(var(--accent-warm-rgb), 0.3);
-
-  /* En claro no hay cielo nocturno: las estrellas son motas de tinta tenue,
-     polvo en la luz, y el titileo lleva el acento. Blancas sobre arena no se
-     verían. */
-  --star: rgba(19, 37, 47, 0.28);
-  --star-bright: rgba(var(--accent-rgb), 0.85);
-  --star-glow: rgba(var(--accent-rgb), 0.3);
-  --star-glow-soft: rgba(var(--accent-rgb), 0.1);
-
-  --grain-opacity: 0.045;
-  --grain-blend: multiply;
-  --vignette: rgba(58, 74, 84, 0.16);
-
-  --svg-filter: invert(0);
+  --bar-bg: rgba(244, 241, 236, 0.78);
+  --danger: #b42318;
 }

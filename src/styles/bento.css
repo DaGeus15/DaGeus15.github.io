@@ -1,0 +1,217 @@
+/* ==========================================================================
+   Bento: tarjetas con halo en el filo, etiquetas y color de capa
+   ========================================================================== */
+
+/* ── Color de capa ──────────────────────────────────────────────────────
+   Cualquier elemento con `data-layer` (tarjeta, etiqueta, nodo o paquete de
+   un diagrama) toma el color semántico de su capa. Sin capa, cae al acento. */
+[data-layer="core"] {
+  --layer-color: var(--tech-core);
+}
+
+[data-layer="data"] {
+  --layer-color: var(--tech-data);
+}
+
+[data-layer="cloud"] {
+  --layer-color: var(--tech-cloud);
+}
+
+/* ── Rejilla ────────────────────────────────────────────────────────────
+   Las columnas las decide el ancho del PANEL (`@container`), no el de la
+   ventana. Columnas explícitas, nunca `auto-fit`: con tarjetas de dos
+   tramos, `auto-fit` no colapsa las pistas vacías (ver AGENTS.md).
+
+   Stack: 2+1 / 1+1+1 a tres columnas; 2 / 1+1 / 1+1 a dos. */
+.bento {
+  container-type: inline-size;
+}
+
+.bento__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-4);
+}
+
+.bento__item {
+  display: flex;
+  min-width: 0;
+}
+
+.bento__item > .bento-tile {
+  flex: 1;
+  min-width: 0;
+}
+
+@container (min-width: 28rem) {
+  .bento__grid--stack {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .bento__grid--stack > [data-span="2"] {
+    grid-column: span 2;
+  }
+}
+
+@container (min-width: 42rem) {
+  .bento__grid--stack {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* ── Tarjeta ────────────────────────────────────────────────────────────
+   Superficie opaca con borde de 1px, sin cristal. `isolation` crea el
+   contexto en el que el filo y el reflejo (z-index -1) quedan sobre el fondo
+   de la tarjeta y bajo su contenido. */
+.bento-tile {
+  --tile-accent: var(--layer-color, var(--accent));
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding: var(--sp-5);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--border);
+  background-color: var(--surface);
+  box-shadow: var(--shadow-card);
+  transition:
+    background-color var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out);
+}
+
+/* Filo de 1px: la máscara deja ver sólo el borde. Va DENTRO de la tarjeta,
+   no la envuelve. Sólo `mask` estándar: el compilador añade el prefijo. */
+.bento-tile__rim,
+.bento-tile__wash {
+  position: absolute;
+  z-index: -1;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--dur-base) var(--ease-out);
+}
+
+.bento-tile__rim {
+  inset: -1px;
+  padding: 1px;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+}
+
+/* El mismo halo, muy tenue, dentro: la luz no se queda en el canto. */
+.bento-tile__wash {
+  inset: 0;
+}
+
+.bento-tile__glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--glow-size);
+  height: var(--glow-size);
+  margin: calc(var(--glow-size) / -2) 0 0 calc(var(--glow-size) / -2);
+  border-radius: 50%;
+  background: radial-gradient(closest-side, var(--tile-accent), transparent);
+}
+
+/* Reflejo superior: estático, pintado una vez. */
+.bento-tile__sheen {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(180deg, var(--tile-sheen), transparent 40%);
+}
+
+/* Hover sólo con puntero fino: en táctil se queda pegado tras un toque. */
+@media (hover: hover) and (pointer: fine) {
+  .bento-tile:hover {
+    border-color: color-mix(in srgb, var(--tile-accent) 28%, transparent);
+    background-color: var(--surface-hover);
+  }
+
+  .bento-tile:hover .bento-tile__rim {
+    opacity: 1;
+  }
+
+  .bento-tile:hover .bento-tile__wash {
+    opacity: var(--tile-wash);
+  }
+
+  .bento-tile:hover .tech-icon {
+    border-color: color-mix(in srgb, var(--tile-accent) 40%, transparent);
+    background-color: color-mix(in srgb, var(--tile-accent) 12%, transparent);
+  }
+
+  .bento-tile:hover .tag:not([data-layer]) {
+    border-color: color-mix(in srgb, var(--tile-accent) 38%, transparent);
+    color: var(--tile-accent);
+  }
+}
+
+/* ── Rótulo de capa ─────────────────────────────────────────────────────
+   Siempre en su color, también sin hover: es la clave del código de color. */
+.layer-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55em;
+  color: var(--tile-accent, var(--accent));
+  font-size: 1rem;
+  font-weight: 650;
+  font-stretch: var(--display-stretch);
+}
+
+.layer-label::before {
+  content: "";
+  flex-shrink: 0;
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* ── Etiquetas ──────────────────────────────────────────────────────────
+   `margin-top: auto` las baja al pie: en una fila de tarjetas con distinta
+   cantidad de texto, quedan alineadas entre sí. */
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  margin-top: auto;
+}
+
+.tag {
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border);
+  background-color: var(--surface-raised);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  line-height: 1.5;
+  transition:
+    color var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out);
+}
+
+/* Etiqueta con capa propia (experiencia): lleva su color siempre. */
+.tag[data-layer] {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  border-color: color-mix(in srgb, var(--layer-color) 34%, transparent);
+  color: var(--layer-color);
+}
+
+.tag[data-layer]::before {
+  content: "";
+  width: 0.38rem;
+  height: 0.38rem;
+  border-radius: 50%;
+  background: currentColor;
+}

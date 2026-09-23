@@ -1,18 +1,23 @@
 /**
- * Datos personales que NO se traducen.
- * El rol, la ubicación, la nacionalidad y la bio viven en `copy.js`, en los
- * dos idiomas, y se unen con esto en `src/lib/useContent.js`.
+ * Datos personales que NO se traducen. El rol, la frase de presentación, la
+ * ubicación y la bio viven en `copy.js` y se unen en `lib/useContent.js`.
+ *
+ * Fuente: el CV (`public/Dayle-Garcia-Fernandez-CV-*.pdf`). Si cambia el CV,
+ * este archivo y `copy.js` se actualizan con él.
  */
 export const profile = {
-  name: "Dayle Garcia",
-  /* El rol se repite en `copy.js` para poder traducirlo en la interfaz. Aquí
-     se queda una copia porque los metadatos (title, Open Graph) se generan al
-     construir el sitio y no pueden depender del idioma del visitante. */
+  name: "Daylé García Fernández",
+  /* El rol va aquí además de en `copy.js`: los metadatos (título, Open Graph)
+     se generan al construir y también se piden fuera de React. */
   role: "Software Engineer",
+  email: "garciadayle2004@gmail.com",
+  /* Retrato completo (Open Graph, datos estructurados) y recorte cuadrado de
+     cara y hombros para la columna fija: a 88px el retrato entero en un
+     cuadrado dejaba la cara diminuta. Si cambia la foto, regenerá el recorte. */
   avatar: "/dayle.jpeg",
-  /* Dos versiones del CV: el botón de descarga ofrece ambas, no adivina por
-     el idioma de la interfaz — quien mira el sitio en español puede querer el
-     CV en inglés para mandarlo fuera. */
+  avatarSquare: "/dayle-avatar.jpg",
+  /* Las dos versiones del CV: quien lee en español puede querer el inglés para
+     mandarlo fuera, así que el botón ofrece ambas. */
   cvEs: "/Dayle-Garcia-Fernandez-CV-ES.pdf",
   cvEn: "/Dayle-Garcia-Fernandez-CV-EN.pdf",
 };

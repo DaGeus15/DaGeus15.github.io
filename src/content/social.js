@@ -1,19 +1,11 @@
-/** Redes sociales del pie de la sección Contacto. */
+/** Enlaces profesionales. Van en la columna fija y en Contacto. */
 export const social = [
+  { id: "github", name: "GitHub", url: "https://github.com/DaGeus15", handle: "github.com/dageus15" },
   {
-    name: "GitHub",
-    url: "https://github.com/DaGeus15",
-    icon: "/assets/images/social-links/github.svg",
-  },
-  {
+    id: "linkedin",
     name: "LinkedIn",
     url: "https://www.linkedin.com/in/dayle-garcia-6a0878170/",
-    icon: "/assets/images/social-links/linkedin.svg",
-  },
-  {
-    name: "X (Twitter)",
-    url: "https://x.com/garci015",
-    icon: "/assets/images/social-links/x.png",
+    handle: "in/dayle-garcia",
   },
 ];
 

@@ -9,7 +9,9 @@
     "start": "next start",
     "lint": "eslint",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d out --dotfiles"
+    "deploy": "gh-pages -d out --dotfiles",
+    "og": "node scripts/og/build-og.mjs",
+    "icons": "node scripts/brand/build-icons.mjs"
   },
   "dependencies": {
     "framer-motion": "^12.40.0",

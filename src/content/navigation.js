@@ -1,14 +1,17 @@
 /**
- * Definición única de las secciones del portafolio.
- * El nav de escritorio, el drawer móvil y el scroll-spy leen todos de aquí.
- * Para añadir una sección: agregá una entrada y creá su componente en
- * `src/components/sections/`, luego registralo en `ContentArea.jsx`.
+ * Secciones de la página, en orden de lectura. La navegación de la columna
+ * fija y el scroll-spy leen de aquí; las etiquetas traducidas están en
+ * `copy.js` (`nav`).
+ *
+ * Proyectos va primero a propósito: con un año de experiencia profesional, lo
+ * que más demuestra son los sistemas construidos (uno en producción).
  */
 export const sections = [
-  { id: "about", label: "Sobre Mí", icon: "user" },
-  { id: "experience", label: "Experiencia", icon: "briefcase" },
-  { id: "projects", label: "Proyectos", icon: "code" },
-  { id: "contact", label: "Contacto", icon: "mail" },
+  { id: "projects" },
+  { id: "experience" },
+  { id: "stack" },
+  { id: "about" },
+  { id: "contact" },
 ];
 
 export const sectionIds = sections.map((s) => s.id);
