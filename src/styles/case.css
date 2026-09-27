@@ -54,9 +54,9 @@
 }
 
 .case-cover[data-tone="dark"] {
-  --border-strong: rgba(236, 234, 230, 0.16);
-  --surface-raised: #202125;
-  background: var(--tone-dark-bg);
+  --border-strong: rgba(220, 230, 245, 0.18);
+  --surface-raised: #1f2833;
+  --inner-light: rgba(255, 255, 255, 0.07);
 }
 
 .shot-stage {
@@ -184,8 +184,12 @@
 /* ── Bloques del informe ────────────────────────────────────────────────
    Rótulo a la izquierda, fijo mientras se lee su bloque; contenido a la
    derecha. Los anchos (arquitectura, capturas) van a todo el ancho. */
+/* `minmax(0, 1fr)` y no `1fr`: con `1fr` la pista no baja del ancho mínimo
+   de su contenido, y el diagrama (min-width 34rem) ensanchaba la página
+   entera en móvil. Así el diagrama se desplaza dentro de su marco. */
 .case-section {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--sp-4) var(--sp-8);
   padding-block: var(--sp-8);
   border-top: 1px solid var(--border);
@@ -381,11 +385,16 @@
 .lightbox__inner {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: var(--sp-3);
+  min-width: 0;
 }
 
+/* `min-width: 0`: como elemento flex, la imagen no baja de su ancho real
+   (647px en una captura de móvil) y el visor se salía de la pantalla. */
 .lightbox__img {
   width: auto;
+  min-width: 0;
   max-width: 100%;
   max-height: calc(94dvh - 4.5rem);
   margin-inline: auto;
@@ -395,12 +404,14 @@
 
 .lightbox__bar {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: var(--sp-4);
+  gap: var(--sp-2) var(--sp-4);
+  width: 100%;
 }
 
 .lightbox__caption {
-  flex: 1;
+  flex: 1 1 16rem;
   font-size: 0.92rem;
 }
 

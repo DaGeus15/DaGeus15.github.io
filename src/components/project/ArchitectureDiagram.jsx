@@ -8,7 +8,7 @@ import { useEffect, useId, useRef } from "react";
  *
  * Junto a las capturas, enseña cómo está hecho el sistema, que es lo que un
  * reclutador técnico quiere ver. El nodo con `accent` (lo que hice yo) va en
- * ascua; el resto, en los neutros.
+ * latón; el resto, en los neutros.
  *
  * Los "paquetes" que recorren las conexiones son SMIL (`<animateMotion>`):
  * corren sin JavaScript, empiezan en el primer pintado y no tocan React. Son

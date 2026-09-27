@@ -125,8 +125,11 @@
   overflow: visible;
 }
 
+/* El lienzo no recibe eventos: los atiende el contenedor y la losa se busca
+   con el rayo de la escena (o, sin escena, en el SVG que queda debajo). */
 .stack3d__canvas {
   opacity: 0;
+  pointer-events: none;
 }
 
 .stack3d[data-ready] .stack3d__canvas {
@@ -165,6 +168,36 @@
 
 .stack3d__slab[data-accent] .is-top {
   fill: var(--stack-accent-top);
+}
+
+/* Hover (o foco en su etiqueta): la losa sube y enciende el filo. En el SVG
+   lo hace esta regla; con la escena activa, la escena. `data-active` lo pone
+   SystemStack.jsx. La elevación va en un grupo interior para no pisarse con
+   la animación de llegada del grupo exterior. */
+.stack3d[data-hover] {
+  cursor: pointer;
+}
+
+.stack3d__lift {
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.stack3d__slab[data-active] .stack3d__lift {
+  transform: translateY(-14px);
+}
+
+.stack3d__slab[data-active] .stack3d__face {
+  stroke: var(--stack-accent-edge);
+}
+
+.stack3d__slab[data-active]:not([data-accent]) .is-top {
+  fill: var(--stack-top-hover);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stack3d__slab[data-active] .stack3d__lift {
+    transform: translateY(-5px);
+  }
 }
 
 /* El momento de la portada: las losas caen y se apilan de abajo arriba. En
@@ -207,6 +240,7 @@
 }
 
 .stack3d__label-text {
+  pointer-events: auto;
   display: grid;
   grid-template-columns: 1.4rem auto;
   column-gap: 0.55rem;
@@ -236,19 +270,55 @@
   line-height: 1.35;
 }
 
-/* Con sitio, en una línea: puede asomar al margen de la columna. */
+.stack3d__tech-part {
+  display: block;
+}
+
+/* Con sitio, en una línea con su separador: puede asomar al margen de la
+   columna. En móvil, una tecnología por línea. */
 @media (min-width: 480px) {
   .stack3d__tech {
     white-space: nowrap;
   }
+
+  .stack3d__tech-part {
+    display: inline;
+  }
+
+  .stack3d__tech-part + .stack3d__tech-part::before {
+    content: " · ";
+  }
 }
 
-.stack3d__label[data-accent] .stack3d__name {
+.stack3d__label[data-accent] .stack3d__name,
+.stack3d__label[data-active] .stack3d__name {
   color: var(--accent);
 }
 
-.stack3d__label[data-accent] .stack3d__label-text::before {
+.stack3d__label[data-accent] .stack3d__label-text::before,
+.stack3d__label[data-active] .stack3d__label-text::before {
   background: var(--stack-accent-edge);
+}
+
+/* La etiqueta activa se acerca a su losa; el trazo guía se alarga hacia ella
+   (scaleX desde la derecha, transform). */
+.stack3d__label-text::before {
+  transform-origin: right center;
+  transition:
+    transform var(--dur-base) var(--ease-out),
+    background-color var(--dur-base) var(--ease-out);
+}
+
+.stack3d__name {
+  transition: color var(--dur-base) var(--ease-out);
+}
+
+.stack3d__label[data-active] .stack3d__label-text::before {
+  transform: scaleX(1.35);
+}
+
+.stack3d__label-text:focus-visible {
+  outline-offset: 4px;
 }
 
 @media (max-width: 479px) {
@@ -360,17 +430,17 @@
   transition: border-color var(--dur-base) var(--ease-out);
 }
 
-/* Capturas oscuras: la tarjeta se invierte para que la ventana no flote sobre
-   un blanco. Los tokens se redefinen dentro, así el texto sigue pasando AA en
-   los dos temas. */
+/* Capturas oscuras: la tarjeta se invierte (marina en claro) para que la
+   ventana no flote sobre un blanco. Los tokens se redefinen dentro, así el
+   texto sigue pasando AA en los dos temas; el fondo está en light.css. */
 .work-card[data-tone="dark"] {
-  --foreground: #eceae6;
-  --muted: #a3a09a;
-  --border: rgba(236, 234, 230, 0.09);
-  --border-strong: rgba(236, 234, 230, 0.16);
-  --surface-raised: #202125;
-  --accent: #e0743c;
-  background: var(--tone-dark-bg);
+  --foreground: #eeebe5;
+  --border: rgba(220, 230, 245, 0.1);
+  --border-strong: rgba(220, 230, 245, 0.18);
+  --surface-raised: #1f2833;
+  --inner-light: rgba(255, 255, 255, 0.07);
+  --muted: #a3abb3;
+  --accent: #e0b676;
   color: var(--foreground);
 }
 
@@ -434,6 +504,18 @@
   font-size: 1.3rem;
   font-weight: 600;
   letter-spacing: -0.02em;
+}
+
+/* La cifra no se parte ("debe = haber" en dos líneas no se lee como cifra);
+   en móvil baja un punto para caber en su media columna. */
+.work-card__metric dd {
+  white-space: nowrap;
+}
+
+@media (max-width: 479px) {
+  .work-card__metric dd {
+    font-size: 1.12rem;
+  }
 }
 
 .work-card__metric dt {
@@ -726,6 +808,24 @@
   line-height: 1.6;
 }
 
+/* La fila a la que se llega desde la pila de la portada se marca un momento
+   y se apaga sola. */
+.stack-row:target {
+  animation: row-target 3.2s var(--ease-out) 0.4s both;
+}
+
+@keyframes row-target {
+  from,
+  40% {
+    /* El velo se extiende por los lados con la sombra (no con padding, que
+       movería el texto). */
+    background-color: var(--accent-soft);
+    box-shadow:
+      inset 0 1px 0 var(--accent-line),
+      0 0 0 var(--sp-3) var(--accent-soft);
+  }
+}
+
 .stack-row__proof {
   max-width: 44ch;
   color: var(--muted);
@@ -759,6 +859,20 @@
   width: 100%;
   border-radius: var(--r-lg);
   border: 1px solid var(--border);
+}
+
+/* En móvil, entero ocupaba la pantalla: recorte de cara y hombros, más
+   pequeño. Después de la regla base. */
+@media (max-width: 1023px) {
+  .about__portrait {
+    max-width: 17rem;
+  }
+
+  .about__portrait img {
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    object-position: 50% 12%;
+  }
 }
 
 .about__lead:first-child {

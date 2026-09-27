@@ -200,8 +200,8 @@ code {
 }
 
 /* ── Botones ──────────────────────────────────────────────────────────
-   Una forma: 10px de radio, 44px de alto (objetivo táctil). Primario en
-   ascua con texto oscuro; secundario con borde. */
+   Una forma: 10px de radio, 44px de alto (objetivo táctil). Primario con el
+   relleno de acento (latón en oscuro, marino en claro); secundario con borde. */
 .btn {
   display: inline-flex;
   align-items: center;

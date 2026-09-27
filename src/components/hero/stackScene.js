@@ -1,4 +1,4 @@
-import { Renderer, Camera, Transform, Box, Program, Mesh, Vec3 } from "ogl";
+import { Renderer, Camera, Transform, Box, Program, Mesh, Vec3, Raycast } from "ogl";
 import { VIEW, PX, SLAB, slabY, slabAnchor } from "./stackGeometry";
 import { HOVER_QUERY } from "@/lib/breakpoints";
 
@@ -13,6 +13,10 @@ import { HOVER_QUERY } from "@/lib/breakpoints";
  *   · Se para fuera de pantalla (IntersectionObserver).
  *   · DPR limitado: 2 con ratón, 1.5 en táctil.
  *   · Sin WebGL (o si falla algo), devuelve null y se queda el SVG.
+ *
+ * Devuelve `{ pick, setHover, dispose }`: `pick` dice qué losa hay bajo un
+ * punto de la pantalla (un rayo contra las cajas), `setHover` levanta una
+ * losa y enciende su filo. Quien decide el hover es `SystemStack.jsx`.
  *
  * Mate: sin luces especulares ni reflejos. Cada cara toma su color de los
  * tokens (`--stack-*`) según hacia dónde mira, igual que el SVG, y los filos
@@ -70,6 +74,7 @@ function readPalette() {
   const get = (name) => rgb(css.getPropertyValue(name) || "#808080");
   return {
     top: get("--stack-top"),
+    topHover: get("--stack-top-hover"),
     left: get("--stack-left"),
     right: get("--stack-right"),
     edge: get("--stack-edge"),
@@ -88,7 +93,9 @@ export function mountStack({ wrap, canvas, labels, accentIndex, count }) {
       alpha: true,
       antialias: true,
     });
-    if (!renderer.isWebgl2) return null;
+    // Un contexto perdido (p. ej. un lienzo reutilizado tras desmontar, que
+    // libera el suyo) no compila shaders: mejor quedarse con el SVG.
+    if (!renderer.isWebgl2 || renderer.gl.isContextLost()) return null;
   } catch {
     return null;
   }
@@ -134,16 +141,30 @@ export function mountStack({ wrap, canvas, labels, accentIndex, count }) {
     return { mesh, program, accent };
   });
 
+  // Si algún programa no enlazó, OGL lo deja sin `uniformLocations` y el
+  // primer render lanza. Sin escena, se queda el SVG.
+  if (slabs.some(({ program }) => !program.uniformLocations)) return null;
+
+  const raycast = new Raycast();
+  const meshes = slabs.map((s) => s.mesh);
+  let palette_ = palette;
+  let hovered = -1;
+
   /* Estado: valor actual y objetivo. El bucle acerca uno al otro con un
      amortiguado exponencial (sin rebote) y se para cuando llegan. */
   const now = { rx: 0, ry: 0, gap: SLAB.gap };
   const goal = { rx: 0, ry: 0, gap: SLAB.gap };
+  // Elevación de cada losa (la que está bajo el cursor sube).
+  const lift = new Array(count).fill(0);
+  const liftGoal = new Array(count).fill(0);
+  const LIFT = reduced ? 0.12 : 0.3;
   const pointer = { x: 0, y: 0 };
   let scrollP = 0;
   let visible = true;
   let size = { w: 1, h: 1 };
   let raf = 0;
   let last = 0;
+  let lost = false;
 
   const anchor = new Vec3();
 
@@ -151,7 +172,7 @@ export function mountStack({ wrap, canvas, labels, accentIndex, count }) {
     stack.rotation.x = now.rx;
     stack.rotation.y = now.ry;
     slabs.forEach(({ mesh }, i) => {
-      mesh.position.y = slabY(i, count, now.gap);
+      mesh.position.y = slabY(i, count, now.gap) + lift[i];
     });
     scene.updateMatrixWorld();
 
@@ -160,7 +181,8 @@ export function mountStack({ wrap, canvas, labels, accentIndex, count }) {
     const scale = size.w / VIEW.w;
     labels.forEach((el, i) => {
       if (!el) return;
-      const [x, y, z] = slabAnchor(i, count, now.gap);
+      const [x, y0, z] = slabAnchor(i, count, now.gap);
+      const y = y0 + lift[i];
       const [rx0, ry0, rz0] = slabAnchor(i, count, SLAB.gap);
       camera.project(anchor.set(x, y, z).applyMatrix4(stack.worldMatrix));
       const sx = ((anchor.x + 1) / 2) * VIEW.w;
@@ -172,7 +194,7 @@ export function mountStack({ wrap, canvas, labels, accentIndex, count }) {
       el.style.transform = `translate(${((sx - bx) * scale).toFixed(2)}px, ${((sy - by) * scale).toFixed(2)}px)`;
     });
 
-    renderer.render({ scene, camera });
+    if (!lost) renderer.render({ scene, camera });
   }
 
   function frame(t) {
@@ -190,12 +212,23 @@ export function mountStack({ wrap, canvas, labels, accentIndex, count }) {
         now[key] = goal[key];
       }
     }
+    // La elevación, algo más rápida: es respuesta directa al cursor.
+    const kl = 1 - Math.exp(-dt * 12);
+    for (let i = 0; i < count; i++) {
+      const delta = liftGoal[i] - lift[i];
+      if (Math.abs(delta) > 1e-4) {
+        lift[i] += delta * kl;
+        moving = true;
+      } else {
+        lift[i] = liftGoal[i];
+      }
+    }
     place();
     if (moving && visible) raf = requestAnimationFrame(frame);
   }
 
   function kick() {
-    if (raf || !visible) return;
+    if (raf || !visible || lost) return;
     last = performance.now();
     raf = requestAnimationFrame(frame);
   }
@@ -235,15 +268,41 @@ export function mountStack({ wrap, canvas, labels, accentIndex, count }) {
     place();
   };
 
-  const applyTheme = () => {
-    const p = readPalette();
-    slabs.forEach(({ program, accent }) => {
-      program.uniforms.uTop.value = accent ? p.accentTop : p.top;
+  /** Colores de cada losa según el tema y el hover: la que está bajo el
+      cursor aclara su cara superior y enciende el filo en latón. */
+  const paint = () => {
+    const p = palette_;
+    slabs.forEach(({ program, accent }, i) => {
+      const on = i === hovered;
+      program.uniforms.uTop.value = accent ? p.accentTop : on ? p.topHover : p.top;
       program.uniforms.uLeft.value = p.left;
       program.uniforms.uRight.value = p.right;
-      program.uniforms.uEdge.value = accent ? p.accentEdge : p.edge;
+      program.uniforms.uEdge.value = accent || on ? p.accentEdge : p.edge;
     });
+  };
+
+  const applyTheme = () => {
+    palette_ = readPalette();
+    paint();
     place();
+  };
+
+  const setHover = (index) => {
+    hovered = index;
+    liftGoal.fill(0);
+    if (index >= 0) liftGoal[index] = LIFT;
+    paint();
+    kick();
+  };
+
+  const pick = (clientX, clientY) => {
+    if (lost) return null;
+    const rect = canvas.getBoundingClientRect();
+    const x = ((clientX - rect.left) / rect.width) * 2 - 1;
+    const y = -(((clientY - rect.top) / rect.height) * 2 - 1);
+    raycast.castMouse(camera, [x, y]);
+    const [hit] = raycast.intersectBounds(meshes);
+    return hit ? meshes.indexOf(hit) : -1;
   };
 
   const ro = new ResizeObserver(resize);
@@ -264,7 +323,20 @@ export function mountStack({ wrap, canvas, labels, accentIndex, count }) {
   onScroll();
   wrap.dataset.ready = "true";
 
-  return () => {
+  // Si el navegador retira el contexto en marcha (demasiados lienzos, GPU
+  // reiniciada), se para todo y vuelve el SVG, que sigue en el DOM.
+  const onLost = (e) => {
+    e.preventDefault();
+    lost = true;
+    cancelAnimationFrame(raf);
+    raf = 0;
+    delete wrap.dataset.ready;
+    labels.forEach((el) => el && (el.style.transform = ""));
+  };
+  canvas.addEventListener("webglcontextlost", onLost);
+
+  const dispose = () => {
+    canvas.removeEventListener("webglcontextlost", onLost);
     cancelAnimationFrame(raf);
     ro.disconnect();
     io.disconnect();
@@ -276,4 +348,6 @@ export function mountStack({ wrap, canvas, labels, accentIndex, count }) {
     delete wrap.dataset.ready;
     gl.getExtension("WEBGL_lose_context")?.loseContext();
   };
+
+  return { pick, setHover, dispose };
 }

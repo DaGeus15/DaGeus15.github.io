@@ -1,0 +1,87 @@
+/* ==========================================================================
+   Luz: lo que hace que el oscuro se lea mate y con cuerpo, no plano.
+
+   La luz viene de arriba, siempre igual:
+   · la página lleva un resplandor cenital, pintado una vez;
+   · las superficies grandes, un degradado vertical, un filo de luz de 1px en
+     el borde superior y una sombra larga y suave debajo;
+   · los controles (píldora, botones, marcos), un reflejo interior arriba.
+
+   Va al final de los módulos a propósito: con la misma especificidad gana la
+   última regla, así que aquí se decide el fondo de estas superficies. Nada
+   de esto se anima.
+   ========================================================================== */
+
+body {
+  background-image: radial-gradient(72rem 38rem at 50% -10rem, var(--glow), transparent 70%);
+  background-repeat: no-repeat;
+}
+
+/* ── Superficies iluminadas ─────────────────────────────────────────── */
+.work-card,
+.case-cover,
+.contact__form,
+.next-project {
+  position: relative;
+  background: var(--surface-grad);
+  box-shadow: var(--shadow-card);
+}
+
+.work-card::before,
+.case-cover::before,
+.contact__form::before,
+.next-project::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 12%;
+  left: 12%;
+  z-index: 2;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--edge-light), transparent);
+  pointer-events: none;
+}
+
+/* Capturas oscuras: la tarjeta se invierte (marino en claro), con su propio
+   degradado. Va con el selector de atributo para ganar a la regla general. */
+.work-card[data-tone="dark"],
+.case-cover[data-tone="dark"] {
+  --edge-light: rgba(255, 255, 255, 0.24);
+  background: var(--tone-dark-grad);
+}
+
+/* ── Controles ──────────────────────────────────────────────────────── */
+.site-nav__pill {
+  box-shadow:
+    inset 0 1px 0 var(--inner-light),
+    var(--shadow-float);
+}
+
+.site-nav__active {
+  box-shadow: inset 0 1px 0 var(--inner-light);
+}
+
+.cv-menu {
+  background: var(--surface-grad);
+  box-shadow:
+    inset 0 1px 0 var(--inner-light),
+    var(--shadow-float);
+}
+
+.btn--primary {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+.btn--ghost {
+  box-shadow: inset 0 1px 0 var(--inner-light);
+}
+
+/* ── Titulares ──────────────────────────────────────────────────────
+   En oscuro, un halo muy leve alrededor de los titulares grandes: la tinta
+   clara sobre marino "emite" un poco, como en la referencia. En claro no:
+   ahí sería suciedad. */
+[data-theme="dark"] .hero__name,
+[data-theme="dark"] .contact__title,
+[data-theme="dark"] .case-hero__title {
+  text-shadow: 0 0 2.5rem rgba(220, 230, 245, 0.14);
+}

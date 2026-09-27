@@ -92,15 +92,12 @@ export const copy = {
       contact: "Contacto",
     },
 
-    /* Las cuatro capas de la pila 3D de la portada. Se dibujan en el lienzo,
-       así que van cortas. */
+    /* Las cuatro capas de la pila 3D de la portada (estructura en
+       `hero.js`). Van cortas: son etiquetas junto a cada losa. `goTo` es el
+       nombre accesible del enlace de cada capa. */
     hero: {
-      layers: [
-        { id: "client", name: "Cliente", tech: "Next.js · Flutter" },
-        { id: "api", name: "API", tech: "Spring Boot · NestJS" },
-        { id: "data", name: "Datos", tech: "PostgreSQL · MongoDB" },
-        { id: "infra", name: "Infra", tech: "Docker · Azure" },
-      ],
+      layers: { client: "Cliente", api: "API", data: "Datos", infra: "Infra" },
+      goTo: (name) => `${name}: ver en el stack`,
     },
 
     sections: {
@@ -497,12 +494,8 @@ export const copy = {
     },
 
     hero: {
-      layers: [
-        { id: "client", name: "Client", tech: "Next.js · Flutter" },
-        { id: "api", name: "API", tech: "Spring Boot · NestJS" },
-        { id: "data", name: "Data", tech: "PostgreSQL · MongoDB" },
-        { id: "infra", name: "Infra", tech: "Docker · Azure" },
-      ],
+      layers: { client: "Client", api: "API", data: "Data", infra: "Infra" },
+      goTo: (name) => `${name}: see it in the stack`,
     },
 
     sections: {

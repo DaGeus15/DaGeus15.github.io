@@ -8,6 +8,9 @@ import SectionHeading from "./SectionHeading";
  *
  * Los iconos son máscaras en el color del texto: los logotipos a todo color
  * convertían la sección en un muestrario de marcas.
+ *
+ * Cada fila tiene id (`stack-<grupo>`): la pila de la portada enlaza aquí, y
+ * la fila a la que se llega se marca un momento (`:target`).
  */
 export default function Stack({ t }) {
   return (
@@ -16,7 +19,7 @@ export default function Stack({ t }) {
 
       <ul className="stack-list">
         {t.skills.map((group) => (
-          <li className="stack-row reveal" key={group.id}>
+          <li className="stack-row reveal" id={`stack-${group.id}`} key={group.id}>
             <h3 className="stack-row__title">{group.title}</h3>
             <div className="stack-row__tech">
               <ul className="stack-row__primary">

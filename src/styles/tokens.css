@@ -66,107 +66,136 @@
   --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-/* ── Paleta: grafito mate + ascua ───────────────────────────────────────
-   Neutros con un punto cálido (no azulados: el gris frío de pantalla es lo
-   que hace que un sitio parezca plantilla) y UN solo acento, ascua, que marca
-   lo accionable y lo propio: el enlace, el foco, el CTA, el nodo que hice yo
-   en un diagrama. Sin segundos colores ni colores por capa: la jerarquía la
-   dan el tamaño, el peso y la luminosidad.
+/* ── Paleta: marino + latón ─────────────────────────────────────────────
+   Sale de la foto (`public/dayle.jpeg`), medida en OKLCH, no elegida a ojo:
+   las dos familias con croma real son el azul marino de la blusa (h≈245) y
+   el cálido de la pared y el pantalón (h≈65). El marino, muy oscuro, es el
+   fondo; el cálido, subido de croma, es el acento: latón. Una pareja clásica
+   que no se parece al naranja arcilla de las herramientas de IA ni al cian
+   de las plantillas. Si cambia la foto, recuantizá.
+
+   UN solo acento, para lo accionable y lo propio: enlaces, foco, CTA, el nodo
+   que hice yo en un diagrama, la losa de la API. La jerarquía la dan el
+   tamaño, el peso y la luminosidad.
+
+   Mate no es plano: la luz viene de arriba. Las superficies llevan un
+   degradado vertical (`--surface-grad`), un filo de luz de 1px arriba
+   (`--edge-light`) y sombras largas y suaves; la página, un resplandor
+   cenital (`--glow`). Es lo que separa un negro "de pantalla" de uno con
+   cuerpo.
 
    Contrastes (WCAG 2.1): texto ≥4.5:1 en todas las superficies; el acento
-   como texto ≥4.5:1; sobre el acento, texto oscuro (--on-accent), 5.9:1. */
+   como texto ≥4.5:1; sobre los rellenos de acento, --on-accent ≥7:1. */
 
 :root,
 [data-theme="dark"] {
   color-scheme: dark;
 
-  --background: #111214;
-  --surface: #18191c;
-  /* Lo elevado DENTRO de una superficie (campos, ventanas, iconos). */
-  --surface-raised: #1f2024;
-  --surface-sunken: #0d0e10;
+  --background: #0f151d;
+  --surface: #151c25;
+  /* Lo elevado DENTRO de una superficie (campos, marcos, iconos). */
+  --surface-raised: #1f2833;
+  --surface-sunken: #0b1016;
+  --surface-grad: linear-gradient(190deg, #1f2833, #121820 70%);
 
-  --foreground: #eceae6;
-  /* 6:1 sobre --surface. */
-  --muted: #9d9a94;
+  --foreground: #eeebe5;
+  /* 6.5:1 sobre --surface. */
+  --muted: #9ea6ae;
   /* Sólo decorativo (reglas, marcos): no pasa AA como texto. */
-  --faint: #3a3b3f;
+  --faint: #33404f;
 
-  --border: rgba(236, 234, 230, 0.08);
-  --border-strong: rgba(236, 234, 230, 0.15);
+  --border: rgba(220, 230, 245, 0.08);
+  --border-strong: rgba(220, 230, 245, 0.15);
 
-  /* Ascua. 6:1 sobre el fondo como texto. */
-  --accent: #e0743c;
-  --accent-hover: #ea8550;
-  --accent-fill-hover: #ea8550;
-  --accent-rgb: 224, 116, 60;
-  /* Relleno de los CTA, con --on-accent encima. */
-  --accent-fill: #e0743c;
-  --on-accent: #141414;
+  /* Latón. 10:1 sobre el fondo como texto. */
+  --accent: #e0b676;
+  --accent-hover: #ebc68d;
+  --accent-rgb: 224, 182, 118;
+  /* Relleno de los CTA, con --on-accent encima (9.5:1). */
+  --accent-fill: #e0b676;
+  --accent-fill-hover: #ebc68d;
+  --on-accent: #141a22;
   --accent-soft: rgba(var(--accent-rgb), 0.12);
   --accent-line: rgba(var(--accent-rgb), 0.4);
 
-  --grain-opacity: 0.06;
-  --shadow-window: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 30px 60px -30px rgba(0, 0, 0, 0.75);
-  --shadow-float: 0 12px 32px -12px rgba(0, 0, 0, 0.6);
-  --nav-bg: rgba(24, 25, 28, 0.72);
-  --danger: #f08a7a;
+  /* Luz: resplandor cenital, filo superior y reflejo interior. */
+  --glow: rgba(150, 175, 210, 0.1);
+  --edge-light: rgba(255, 255, 255, 0.28);
+  --inner-light: rgba(255, 255, 255, 0.07);
+
+  --grain-opacity: 0.07;
+  --shadow-card: 0 40px 80px -30px rgba(0, 0, 0, 0.6);
+  --shadow-window: inset 0 1px 0 var(--inner-light), 0 30px 60px -30px rgba(0, 0, 0, 0.75);
+  --shadow-float: 0 14px 36px -14px rgba(0, 0, 0, 0.65);
+  --nav-bg: rgba(21, 28, 37, 0.74);
+  --danger: #f29b8b;
 
   /* Tarjeta invertida para capturas oscuras (ver `tone` en projects.js). */
-  --tone-dark-bg: #0d0e10;
+  --tone-dark-bg: #0b1016;
+  --tone-dark-grad: linear-gradient(190deg, #18202a, #0b1016 70%);
 
   /* Pila 3D de la portada: una cara por orientación (arriba, izquierda,
-     derecha), el filo, y la losa propia (la API) en ascua. Los lee también
+     derecha), el filo, y la losa propia (la API) en latón. Los lee también
      la escena OGL, así que van en hexadecimal. */
-  --stack-top: #27282c;
-  --stack-left: #1c1d20;
-  --stack-right: #151618;
-  --stack-edge: #404146;
-  --stack-accent-top: #2f2622;
-  --stack-accent-edge: #e0743c;
+  --stack-top: #222c38;
+  --stack-top-hover: #2b3745;
+  --stack-left: #17202a;
+  --stack-right: #111821;
+  --stack-edge: #36444f;
+  --stack-accent-top: #2c2c29;
+  --stack-accent-edge: #e0b676;
 }
 
-/* ── Tema claro: blanco mate ────────────────────────────────────────────
-   Papel, no blanco de laboratorio: el lienzo es un gris cálido y las
-   superficies casi blancas se separan de él por luminosidad y un borde. */
+/* ── Tema claro: papel cálido y tinta marina ────────────────────────────
+   El lienzo es el greige de la pared de la foto; el texto, el marino de la
+   blusa. El CTA se invierte: relleno marino con texto de papel, y el latón
+   (oscurecido a bronce para pasar AA) queda para enlaces y detalles. */
 [data-theme="light"] {
   color-scheme: light;
 
-  --background: #f1f1ee;
-  --surface: #fafaf8;
-  --surface-raised: #e9e9e5;
-  --surface-sunken: #e4e4df;
+  --background: #f4f1ec;
+  --surface: #fbfaf7;
+  --surface-raised: #ebe7e0;
+  --surface-sunken: #e8e4dd;
+  --surface-grad: linear-gradient(190deg, #ffffff, #f8f6f2 70%);
 
-  --foreground: #15171a;
-  --muted: #5b5954;
-  --faint: #cfcec8;
+  --foreground: #142030;
+  --muted: #4f5966;
+  --faint: #cfc9bf;
 
-  --border: rgba(21, 23, 26, 0.09);
-  --border-strong: rgba(21, 23, 26, 0.17);
+  --border: rgba(20, 32, 48, 0.09);
+  --border-strong: rgba(20, 32, 48, 0.17);
 
-  /* Ascua oscurecida para texto: 5:1 sobre el lienzo. Los rellenos (CTA)
-     siguen en el ascua clara con texto oscuro, igual que en oscuro. */
-  --accent: #a94b19;
-  --accent-hover: #933f12;
-  --accent-rgb: 169, 75, 25;
-  --accent-fill: #e0743c;
-  --accent-fill-hover: #d4672f;
-  --on-accent: #141414;
+  /* Bronce: 5.5:1 sobre el lienzo. */
+  --accent: #845922;
+  --accent-hover: #6f4a1a;
+  --accent-rgb: 132, 89, 34;
+  --accent-fill: #142030;
+  --accent-fill-hover: #22324a;
+  --on-accent: #f4f1ec;
   --accent-soft: rgba(var(--accent-rgb), 0.09);
   --accent-line: rgba(var(--accent-rgb), 0.35);
 
+  --glow: rgba(255, 255, 255, 0.7);
+  --edge-light: rgba(255, 255, 255, 1);
+  --inner-light: rgba(255, 255, 255, 0.8);
+
   --grain-opacity: 0.05;
-  --shadow-window: 0 1px 2px rgba(21, 23, 26, 0.06), 0 30px 50px -32px rgba(21, 23, 26, 0.35);
-  --shadow-float: 0 12px 28px -14px rgba(21, 23, 26, 0.3);
-  --nav-bg: rgba(250, 250, 248, 0.78);
+  --shadow-card: 0 30px 60px -36px rgba(20, 32, 48, 0.28);
+  --shadow-window: inset 0 1px 0 var(--inner-light), 0 26px 50px -30px rgba(20, 32, 48, 0.35);
+  --shadow-float: 0 12px 28px -14px rgba(20, 32, 48, 0.3);
+  --nav-bg: rgba(251, 250, 247, 0.8);
   --danger: #b42318;
 
-  --tone-dark-bg: #1b1c1f;
+  /* En claro, las tarjetas de capturas oscuras son marinas. */
+  --tone-dark-bg: #142030;
+  --tone-dark-grad: linear-gradient(190deg, #1f2f45, #142030 70%);
 
-  --stack-top: #fbfbf9;
-  --stack-left: #e6e5e0;
-  --stack-right: #d8d7d1;
-  --stack-edge: #bdbcb5;
-  --stack-accent-top: #f8ece4;
-  --stack-accent-edge: #cf6530;
+  --stack-top: #fdfcfa;
+  --stack-top-hover: #ffffff;
+  --stack-left: #e9e5de;
+  --stack-right: #dbd6cd;
+  --stack-edge: #bdb5a8;
+  --stack-accent-top: #f5ead8;
+  --stack-accent-edge: #a8762f;
 }

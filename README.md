@@ -54,6 +54,7 @@ actualizá estos archivos con él.
 | Grupos del stack, iconos y herramientas           | `content/skills.js`      |
 | GitHub, LinkedIn y clave del formulario           | `content/social.js`      |
 | Orden de las secciones                            | `content/navigation.js`  |
+| Capas de la pila 3D y a qué grupo del stack llevan | `content/hero.js`       |
 
 En los textos podés usar `**negrita**` y `` `código` ``; lo renderiza
 `lib/RichText.jsx`.
@@ -91,8 +92,8 @@ traducen van en `copy.js`, en `projects[id].nodes`.
 
 ## Cómo cambiar el aspecto visual
 
-El sistema de diseño está en **`src/styles/tokens.css`**: la paleta grafito
-mate + ascua de cada tema, el grano, tipografía, espaciado, radios, duraciones
+El sistema de diseño está en **`src/styles/tokens.css`**: la paleta marino +
+latón de cada tema (sacada de la foto), la luz, el grano, tipografía, espaciado, radios, duraciones
 y los colores de la pila 3D. Los springs, en **`src/lib/motion.js`**. Las
 reglas y su porqué, en `AGENTS.md`.
 

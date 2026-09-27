@@ -12,8 +12,9 @@
  * Si cambia el fondo, recolocá CIRCLE: es el centro y el radio del anillo
  * blanco medidos sobre la imagen original.
  *
- * El fondo original es azulado; se desatura para que caiga en el grafito
- * mate del sitio, y el rol va en ascua, el acento de `tokens.css`.
+ * El fondo original es azul verdoso; se tiñe de marino (conserva su luz y
+ * pierde su color) para que case con el sitio, y el rol va en latón, el
+ * acento de `tokens.css`.
  */
 import sharp from "sharp";
 import { fileURLToPath } from "node:url";
@@ -51,9 +52,9 @@ const TEXT_X = 412;
 const text = Buffer.from(`
 <svg width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg">
   <style>
-    .name { font: 600 52px "Segoe UI", "Helvetica Neue", Arial, sans-serif; fill: #eceae6; letter-spacing: -0.5px; }
-    .role { font: 500 28px "Segoe UI", "Helvetica Neue", Arial, sans-serif; fill: #e0743c; }
-    .mono { font: 400 19px Consolas, "SF Mono", Menlo, monospace; fill: #9d9a94; }
+    .name { font: 600 52px "Segoe UI", "Helvetica Neue", Arial, sans-serif; fill: #eeebe5; letter-spacing: -0.5px; }
+    .role { font: 500 28px "Segoe UI", "Helvetica Neue", Arial, sans-serif; fill: #e0b676; }
+    .mono { font: 400 19px Consolas, "SF Mono", Menlo, monospace; fill: #9ea6ae; }
   </style>
   <text x="${TEXT_X}" y="262" class="name">Daylé García Fernández</text>
   <text x="${TEXT_X}" y="308" class="role">Software Engineer</text>
@@ -61,9 +62,13 @@ const text = Buffer.from(`
   <text x="${Math.round(cx - d / 2)}" y="${H - 52}" class="mono">dageus15.github.io</text>
 </svg>`);
 
-await sharp(join(root, "scripts", "og", "background.webp"))
+/* El tinte va sólo al fondo: aplicado al final teñía también la foto. */
+const background = await sharp(join(root, "scripts", "og", "background.webp"))
   .resize(W, H, { fit: "cover" })
-  .modulate({ saturation: 0.15 })
+  .tint("#34506f")
+  .toBuffer();
+
+await sharp(background)
   .composite([
     { input: avatar, left: Math.round(cx - d / 2), top: Math.round(cy - d / 2) },
     { input: text, left: 0, top: 0 },

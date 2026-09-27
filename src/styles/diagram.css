@@ -55,7 +55,7 @@
   stroke-width: 1;
 }
 
-/* El nodo propio (lo que hice yo) en ascua: el único color del diagrama. */
+/* El nodo propio (lo que hice yo) en latón: el único color del diagrama. */
 .diagram__node[data-accent] rect {
   fill: color-mix(in srgb, var(--accent) 10%, var(--surface-raised));
   stroke: var(--accent);
@@ -79,7 +79,7 @@
 }
 
 /* Paquetes: los síncronos en el color del texto, los eventos asíncronos en
-   ascua. */
+   latón. */
 .diagram__packet {
   fill: var(--foreground);
 }

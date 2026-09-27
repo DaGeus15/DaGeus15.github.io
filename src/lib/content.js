@@ -4,6 +4,7 @@ import projectsBase from "@/content/projects";
 import skillGroups from "@/content/skills";
 import experienceBase from "@/content/experience";
 import navBase from "@/content/navigation";
+import heroLayers from "@/content/hero";
 import social from "@/content/social";
 import { DEFAULT_LANG } from "./locales";
 
@@ -55,7 +56,14 @@ export function getContent(lang) {
     social,
     nav: navBase.map((s) => ({ ...s, label: c.nav[s.id] })),
     sections: c.sections,
-    hero: c.hero,
+    // Capas de la pila de la portada, con su nombre accesible ya resuelto: la
+    // pila es un componente de cliente y `goTo` es una función.
+    hero: {
+      layers: heroLayers.map((l) => {
+        const name = c.hero.layers[l.id];
+        return { ...l, name, label: `${c.hero.goTo(name)} (${l.tech})` };
+      }),
+    },
     experience: c.experience.map((role) => ({
       ...experienceBase.find((e) => e.id === role.id),
       ...role,

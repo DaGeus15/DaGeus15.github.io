@@ -84,16 +84,24 @@ silencio.
 - **Colores, espaciado, radios y duraciones salen de `styles/tokens.css`.**
   Tamaños en `rem` (`base.css` sube la raíz por encima de 1440px); alturas de
   contenedor en `dvh`, nunca `vh`.
-- **Paleta: grafito mate + ascua.** Neutros con un punto cálido (el gris frío
-  de pantalla es lo que hace que un sitio parezca plantilla) y UN solo acento,
-  ascua, para lo accionable y lo propio: enlaces, foco, CTA, el nodo que hice
-  yo en un diagrama, la losa de la API. Nada de segundos colores ni colores por
-  capa: la jerarquía la dan el tamaño, el peso y la luminosidad.
+- **Paleta: marino + latón, sacada de la foto por medición.** Cuantizando
+  `public/dayle.jpeg` en OKLCH, las únicas familias con croma real son el
+  marino de la blusa (h≈245) y el cálido de la pared y el pantalón (h≈65):
+  el marino muy oscuro es el fondo y el cálido, subido de croma, el acento
+  (latón). En claro, papel cálido (la pared) con tinta marina. UN solo
+  acento, para lo accionable y lo propio: enlaces, foco, CTA, el nodo que
+  hice yo en un diagrama, la losa de la API. Nada de colores por capa. Evitá
+  el naranja arcilla: es el color de las herramientas de IA y el sitio se leía
+  "hecho por IA". Si cambia la foto, recuantizá; no elijas a ojo.
 - **`--accent` para texto y bordes; `--accent-fill` + `--on-accent` para
-  rellenos.** En claro el acento de texto es un ascua oscurecido (5:1); los
-  rellenos siguen en el ascua clara con texto oscuro en los dos temas.
-- **Mate = grano.** Una capa fija de ruido (`body::after`, `--grain`) pintada
-  una vez. Nada de resplandores, degradados de fondo ni cuadrículas.
+  rellenos.** En oscuro el relleno es latón con texto marino; en claro el
+  relleno es marino con texto de papel y el acento de texto, un bronce (5.5:1).
+- **Mate = grano + luz cenital, no plano.** Una capa fija de ruido
+  (`body::after`), un resplandor arriba de la página, y en las superficies
+  grandes un degradado vertical, un filo de luz de 1px arriba y una sombra
+  larga (todo en `styles/light.css`, que va al final). Un negro plano con
+  superficies planas se leía "muy negro", sin cuerpo. Nada de esto se anima;
+  nada de cuadrículas ni resplandores de colores.
 - **Tarjetas con capturas oscuras se invierten** (`tone: "dark"` en
   `projects.js`) y redefinen sus tokens dentro, para que el texto pase AA en
   los dos temas y la ventana no flote sobre un blanco.
@@ -105,9 +113,8 @@ silencio.
   sostiene solo.
 - **Superficies del navegador con la paleta**: selección, foco, cursor de
   texto y barras de desplazamiento están en `base.css`.
-- **La profundidad la dan un borde de 1px y un cambio de luminosidad**; las
-  únicas sombras son las de los marcos de captura y lo que flota (píldora,
-  menús), siempre con desplazamiento y difuminado.
+- **La profundidad la dan la luz de arriba, un borde de 1px y sombras largas
+  con desplazamiento**; nunca un halo de color sin desplazamiento.
 
 ## Cristal
 
@@ -178,6 +185,17 @@ silencio.
   real. El CSS las deja en la esquina de su losa en reposo (`--x`/`--y`); la
   escena las mueve con `transform` y el centrado va en `translate`, para no
   pisarse.
+- **La pila es un índice del stack.** Cada etiqueta es un enlace a su grupo
+  (`#stack-<grupo>`, mapeo en `content/hero.js`) y la fila de destino se marca
+  con `:target`. El hover tiene UNA fuente (`hover()` en `SystemStack.jsx`):
+  la disparan la etiqueta (puntero y foco) y la losa (el rayo de la escena, o
+  el polígono del SVG si no hay escena); pone `data-active` y avisa a la
+  escena, que levanta la losa. Un clic en la losa sigue el enlace de su
+  etiqueta. El lienzo no recibe eventos: los atiende el contenedor.
+- **Contexto perdido = SVG.** Si el contexto WebGL llega perdido (un lienzo
+  reutilizado tras desmontar, que libera el suyo) o se pierde en marcha, la
+  escena no monta o se retira y vuelve el SVG. Sin esto, cada recarga en
+  caliente llenaba la consola de errores de `Program.use`.
 
 ## Layout y CSS
 
@@ -191,6 +209,11 @@ silencio.
   módulo lleva sus `@media` junto a lo que ajustan.
 - **Columnas explícitas en la rejilla de trabajo** (12 → 2 → 1). `auto-fit`
   no colapsa pistas vacías cuando un hijo cruza varias.
+- **Pistas de rejilla con `minmax(0, 1fr)`, nunca `1fr` a secas, si dentro
+  hay algo con `min-width`.** `1fr` no baja del ancho mínimo de su contenido:
+  el diagrama (34rem) ensanchaba la página entera de los casos en móvil y el
+  visor salía descentrado. Lo mismo para una imagen como hijo flex:
+  `min-width: 0`.
 - **Los diagramas no se encogen hasta ser ilegibles**: en pantalla estrecha se
   desplazan de lado dentro de su marco (`min-width` del SVG).
 - **Enlace estirado para tarjetas enlazables**: el `<a>` es el título y su
