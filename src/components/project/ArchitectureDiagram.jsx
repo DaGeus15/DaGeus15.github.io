@@ -6,8 +6,9 @@ import { useEffect, useId, useRef } from "react";
  * Diagrama de arquitectura de un proyecto, dibujado a partir de los datos de
  * `content/projects.js` (nodos con posición, conexiones con protocolo).
  *
- * Para un perfil backend vale más que una captura: enseña cómo está hecho el
- * sistema, que es lo que un reclutador técnico quiere ver.
+ * Junto a las capturas, enseña cómo está hecho el sistema, que es lo que un
+ * reclutador técnico quiere ver. El nodo con `accent` (lo que hice yo) va en
+ * ascua; el resto, en los neutros.
  *
  * Los "paquetes" que recorren las conexiones son SMIL (`<animateMotion>`):
  * corren sin JavaScript, empiezan en el primer pintado y no tocan React. Son
@@ -93,7 +94,6 @@ export default function ArchitectureDiagram({ diagram, labels, title, legend }) 
     ...e,
     key: `${e.from}-${e.to}`,
     index: i,
-    layer: nodes[e.to].layer,
     ...route(nodes[e.from], nodes[e.to]),
   }));
 
@@ -163,7 +163,6 @@ export default function ArchitectureDiagram({ diagram, labels, title, legend }) 
                   key={e.key}
                   r={e.async ? 2.2 : 2.6}
                   className={e.async ? "diagram__packet is-async" : "diagram__packet"}
-                  data-layer={e.layer}
                   opacity="0"
                 >
                   <animateMotion dur={dur} begin={begin} repeatCount="indefinite" path={e.d} />
@@ -182,7 +181,7 @@ export default function ArchitectureDiagram({ diagram, labels, title, legend }) 
 
           <g className="diagram__nodes">
             {Object.values(nodes).map((n) => (
-              <g key={n.id} className="diagram__node" data-layer={n.layer}>
+              <g key={n.id} className="diagram__node" data-accent={n.accent || undefined}>
                 <rect x={n.l} y={n.t} width={n.w} height={n.h} rx="8" />
                 <text
                   x={n.x}

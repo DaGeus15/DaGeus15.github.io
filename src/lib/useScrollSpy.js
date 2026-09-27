@@ -7,18 +7,19 @@ import { useEffect, useState } from "react";
  * altura de la ventana.
  *
  * No se usa "la de mayor proporción visible": una sección más alta que la
- * pantalla (Proyectos) nunca pasa de una proporción baja aunque la ocupe
+ * pantalla (Trabajo) nunca pasa de una proporción baja aunque la ocupe
  * entera, y la navegación se quedaba una sección por detrás. Con una línea,
  * sólo una sección la cruza a la vez y la respuesta no depende de su altura.
  *
  * La línea es una franja del 1% (un `root` de alto cero no da intersecciones
  * fiables). `ids` debe ser estable (una constante de módulo): si cambia, el
- * observer se reconstruye.
+ * observer se reconstruye. Arranca sin sección activa: la portada no es una.
  */
 export function useScrollSpy(ids) {
-  const [activeId, setActiveId] = useState(ids[0] ?? null);
+  const [activeId, setActiveId] = useState(null);
 
   useEffect(() => {
+    if (!ids.length) return;
     const crossing = new Set();
 
     const observer = new IntersectionObserver(

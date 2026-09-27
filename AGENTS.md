@@ -1,9 +1,6 @@
-<!-- BEGIN:nextjs-agent-rules -->
 # This is NOT the Next.js you know
 
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
-<!-- END:nextjs-agent-rules -->
-
 # Convenciones del proyecto
 
 Portafolio personal. Next.js 16 App Router, export estático a GitHub Pages.
@@ -17,87 +14,125 @@ silencio.
 
 ## Dirección
 
-- **El sitio se lee como un documento técnico, no como una demo de efectos.**
-  Lo técnico es CONTENIDO (diagramas de arquitectura, métricas, metadatos en
-  mono), nunca disfraz (terminal falsa, texto verde sobre negro). El visitante
+- **Producto mate y preciso, no demo de efectos.** Lo técnico es CONTENIDO
+  (diagramas de arquitectura, capturas reales, cifras, metadatos en mono),
+  nunca disfraz (terminal falsa, texto verde sobre negro). El visitante
   principal es un reclutador con 30 segundos: quién, qué hace y la prueba,
   arriba y sin navegación que aprender.
-- **Una sola página, una sola forma de leerla**, más una página por proyecto
-  (`/[lang]/projects/[id]`). No vuelvas a meter modos de lectura ni "ver más"
-  que escondan contenido: lo que está oculto no se lee.
-- **Los hechos salen del CV** (`public/Dayle-Garcia-Fernandez-CV-*.pdf`). Si el
-  CV cambia, `content/` cambia con él; no inventes cifras ni herramientas.
+- **La portada resume; el caso de estudio lo cuenta todo.** Cada proyecto sale
+  en la portada con título, una línea, dos cifras y sus capturas; el stack, la
+  arquitectura, las funcionalidades, el reto, la galería y el rol viven en
+  `/[lang]/projects/[id]`. No repitas en la portada lo que ya está a un clic,
+  y no quites del caso nada de lo que se sabe del proyecto.
+- **Una sola página, una sola forma de leerla**, más una página por proyecto.
+  Nada de modos de lectura ni "ver más" que escondan contenido: lo que está
+  oculto no se lee.
+- **Los hechos salen del CV** (`public/Dayle-Garcia-Fernandez-CV-*.pdf`) **y
+  de los informes de cada proyecto.** No inventes cifras ni herramientas. Si
+  algo del informe es un objetivo y no un resultado medido, no va como cifra.
+- **Sólo lo que hice yo.** En la Junta de Agua de Miñarica el sistema lo hizo
+  un equipo y lo mío es el **módulo contable**: título, capturas, diagrama y
+  cifras son de ese módulo; la facturación SRI y el resto salen sólo como
+  contexto (`scope` en `copy.js`). Lo mismo para cualquier proyecto de equipo.
 
 ## Contenido e idioma
 
 - **Nada de texto ni datos en los componentes.** Todo vive en `src/content/`.
 - **Lo traducible va en `copy.js` (`es` y `en`); lo demás, en su archivo**
   (`projects.js`, `skills.js`, `experience.js`, `profile.js`…). Se unen en
-  `lib/content.js` **por clave** (`id`), nunca por posición.
+  `lib/content.js` **por clave** (`id`), nunca por posición. Los pies de las
+  capturas van en `copy.js` (`shots[id]`) y sirven también de `alt`.
 - **El idioma sale de la URL: `/es/` y `/en/` son HTML distintos.** No lo
   detectes en el cliente ni lo guardes en estado: antes se generaba un único
   HTML en español y se cambiaba tras hidratar, y el visitante en inglés veía el
   español un instante y Google sólo indexaba una versión. Sólo la raíz
   (`app/(root)/page.js`) mira el navegador, para redirigir. Es un segundo
   layout raíz (grupo de rutas) porque el de `[lang]` necesita el idioma para
-  `<html lang>`.
+  `<html lang>`, y lleva los metadatos Open Graph completos: LinkedIn no
+  ejecuta JavaScript y lee esa página tal cual.
 - **`lib/locales.js` y `lib/content.js` son módulos neutros** (sin
   `"use client"`): los usan páginas y metadatos en el servidor. Una constante
   importada desde un módulo `"use client"` llega al servidor como referencia
   de cliente, no como valor.
 - **Las secciones son componentes de servidor** que reciben `t =
-  getContent(lang)`. Sólo hidratan las piezas interactivas (navegación, tema,
-  CV, formulario, tarjetas con halo, diagramas), que usan `useContent()`.
-  **No pases el objeto `ui` entero a un componente de cliente**: lleva
-  funciones y no se puede serializar; pasá las cadenas que use.
+  getContent(lang)`. Sólo hidratan las piezas interactivas (píldora, tema, CV,
+  pila 3D, tarjetas de proyecto, galería, formulario). **No pases el objeto
+  `ui` entero a un componente de cliente**: lleva funciones (`teamOf`,
+  `openShot`…) y no se puede serializar; pasá las cadenas ya resueltas.
 - **El tema sigue al navegador.** `data-theme` es el aplicado y
   `data-theme-source` dice si viene del sistema o del visitante; el script
   inline del layout deja los dos listos antes de hidratar.
+
+## Capturas
+
+- **Salen de los informes de cada proyecto con `scripts/projects/`.**
+  `build-shots.mjs` recorta, difumina y convierte a WebP (web ≤1600px de
+  ancho, móvil ≤1400px de alto, calidad 82). La ruta a los informes está en
+  `source-map.mjs`, que NO se sube (es local y apunta a documentos con datos
+  de terceros).
+- **Nada de datos personales en una captura**: correos y nombres de
+  compañeros o clientes se difuminan (`blur`), la barra del navegador se
+  recorta (`cropTop`) y lo que no se puede limpiar (fotos con personas,
+  listas de clientes reales, contenido de prueba impresentable) no entra.
+  Mirá cada captura a tamaño real antes de añadirla.
+- **`w`/`h` en `projects.js` son los píxeles reales del archivo**: reservan
+  el hueco antes de que cargue (sin saltos de maquetación). Si regenerás una
+  captura, actualizalos.
 
 ## Diseño y tokens
 
 - **Colores, espaciado, radios y duraciones salen de `styles/tokens.css`.**
   Tamaños en `rem` (`base.css` sube la raíz por encima de 1440px); alturas de
   contenedor en `dvh`, nunca `vh`.
-- **Mona Sans para leer, mono del sistema para metadatos** (fechas, stack,
-  protocolos, índices). La mono marca lo que es dato frente a lo que es prosa;
-  no la uses para párrafos.
-- **La paleta sale de la foto por complemento, no por copia.** La única familia
-  con croma real en `public/dayle.jpeg` es la cálida (h≈55); el acento es su
-  complemento (h=232). Mismo tono en los dos temas; sólo cambia la L. Frío =
-  interfaz; cálido = ambiental (segundo resplandor, paquetes asíncronos). Si
-  cambia la foto, recuantizá en OKLCH; no elijas a ojo.
-- **`--tech-core/data/cloud` codifican datos**, la capa de cada tecnología. Van
-  en texto, bordes, halos y nodos de diagrama, nunca de relleno bajo texto. Se
-  aplican con `data-layer` (ver `bento.css`). Contraste ≥8:1 en oscuro, ≥5:1
-  en claro.
-- **`--accent` para texto y bordes; `--accent-fill` para superficies con texto
-  blanco.** El acento del tema oscuro sólo da 3:1 contra blanco.
-- **La profundidad la dan un borde de 1px y un cambio de luminosidad**, no
-  sombras grandes ni cristal. En claro, nada blanco sobre blanco.
-- **El retrato de la columna es un recorte aparte** (`dayle-avatar.jpg`, cara y
-  hombros). A 88px, el retrato entero en un cuadrado dejaba la cara diminuta.
-  Si cambia la foto, regenerá el recorte (con `sharp`, ya instalado).
+- **Paleta: grafito mate + ascua.** Neutros con un punto cálido (el gris frío
+  de pantalla es lo que hace que un sitio parezca plantilla) y UN solo acento,
+  ascua, para lo accionable y lo propio: enlaces, foco, CTA, el nodo que hice
+  yo en un diagrama, la losa de la API. Nada de segundos colores ni colores por
+  capa: la jerarquía la dan el tamaño, el peso y la luminosidad.
+- **`--accent` para texto y bordes; `--accent-fill` + `--on-accent` para
+  rellenos.** En claro el acento de texto es un ascua oscurecido (5:1); los
+  rellenos siguen en el ascua clara con texto oscuro en los dos temas.
+- **Mate = grano.** Una capa fija de ruido (`body::after`, `--grain`) pintada
+  una vez. Nada de resplandores, degradados de fondo ni cuadrículas.
+- **Tarjetas con capturas oscuras se invierten** (`tone: "dark"` en
+  `projects.js`) y redefinen sus tokens dentro, para que el texto pase AA en
+  los dos temas y la ventana no flote sobre un blanco.
+- **Mona Sans para leer y titular (expandida en los titulares:
+  `--display-stretch`, `--title-stretch`), mono del sistema para datos**
+  (fechas, cifras, stack, nombres de código). No uses la mono para párrafos
+  ni rótulos.
+- **Sin rótulos encima de los títulos ni índices numerados.** El título se
+  sostiene solo.
+- **Superficies del navegador con la paleta**: selección, foco, cursor de
+  texto y barras de desplazamiento están en `base.css`.
+- **La profundidad la dan un borde de 1px y un cambio de luminosidad**; las
+  únicas sombras son las de los marcos de captura y lo que flota (píldora,
+  menús), siempre con desplazamiento y difuminado.
 
 ## Cristal
 
-- **Sólo la barra móvil lleva `backdrop-filter`**: es lo único que se desplaza
-  sobre contenido. Tarjetas y paneles son superficies opacas. Si añadís otro
-  cristal: nunca dentro de otro (muestrea la salida ya desenfocada), ningún
-  ancestro con `opacity` < 1, `filter`, `mask` o `will-change: opacity` (lo
-  convierte en backdrop root y deja de ver el fondo), y el peso sale de
-  `--glass-blur` para que `prefers-reduced-transparency` lo apague.
+- **Sólo la píldora de navegación lleva `backdrop-filter`**: es lo único que
+  se desplaza sobre contenido. Tarjetas, paneles y el fondo del visor son
+  opacos. Si añadís otro cristal: nunca dentro de otro (muestrea la salida ya
+  desenfocada), ningún ancestro con `opacity` < 1, `filter`, `mask` o
+  `will-change: opacity` (lo convierte en backdrop root y deja de ver el
+  fondo), y el peso sale de `--glass-blur` para que
+  `prefers-reduced-transparency` lo apague.
 - **No escribas `-webkit-backdrop-filter` ni `-webkit-mask` a mano.** Lightning
   CSS se queda con la versión prefijada y el efecto desaparece del build.
 
 ## Movimiento
 
-- **Framer Motion es la única librería de animación**, y los springs salen de
-  `lib/motion.js` (`bounce` + `visualDuration`). Sin GSAP, Three.js ni
-  react-spring. Nada rebota: no hay gestos con inercia.
-- **Sólo `transform` y `opacity` en lo que se anima por fotograma.** La línea
-  de la navegación y el subrayado del correo son `scaleX`, no `width` ni
-  `background-size`.
+- **Framer Motion para la interfaz** (springs de `lib/motion.js`, con
+  `bounce` + `visualDuration`) **y OGL sólo para la pila 3D de la portada.**
+  Sin GSAP, Three.js ni react-spring: Three.js pesaba ~130 KB comprimidos
+  para cuatro cajas; OGL, ~15 KB. Nada rebota: no hay gestos con inercia.
+- **Un solo momento de autor**: las losas de la portada caen y se apilan al
+  cargar. El resto del movimiento es respuesta (hover, puntero, scroll), no
+  decoración.
+- **Sólo `transform` y `opacity` en lo que se anima por fotograma.** El
+  indicador de la píldora es `layoutId` (transform), el subrayado del correo
+  es `scaleX`, la inclinación de las tarjetas es `rotateX/Y`.
 - **Las entradas son CSS**, para que funcionen antes de hidratar y sin JS:
   `.enter` (cascada al cargar, `--i` es el orden) y `.reveal` (ligada al scroll
   con `animation-timeline: view()`; sin soporte, el contenido simplemente
@@ -105,42 +140,57 @@ silencio.
   sale invisible hasta que hidrata.
 - **Movimiento reducido se decide efecto a efecto.** `MotionConfig` va con
   `reducedMotion="never"` y `base.css` sólo quita el scroll suave. Lo pequeño
-  (hover, entradas de pocos px, desplegables, latidos) anima siempre; lo que
-  se mueve en bucle y explica algo (los paquetes de los diagramas) va más
-  lento. Peor caso: "suave", nunca "quieto".
-- **Nada grande se mueve.** El fondo es estático: cuadrícula y resplandores
-  pintados una vez. Lo único que se mueve es la zona de la cuadrícula bajo el
-  cursor, un círculo desplazado por `transform` con su cuadrícula interior
-  desplazada al revés (ver `Backdrop.jsx`). Los halos de las tarjetas, igual.
-  Un degradado que se reconstruye por fotograma o una capa grande en bucle,
-  no.
-- **Lo perpetuo, sólo si es pequeño**: los latidos (`.live-dot`, el nodo del
-  puesto actual) y los paquetes SMIL de los diagramas, que además se pausan
-  fuera de pantalla. El pulso del CV suena tres veces y se calla.
+  (hover, entradas de pocos px, desplegables) anima siempre; lo que se mueve
+  más (la caída de las losas, el giro de la pila, los paquetes de los
+  diagramas) hace el mismo gesto en corto o más lento. Peor caso: "suave",
+  nunca "quieto".
+- **Nada perpetuo salvo lo pequeño**: los paquetes SMIL de los diagramas, que
+  además se pausan fuera de pantalla. Sin latidos ni pulsos.
 - **No ramifiques el árbol renderizado según `useReducedMotion()` o una media
   query**, ni cambies atributos por ellos en el render: descuadra la
-  hidratación. Misma estructura siempre; el ajuste va en un efecto.
-- **Puntero y scroll con motion values**, no `useState` en `pointermove`. Nada
-  de `setState` en el montaje: `useSyncExternalStore`.
+  hidratación. Misma estructura siempre; el ajuste va en un efecto o en CSS.
+- **Puntero y scroll con motion values**, no `useState` en `pointermove`; el
+  rectángulo se mide al entrar, no en cada movimiento. Nada de `setState` en
+  el montaje: `useSyncExternalStore`.
 - **El scroll-spy marca la sección que cruza una línea al 40% de la altura**,
   no la de mayor proporción visible: una sección más alta que la pantalla
-  nunca tiene proporción alta y la navegación se quedaba una por detrás. Los
-  ids deben ser estables (constante de módulo).
+  nunca tiene proporción alta y la navegación se quedaba una por detrás. La
+  portada (`#top`) también se observa, para que al volver arriba no quede
+  nada marcado. Los ids deben ser estables (constante de módulo).
+
+## 3D (pila de la portada)
+
+- **El SVG es el primer pintado y el respaldo; OGL sólo añade interacción.**
+  `SystemStack.jsx` pinta la pila en SVG isométrico desde el build (con la
+  entrada en CSS); `stackScene.js` se importa dinámicamente después de esa
+  entrada y del primer inactivo, y sustituye al SVG en la MISMA pose.
+- **Las dos capas comparten geometría** (`stackGeometry.js`): la cámara de la
+  escena es ortográfica e isométrica, así que el SVG puede calcular la misma
+  proyección y el relevo es un fundido invisible. Si tocás tamaños o
+  posiciones, tocálos ahí y en ningún otro sitio.
+- **Pinta bajo demanda**: el bucle sólo corre mientras algo se acerca a su
+  objetivo (puntero, scroll, tema) y se para al llegar; fuera de pantalla no
+  pinta. DPR ≤2 con ratón y ≤1.5 en táctil. Sin WebGL 2 no monta y se queda
+  el SVG.
+- **Los colores de la escena salen de los tokens** (`--stack-*`, en
+  hexadecimal) y se releen al cambiar `data-theme`.
+- **Las etiquetas son HTML**, no texto en textura: nítidas, con la fuente
+  real. El CSS las deja en la esquina de su losa en reposo (`--x`/`--y`); la
+  escena las mueve con `transform` y el centrado va en `translate`, para no
+  pisarse.
 
 ## Layout y CSS
 
 - **Un solo punto de corte de VENTANA: 1024px** (`lib/breakpoints.js`). Por
-  debajo, una columna y la barra móvil; por encima, la columna fija. Lo que
-  depende del ancho de un PANEL usa `@container` (ver `bento.css`).
+  encima, portada dividida y píldora arriba; por debajo, una columna y la
+  píldora abajo (donde está el pulgar), con tres secciones. Lo que depende
+  del ancho de una TARJETA usa `@container` (la tarjeta ancha de KAPHIY).
 - **Un `@media` que sobrescribe una regla va DESPUÉS de ella.** Con la misma
   especificidad gana la última: la barra móvil salió visible en escritorio y
   los botones de tema duplicados en móvil por tener el `@media` delante. Cada
   módulo lleva sus `@media` junto a lo que ajustan.
-- **La columna fija tiene que caber entera** a 1366×768, con el CV a la vista.
-  Si le añadís algo, compensalo en el bloque `max-height: 900px` de
-  `shell.css`.
-- **Columnas explícitas si hay tarjetas de dos tramos.** `auto-fit` no colapsa
-  pistas vacías cuando un hijo cruza varias.
+- **Columnas explícitas en la rejilla de trabajo** (12 → 2 → 1). `auto-fit`
+  no colapsa pistas vacías cuando un hijo cruza varias.
 - **Los diagramas no se encogen hasta ser ilegibles**: en pantalla estrecha se
   desplazan de lado dentro de su marco (`min-width` del SVG).
 - **Enlace estirado para tarjetas enlazables**: el `<a>` es el título y su
@@ -149,14 +199,17 @@ silencio.
 - **El hover enciende, no revela.** Todo se ve sin hover; los estilos de hover
   van bajo `(hover: hover) and (pointer: fine)` o se quedan pegados tras un
   toque.
-- **Los desplegables son `grid-template-rows: 0fr → 1fr`**, sin medir alturas,
-  con `inert` en el cuerpo cerrado y el aire en márgenes de los hijos.
+- **Modales nativos**: el visor de capturas es un `<dialog>` con
+  `showModal()` (foco atrapado, Escape y fondo inerte sin código propio). Está
+  siempre en el árbol; sólo cambia lo que muestra.
 
 ## Dependencias
 
 - **Sin CDNs externos.** El sitio es estático y funciona offline; assets en
-  `public/`. Los iconos que faltan se generan como SVG local desde
-  `react-icons/si`.
+  `public/`. Los iconos del stack son SVG locales (de `react-icons/si`) que se
+  pintan como máscara en el color del texto.
+- **`next/image` con `loading="eager"` para lo que está arriba al cargar**;
+  `priority` está obsoleto en Next 16.
 
 ## Antes de dar algo por terminado
 

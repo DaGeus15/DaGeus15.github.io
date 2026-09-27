@@ -18,9 +18,9 @@ export const EASE_OUT = [0.23, 1, 0.32, 1];
 export const spring = {
   /** Interacciones directas: hover, pulsación. */
   snappy: { type: "spring", bounce: 0, visualDuration: 0.25 },
-  /** Lo que sigue al cursor (halo de las tarjetas, cuadrícula encendida).
-      Con más de ~0.15s una luz "del cursor" se lee como retraso. */
-  cursor: { type: "spring", bounce: 0, visualDuration: 0.14 },
+  /** Inclinación de las capturas de una tarjeta: más lenta que el cursor, se
+      lee como peso y no como retraso. */
+  tilt: { type: "spring", bounce: 0, visualDuration: 0.45 },
 };
 
 /** Transiciones por duración, para fundidos. */

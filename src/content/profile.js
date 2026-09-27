@@ -11,11 +11,10 @@ export const profile = {
      se generan al construir y también se piden fuera de React. */
   role: "Software Engineer",
   email: "garciadayle2004@gmail.com",
-  /* Retrato completo (Open Graph, datos estructurados) y recorte cuadrado de
-     cara y hombros para la columna fija: a 88px el retrato entero en un
-     cuadrado dejaba la cara diminuta. Si cambia la foto, regenerá el recorte. */
+  /* Retrato completo: Sobre mí, datos estructurados. El recorte cuadrado de
+     cara y hombros (`public/dayle-avatar.jpg`) lo usa la imagen de vista
+     previa (`npm run og`); si cambia la foto, regenerá los dos. */
   avatar: "/dayle.jpeg",
-  avatarSquare: "/dayle-avatar.jpg",
   /* Las dos versiones del CV: quien lee en español puede querer el inglés para
      mandarlo fuera, así que el botón ofrece ambas. */
   cvEs: "/Dayle-Garcia-Fernandez-CV-ES.pdf",

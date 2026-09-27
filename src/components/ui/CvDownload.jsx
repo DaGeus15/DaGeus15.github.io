@@ -13,8 +13,11 @@ import { tween } from "@/lib/motion";
  *
  * El menú se cierra al pulsar fuera y con Escape; `pointerdown` para que se
  * cierre antes de que el gesto termine, como los menús del sistema.
+ *
+ * `compact`: botón pequeño con "CV" (en la píldora). `placement`: hacia dónde
+ * se abre el menú; en la píldora, que está arriba, hacia abajo.
  */
-export default function CvDownload() {
+export default function CvDownload({ compact = false, placement = "up" }) {
   const { profile, ui, lang } = useContent();
   const [open, setOpen] = useState(false);
   const wrapRef = useRef(null);
@@ -47,23 +50,25 @@ export default function CvDownload() {
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="btn btn--primary cv-button"
+        className={`btn btn--primary cv-button ${compact ? "btn--sm" : ""}`}
         aria-haspopup="menu"
         aria-expanded={open}
+        aria-label={compact ? ui.downloadCv : undefined}
       >
         <FiDownload aria-hidden="true" />
-        {ui.downloadCv}
+        {compact ? ui.cvShort : ui.downloadCv}
       </button>
 
       <AnimatePresence>
         {open && (
           <motion.div
             className="cv-menu"
+            data-placement={placement}
             role="menu"
             aria-label={ui.cvChoose}
-            initial={{ opacity: 0, y: 4, scale: 0.98 }}
+            initial={{ opacity: 0, y: placement === "down" ? -4 : 4, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 4, scale: 0.98 }}
+            exit={{ opacity: 0, y: placement === "down" ? -4 : 4, scale: 0.98 }}
             transition={tween.fast}
           >
             {options.map((o) => (

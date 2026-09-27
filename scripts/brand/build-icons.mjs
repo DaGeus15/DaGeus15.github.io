@@ -18,11 +18,11 @@ const S = 512;
 
 const svg = Buffer.from(`
 <svg width="${S}" height="${S}" viewBox="0 0 ${S} ${S}" xmlns="http://www.w3.org/2000/svg">
-  <rect x="8" y="8" width="${S - 16}" height="${S - 16}" rx="116" fill="#0a0e11"
-        stroke="#52a5cd" stroke-opacity="0.45" stroke-width="12"/>
+  <rect x="8" y="8" width="${S - 16}" height="${S - 16}" rx="116" fill="#111214"
+        stroke="#e0743c" stroke-opacity="0.45" stroke-width="12"/>
   <text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle"
         font-family="Segoe UI, Helvetica Neue, Arial, sans-serif" font-weight="700"
-        font-size="236" letter-spacing="-10" fill="#52a5cd">DG</text>
+        font-size="236" letter-spacing="-10" fill="#e0743c">DG</text>
 </svg>`);
 
 const base = await sharp(svg).png().toBuffer();
@@ -30,7 +30,7 @@ const base = await sharp(svg).png().toBuffer();
 await sharp(base).resize(192, 192).png().toFile(join(root, "src", "app", "icon.png"));
 /* iOS pone sus propias esquinas redondeadas: aquí el fondo va a sangre. */
 await sharp(base)
-  .flatten({ background: "#0a0e11" })
+  .flatten({ background: "#111214" })
   .resize(180, 180)
   .png()
   .toFile(join(root, "src", "app", "apple-icon.png"));

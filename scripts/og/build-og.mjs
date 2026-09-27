@@ -11,6 +11,9 @@
  *
  * Si cambia el fondo, recolocá CIRCLE: es el centro y el radio del anillo
  * blanco medidos sobre la imagen original.
+ *
+ * El fondo original es azulado; se desatura para que caiga en el grafito
+ * mate del sitio, y el rol va en ascua, el acento de `tokens.css`.
  */
 import sharp from "sharp";
 import { fileURLToPath } from "node:url";
@@ -42,15 +45,15 @@ const avatar = await sharp(join(root, "public", "dayle-avatar.jpg"))
   .png()
   .toBuffer();
 
-/* Texto: la misma jerarquía que la columna fija del sitio. La fuente es la del
+/* Texto: la misma jerarquía que la portada del sitio. La fuente es la del
    sistema (librsvg no lee woff2); en Windows sale Segoe UI y Consolas. */
 const TEXT_X = 412;
 const text = Buffer.from(`
 <svg width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg">
   <style>
-    .name { font: 600 52px "Segoe UI", "Helvetica Neue", Arial, sans-serif; fill: #e8eef1; letter-spacing: -0.5px; }
-    .role { font: 500 28px "Segoe UI", "Helvetica Neue", Arial, sans-serif; fill: #52a5cd; }
-    .mono { font: 400 19px Consolas, "SF Mono", Menlo, monospace; fill: #95a3ab; }
+    .name { font: 600 52px "Segoe UI", "Helvetica Neue", Arial, sans-serif; fill: #eceae6; letter-spacing: -0.5px; }
+    .role { font: 500 28px "Segoe UI", "Helvetica Neue", Arial, sans-serif; fill: #e0743c; }
+    .mono { font: 400 19px Consolas, "SF Mono", Menlo, monospace; fill: #9d9a94; }
   </style>
   <text x="${TEXT_X}" y="262" class="name">Daylé García Fernández</text>
   <text x="${TEXT_X}" y="308" class="role">Software Engineer</text>
@@ -60,6 +63,7 @@ const text = Buffer.from(`
 
 await sharp(join(root, "scripts", "og", "background.webp"))
   .resize(W, H, { fit: "cover" })
+  .modulate({ saturation: 0.15 })
   .composite([
     { input: avatar, left: Math.round(cx - d / 2), top: Math.round(cy - d / 2) },
     { input: text, left: 0, top: 0 },

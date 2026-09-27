@@ -43,3 +43,10 @@ next-env.d.ts
 
 # Skills de Claude: herramienta de desarrollo, no parte del sitio.
 .claude/skills/
+
+# Ruta local a los informes de los proyectos (de donde salen las capturas):
+# es de este equipo y apunta a documentos con datos de terceros.
+scripts/projects/source-map.mjs
+
+# Instantáneas de las revisiones de diseño.
+.impeccable/

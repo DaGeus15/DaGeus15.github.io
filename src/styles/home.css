@@ -1,0 +1,1035 @@
+/* ==========================================================================
+   Portada y secciones de la página principal
+   ========================================================================== */
+
+.page {
+  position: relative;
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding-inline: var(--page-gutter);
+}
+
+/* ── Portada ────────────────────────────────────────────────────────────
+   Dividida: texto a la izquierda, pila 3D a la derecha. Un solo punto de
+   corte de ventana, 1024px. */
+.hero {
+  display: grid;
+  align-items: center;
+  gap: var(--sp-8);
+  min-height: min(100dvh, 60rem);
+  padding-top: calc(var(--nav-clear) + var(--sp-5));
+  padding-bottom: var(--sp-8);
+}
+
+@media (min-width: 1024px) {
+  .hero {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 1023px) {
+  .hero {
+    min-height: 0;
+    padding-top: var(--sp-10);
+  }
+}
+
+.hero__name {
+  font-size: clamp(2.6rem, 0.8rem + 5.4vw, 6rem);
+  font-weight: 680;
+  font-stretch: var(--display-stretch);
+  line-height: 0.94;
+  letter-spacing: -0.04em;
+}
+
+.hero__name span {
+  display: block;
+}
+
+.hero__role {
+  margin-top: var(--sp-5);
+  font-size: clamp(1.15rem, 1rem + 0.6vw, 1.5rem);
+  font-weight: 500;
+  font-stretch: var(--title-stretch);
+  letter-spacing: -0.01em;
+}
+
+.hero__pitch {
+  max-width: 36ch;
+  margin-top: var(--sp-3);
+  color: var(--muted);
+  font-size: clamp(1.02rem, 0.95rem + 0.3vw, 1.18rem);
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+  margin-top: var(--sp-7);
+}
+
+.hero__actions .btn--ghost svg {
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.hero__actions .btn--ghost:hover svg {
+  transform: translateY(2px);
+}
+
+.hero__facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2) var(--sp-5);
+  margin-top: var(--sp-6);
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.hero__facts li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.hero__facts svg {
+  flex-shrink: 0;
+}
+
+.hero__visual {
+  width: 100%;
+}
+
+/* ── Pila 3D (SystemStack.jsx) ──────────────────────────────────────────
+   El SVG y el lienzo ocupan el mismo cuadro, con las proporciones del
+   viewBox, y dibujan la misma pose: el relevo es un fundido. */
+.stack3d {
+  position: relative;
+  width: 100%;
+  max-width: 34rem;
+  margin-inline: auto;
+  aspect-ratio: 400 / 460;
+}
+
+.stack3d__svg,
+.stack3d__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transition: opacity var(--dur-slow) var(--ease-out);
+}
+
+.stack3d__svg {
+  overflow: visible;
+}
+
+.stack3d__canvas {
+  opacity: 0;
+}
+
+.stack3d[data-ready] .stack3d__canvas {
+  opacity: 1;
+}
+
+.stack3d[data-ready] .stack3d__svg {
+  opacity: 0;
+}
+
+.stack3d__face {
+  stroke: var(--stack-edge);
+  stroke-width: 1;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  transition:
+    fill var(--dur-slow) var(--ease-out),
+    stroke var(--dur-slow) var(--ease-out);
+}
+
+.stack3d__face.is-top {
+  fill: var(--stack-top);
+}
+
+.stack3d__face.is-left {
+  fill: var(--stack-left);
+}
+
+.stack3d__face.is-right {
+  fill: var(--stack-right);
+}
+
+.stack3d__slab[data-accent] .stack3d__face {
+  stroke: var(--stack-accent-edge);
+}
+
+.stack3d__slab[data-accent] .is-top {
+  fill: var(--stack-accent-top);
+}
+
+/* El momento de la portada: las losas caen y se apilan de abajo arriba. En
+   CSS, así ocurre antes de hidratar y sin WebGL. Con movimiento reducido, el
+   mismo gesto en corto. */
+.stack3d__slab {
+  --drop: -44px;
+  animation: slab-drop 0.9s var(--ease-out) both;
+  animation-delay: calc(var(--i) * 110ms + 250ms);
+}
+
+@keyframes slab-drop {
+  from {
+    opacity: 0;
+    transform: translateY(var(--drop));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stack3d__slab {
+    --drop: -10px;
+  }
+}
+
+.stack3d__labels {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* El CSS la deja en la esquina de su losa en reposo; con la escena activa,
+   `transform` la desplaza con la losa. El centrado va en `translate` para no
+   pisarse con ese transform. */
+.stack3d__label {
+  position: absolute;
+  top: var(--y);
+  left: var(--x);
+  max-width: calc(100% - var(--x));
+  translate: 0 -50%;
+}
+
+.stack3d__label-text {
+  display: grid;
+  grid-template-columns: 1.4rem auto;
+  column-gap: 0.55rem;
+  align-items: center;
+  animation: enter 0.7s var(--ease-out) both;
+  animation-delay: calc(1.05s + var(--i) * 70ms);
+}
+
+.stack3d__label-text::before {
+  content: "";
+  grid-row: 1 / span 2;
+  height: 1px;
+  background: var(--stack-edge);
+}
+
+.stack3d__name {
+  font-size: 0.92rem;
+  font-weight: 650;
+  font-stretch: var(--title-stretch);
+  line-height: 1.2;
+}
+
+.stack3d__tech {
+  grid-column: 2;
+  color: var(--muted);
+  font-size: 0.7rem;
+  line-height: 1.35;
+}
+
+/* Con sitio, en una línea: puede asomar al margen de la columna. */
+@media (min-width: 480px) {
+  .stack3d__tech {
+    white-space: nowrap;
+  }
+}
+
+.stack3d__label[data-accent] .stack3d__name {
+  color: var(--accent);
+}
+
+.stack3d__label[data-accent] .stack3d__label-text::before {
+  background: var(--stack-accent-edge);
+}
+
+@media (max-width: 479px) {
+  .stack3d__label-text {
+    grid-template-columns: 0.9rem auto;
+    column-gap: 0.4rem;
+  }
+
+  .stack3d__name {
+    font-size: 0.82rem;
+  }
+
+  .stack3d__tech {
+    font-size: 0.64rem;
+  }
+}
+
+/* ── Secciones ──────────────────────────────────────────────────────── */
+.section {
+  padding-top: var(--sp-11);
+}
+
+@media (max-width: 1023px) {
+  .section {
+    padding-top: var(--sp-10);
+  }
+}
+
+.section-head {
+  display: grid;
+  gap: var(--sp-4) var(--sp-8);
+  margin-bottom: var(--sp-8);
+}
+
+@media (min-width: 1024px) {
+  .section-head {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr);
+    align-items: end;
+  }
+}
+
+.section-head__title {
+  font-size: clamp(2.1rem, 1.2rem + 2.8vw, 3.75rem);
+  font-weight: 650;
+  font-stretch: var(--title-stretch);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.section-head__intro {
+  max-width: 46ch;
+  color: var(--muted);
+  font-size: 1.02rem;
+  text-wrap: pretty;
+}
+
+/* ── Trabajo seleccionado ───────────────────────────────────────────────
+   Rejilla asimétrica de 12 columnas: KAPHIY a todo el ancho y el resto en
+   7 + 5 / 5 + 7. Columnas explícitas: `auto-fit` no colapsa pistas vacías
+   cuando un hijo cruza varias. */
+.work-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--sp-4);
+}
+
+.work-grid__item {
+  display: flex;
+  grid-column: span 5;
+  container-type: inline-size;
+}
+
+.work-grid__item[data-size="wide"] {
+  grid-column: 1 / -1;
+}
+
+.work-grid__item[data-size="large"] {
+  grid-column: span 7;
+}
+
+@media (max-width: 1023px) {
+  .work-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .work-grid__item,
+  .work-grid__item[data-size="large"] {
+    grid-column: span 1;
+  }
+}
+
+@media (max-width: 639px) {
+  .work-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.work-card {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 32rem;
+  overflow: hidden;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  transition: border-color var(--dur-base) var(--ease-out);
+}
+
+/* Capturas oscuras: la tarjeta se invierte para que la ventana no flote sobre
+   un blanco. Los tokens se redefinen dentro, así el texto sigue pasando AA en
+   los dos temas. */
+.work-card[data-tone="dark"] {
+  --foreground: #eceae6;
+  --muted: #a3a09a;
+  --border: rgba(236, 234, 230, 0.09);
+  --border-strong: rgba(236, 234, 230, 0.16);
+  --surface-raised: #202125;
+  --accent: #e0743c;
+  background: var(--tone-dark-bg);
+  color: var(--foreground);
+}
+
+.work-card__body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: clamp(1.35rem, 1rem + 1.2vw, 2.25rem);
+}
+
+.work-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1) var(--sp-3);
+  color: var(--muted);
+  font-size: 0.74rem;
+}
+
+.work-card__live {
+  color: var(--accent);
+}
+
+.work-card__title {
+  margin-top: var(--sp-3);
+  font-size: clamp(1.55rem, 1.1rem + 1.3vw, 2.2rem);
+  font-weight: 650;
+  font-stretch: var(--title-stretch);
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+  transition: color var(--dur-base) var(--ease-out);
+}
+
+.work-card__line {
+  max-width: 40ch;
+  margin-top: var(--sp-2);
+  color: var(--muted);
+  text-wrap: pretty;
+}
+
+/* Las dos cifras siempre lado a lado: apiladas, se comían el sitio de las
+   capturas en las tarjetas estrechas. */
+.work-card__metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 13rem));
+  gap: var(--sp-4) var(--sp-6);
+  margin-top: var(--sp-5);
+}
+
+/* La etiqueta va primero en el DOM (dt antes que dd) y la cifra primero a
+   la vista. */
+.work-card__metric {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+  gap: 0.15rem;
+}
+
+.work-card__metric dd {
+  color: var(--foreground);
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.work-card__metric dt {
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.work-card__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: var(--sp-5);
+  color: var(--accent);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.work-card__cta svg {
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .work-card:hover {
+    border-color: var(--border-strong);
+  }
+
+  .work-card:hover .work-card__title {
+    color: var(--accent);
+  }
+
+  .work-card:hover .work-card__cta svg {
+    transform: translateX(4px);
+  }
+}
+
+/* Escenario de las capturas: se sale por abajo y por la derecha de la
+   tarjeta, que lo recorta. La perspectiva vive aquí; la inclinación la pone
+   WorkCard.jsx en `.work-card__stage`. */
+.work-card__media {
+  position: relative;
+  flex: 1;
+  min-height: 15rem;
+  perspective: 1400px;
+}
+
+.work-card__stage {
+  position: absolute;
+  inset: var(--sp-1) calc(var(--sp-8) * -1) calc(var(--sp-9) * -1) clamp(1.35rem, 1rem + 1.2vw, 2.25rem);
+  transform-style: preserve-3d;
+}
+
+.work-card__cover {
+  width: 100%;
+}
+
+.work-card__inset {
+  position: absolute;
+  top: 14%;
+  right: calc(var(--sp-8) + 6%);
+  width: 23%;
+  min-width: 5.5rem;
+}
+
+.work-card__inset .frame {
+  box-shadow: var(--shadow-float), var(--shadow-window);
+}
+
+/* Dos teléfonos (KAPHIY): lado a lado, el del comensal primero y más alto. */
+.work-card[data-layout="phones"] .work-card__stage {
+  inset: var(--sp-2) var(--sp-5) calc(var(--sp-10) * -1);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 5%;
+}
+
+.work-card[data-layout="phones"] .work-card__cover {
+  width: 40%;
+  max-width: 17rem;
+  margin-top: var(--sp-8);
+}
+
+.work-card[data-layout="phones"] .work-card__inset {
+  position: relative;
+  top: auto;
+  right: auto;
+  order: -1;
+  width: 32%;
+  max-width: 13.5rem;
+}
+
+/* Tarjeta ancha: texto a la izquierda, capturas a la derecha. Depende del
+   ancho de la tarjeta, no de la ventana: @container. */
+@container (min-width: 50rem) {
+  .work-card[data-size="wide"] {
+    flex-direction: row;
+    min-height: 34rem;
+  }
+
+  .work-card[data-size="wide"] .work-card__body {
+    width: 42%;
+    justify-content: center;
+  }
+
+  .work-card[data-size="wide"] .work-card__title {
+    font-size: clamp(2.2rem, 1.2rem + 2.4vw, 3.4rem);
+  }
+}
+
+@media (max-width: 639px) {
+  .work-card {
+    min-height: 28rem;
+  }
+}
+
+/* ── Marcos de captura (Frame.jsx) ──────────────────────────────────── */
+.frame {
+  display: block;
+  padding: 5px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--border-strong);
+  background: var(--surface-raised);
+  box-shadow: var(--shadow-window);
+}
+
+.frame__img {
+  width: 100%;
+  border-radius: calc(var(--r-md) - 5px);
+  user-select: none;
+}
+
+.frame--phone {
+  border-radius: 26px;
+}
+
+.frame--phone .frame__img {
+  border-radius: 21px;
+}
+
+/* ── Experiencia ────────────────────────────────────────────────────── */
+.role {
+  display: grid;
+  gap: var(--sp-5) var(--sp-8);
+  padding-top: var(--sp-6);
+  border-top: 1px solid var(--border);
+}
+
+@media (min-width: 1024px) {
+  .role {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.6fr);
+  }
+}
+
+.role__company {
+  font-size: clamp(1.4rem, 1.2rem + 0.6vw, 1.75rem);
+  font-weight: 650;
+  font-stretch: var(--title-stretch);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.role__title {
+  margin-top: var(--sp-1);
+  font-weight: 500;
+}
+
+.role__when {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2) var(--sp-3);
+  margin-top: var(--sp-4);
+  color: var(--muted);
+}
+
+.role__current {
+  padding: 0.1rem 0.55rem;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--accent-line);
+  color: var(--accent);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.74rem;
+  font-weight: 600;
+}
+
+.role__where {
+  margin-top: var(--sp-1);
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.role__bullets {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  max-width: var(--measure);
+  color: var(--muted);
+  font-size: 1.02rem;
+  line-height: 1.65;
+}
+
+.role__bullets li {
+  position: relative;
+  padding-left: 1.25rem;
+}
+
+.role__bullets li::before {
+  content: "";
+  position: absolute;
+  top: 0.82em;
+  left: 0;
+  width: 0.55rem;
+  height: 1px;
+  background: currentColor;
+}
+
+.role__stack {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sp-1) var(--sp-3);
+  margin-top: var(--sp-6);
+  padding-top: var(--sp-4);
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+}
+
+.role__stack-label {
+  color: var(--foreground);
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+/* ── Stack ──────────────────────────────────────────────────────────── */
+.stack-list {
+  border-top: 1px solid var(--border);
+}
+
+.stack-row {
+  display: grid;
+  gap: var(--sp-3) var(--sp-8);
+  padding-block: var(--sp-6);
+  border-bottom: 1px solid var(--border);
+}
+
+@media (min-width: 1024px) {
+  .stack-row {
+    grid-template-columns: 12rem minmax(0, 1.15fr) minmax(0, 1fr);
+    align-items: baseline;
+  }
+}
+
+.stack-row__title {
+  font-size: 1.1rem;
+  font-weight: 650;
+  font-stretch: var(--title-stretch);
+  letter-spacing: -0.01em;
+}
+
+.stack-row__primary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2) var(--sp-5);
+}
+
+.stack-row__primary li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+/* Logotipo como máscara: toma el color del texto, monocromo en los dos
+   temas. La imagen de la máscara llega en línea desde Stack.jsx. */
+.stack-row__icon {
+  width: 1.15rem;
+  height: 1.15rem;
+  flex-shrink: 0;
+  background: currentColor;
+  mask-position: center;
+  mask-repeat: no-repeat;
+  mask-size: contain;
+}
+
+.stack-row__tools {
+  margin-top: var(--sp-2);
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.stack-row__proof {
+  max-width: 44ch;
+  color: var(--muted);
+  font-size: 0.95rem;
+  text-wrap: pretty;
+}
+
+/* ── Sobre mí ───────────────────────────────────────────────────────── */
+.about {
+  display: grid;
+  gap: var(--sp-8);
+}
+
+@media (min-width: 1024px) {
+  .about {
+    grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr);
+    align-items: start;
+  }
+
+  .about__portrait {
+    position: sticky;
+    top: var(--nav-clear);
+  }
+}
+
+.about__portrait {
+  max-width: 26rem;
+}
+
+.about__portrait img {
+  width: 100%;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--border);
+}
+
+.about__lead:first-child {
+  color: var(--foreground);
+  font-size: clamp(1.12rem, 1rem + 0.45vw, 1.3rem);
+  line-height: 1.6;
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-7) var(--sp-6);
+  margin-top: var(--sp-8);
+  padding-top: var(--sp-6);
+  border-top: 1px solid var(--border);
+}
+
+.fact--wide {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 639px) {
+  .facts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.fact__head {
+  margin-bottom: var(--sp-3);
+  font-size: 0.95rem;
+  font-weight: 650;
+}
+
+.fact__title {
+  font-weight: 550;
+  line-height: 1.45;
+}
+
+.fact__meta {
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.fact__meta.mono {
+  font-size: 0.74rem;
+}
+
+.fact__note {
+  margin-top: var(--sp-2);
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.fact-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.fact-list--grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr));
+  gap: var(--sp-4) var(--sp-6);
+}
+
+/* ── Contacto ───────────────────────────────────────────────────────── */
+.contact {
+  display: grid;
+  gap: var(--sp-8);
+}
+
+@media (min-width: 1024px) {
+  .contact {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    align-items: start;
+  }
+}
+
+.contact__title {
+  font-size: clamp(2.6rem, 0.8rem + 5vw, 5.5rem);
+  font-weight: 680;
+  font-stretch: var(--display-stretch);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+}
+
+.contact__intro {
+  max-width: 44ch;
+  margin-top: var(--sp-4);
+  color: var(--muted);
+  font-size: 1.05rem;
+  text-wrap: pretty;
+}
+
+.contact-email {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-top: var(--sp-7);
+}
+
+/* Subrayado que se dibuja de izquierda a derecha: scaleX de un filete, no
+   una animación de `background-size`. */
+.contact-email__link {
+  position: relative;
+  font-size: clamp(1.2rem, 0.85rem + 1.6vw, 2.1rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+  transition: color var(--dur-base) var(--ease-out);
+}
+
+.contact-email__link::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: -2px;
+  left: 0;
+  height: 1px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--dur-slow) var(--ease-out);
+}
+
+.contact-email__link:hover {
+  color: var(--accent);
+}
+
+.contact-email__link:hover::after {
+  transform: scaleX(1);
+}
+
+.contact-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+  margin-top: var(--sp-6);
+}
+
+.contact-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  height: 2.75rem;
+  padding: 0 1rem;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border-strong);
+  font-size: 0.92rem;
+  font-weight: 600;
+  transition: border-color var(--dur-fast) var(--ease-out);
+}
+
+.contact-link:hover {
+  border-color: var(--foreground);
+}
+
+.contact-link__handle,
+.contact-link__arrow {
+  color: var(--muted);
+}
+
+.contact-link__handle {
+  font-size: 0.72rem;
+}
+
+.contact__form {
+  padding: clamp(1.35rem, 1rem + 1.2vw, 2.25rem);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.contact__form-title {
+  margin-bottom: var(--sp-5);
+  font-size: 1.05rem;
+  font-weight: 650;
+}
+
+/* ── Formulario ─────────────────────────────────────────────────────── */
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(12rem, 100%), 1fr));
+  gap: var(--sp-4);
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-label {
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 550;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem 0.9rem;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border-strong);
+  background: var(--background);
+  color: var(--foreground);
+  font: inherit;
+  /* 16px evita el zoom automático de iOS al enfocar. */
+  font-size: 1rem;
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.form-textarea {
+  min-height: 8rem;
+  resize: vertical;
+}
+
+.form-error {
+  color: var(--danger);
+  font-size: 0.9rem;
+}
+
+.contact-form .btn {
+  align-self: flex-start;
+}
+
+.spinner {
+  width: 15px;
+  height: 15px;
+  border: 2px solid transparent;
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.form-success {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.4rem;
+}
+
+.form-success svg {
+  margin-bottom: var(--sp-2);
+  stroke: var(--accent);
+}
+
+.form-success__title {
+  font-weight: 650;
+}
+
+.form-success__body {
+  color: var(--muted);
+}

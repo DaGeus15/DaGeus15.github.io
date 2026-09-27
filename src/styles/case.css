@@ -1,0 +1,492 @@
+/* ==========================================================================
+   Caso de estudio (app/[lang]/projects/[id]/page.js)
+   ========================================================================== */
+
+.case-hero {
+  max-width: 62rem;
+  padding-top: calc(var(--nav-clear) + var(--sp-8));
+}
+
+@media (max-width: 1023px) {
+  .case-hero {
+    padding-top: var(--sp-9);
+  }
+}
+
+.case-hero__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1) var(--sp-3);
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.case-hero__live {
+  color: var(--accent);
+}
+
+.case-hero__title {
+  margin-top: var(--sp-4);
+  font-size: clamp(2.4rem, 0.9rem + 4.6vw, 5.25rem);
+  font-weight: 680;
+  font-stretch: var(--display-stretch);
+  line-height: 0.96;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+
+.case-hero__subtitle {
+  max-width: 40ch;
+  margin-top: var(--sp-4);
+  color: var(--muted);
+  font-size: clamp(1.1rem, 1rem + 0.5vw, 1.4rem);
+  text-wrap: pretty;
+}
+
+/* ── Portada del caso: la composición de capturas en su lienzo ──────── */
+.case-cover {
+  margin-top: var(--sp-8);
+  padding: clamp(1.25rem, 4vw, 4rem);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.case-cover[data-tone="dark"] {
+  --border-strong: rgba(236, 234, 230, 0.16);
+  --surface-raised: #202125;
+  background: var(--tone-dark-bg);
+}
+
+.shot-stage {
+  position: relative;
+  max-width: 60rem;
+  margin-inline: auto;
+}
+
+.shot-stage[data-layout="window"][data-inset] .shot-stage__cover {
+  width: 86%;
+}
+
+.shot-stage[data-layout="window"] .shot-stage__inset {
+  position: absolute;
+  right: 0;
+  bottom: 6%;
+  width: 21%;
+  box-shadow: var(--shadow-float), var(--shadow-window);
+}
+
+.shot-stage[data-layout="phones"] {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5%;
+}
+
+.shot-stage[data-layout="phones"] .shot-stage__cover {
+  width: 38%;
+  max-width: 22rem;
+}
+
+.shot-stage[data-layout="phones"] .shot-stage__inset {
+  order: -1;
+  width: 27%;
+  max-width: 16rem;
+}
+
+/* ── Introducción y ficha ───────────────────────────────────────────── */
+.case-intro {
+  display: grid;
+  gap: var(--sp-7) var(--sp-9);
+  margin-top: var(--sp-9);
+}
+
+@media (min-width: 1024px) {
+  .case-intro {
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+.case-intro__lead {
+  max-width: 38ch;
+  font-size: clamp(1.2rem, 1rem + 0.8vw, 1.6rem);
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+  text-wrap: pretty;
+}
+
+.case-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-5) var(--sp-6);
+}
+
+.case-facts > div {
+  padding-top: var(--sp-3);
+  border-top: 1px solid var(--border);
+}
+
+.case-facts dt {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.case-facts dd {
+  margin-top: 0.15rem;
+  font-weight: 550;
+  line-height: 1.45;
+}
+
+.case-facts__private {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--muted);
+}
+
+/* ── Cifras ─────────────────────────────────────────────────────────── */
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(12rem, 100%), 1fr));
+  gap: var(--sp-5);
+  margin-top: var(--sp-9);
+  padding-block: var(--sp-6);
+  border-block: 1px solid var(--border);
+}
+
+/* La etiqueta va primero en el DOM (dt antes que dd) y la cifra primero a
+   la vista. */
+.metric {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 0.3rem;
+}
+
+.metric__value {
+  color: var(--foreground);
+  font-family: var(--font-mono);
+  font-size: clamp(1.45rem, 1.15rem + 1vw, 2.1rem);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.metric__label {
+  max-width: 24ch;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+/* ── Bloques del informe ────────────────────────────────────────────────
+   Rótulo a la izquierda, fijo mientras se lee su bloque; contenido a la
+   derecha. Los anchos (arquitectura, capturas) van a todo el ancho. */
+.case-section {
+  display: grid;
+  gap: var(--sp-4) var(--sp-8);
+  padding-block: var(--sp-8);
+  border-top: 1px solid var(--border);
+}
+
+.case-section:first-of-type {
+  margin-top: var(--sp-8);
+}
+
+@media (min-width: 1024px) {
+  .case-section {
+    grid-template-columns: 13rem minmax(0, 1fr);
+  }
+
+  .case-section[data-wide] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .case-section:not([data-wide]) .case-section__title {
+    position: sticky;
+    top: var(--nav-clear);
+    align-self: start;
+  }
+}
+
+.case-section__title {
+  font-size: 1.1rem;
+  font-weight: 650;
+  font-stretch: var(--title-stretch);
+  letter-spacing: -0.01em;
+}
+
+.feature-list {
+  max-width: var(--measure);
+  border-top: 1px solid var(--border);
+}
+
+.feature-list li {
+  padding-block: var(--sp-3);
+  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.challenge__title {
+  max-width: 30ch;
+  margin-bottom: var(--sp-3);
+  font-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
+  font-weight: 650;
+  font-stretch: var(--title-stretch);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+/* Nota de alcance (lo que el sistema tiene y NO es mío): una superficie
+   aparte, sin filete de color. */
+.scope-note {
+  max-width: var(--measure);
+  margin-top: var(--sp-5);
+  padding: var(--sp-4) var(--sp-5);
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+
+.scope-note__label {
+  display: block;
+  margin-bottom: var(--sp-1);
+  color: var(--foreground);
+  font-size: 0.86rem;
+  font-weight: 650;
+}
+
+.tech-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(11rem, 100%), 1fr));
+  column-gap: var(--sp-5);
+}
+
+.tech-grid li {
+  padding-block: var(--sp-3);
+  border-top: 1px solid var(--border);
+  font-size: 0.84rem;
+}
+
+/* ── Galería ────────────────────────────────────────────────────────── */
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(14rem, 100%), 1fr));
+  grid-auto-flow: dense;
+  gap: var(--sp-7) var(--sp-5);
+}
+
+.gallery__item {
+  grid-column: span 2;
+}
+
+.gallery__item[data-mobile] {
+  grid-column: span 1;
+}
+
+@media (max-width: 639px) {
+  .gallery__item {
+    grid-column: auto;
+  }
+}
+
+.gallery__open {
+  display: block;
+  width: 100%;
+  border-radius: var(--r-md);
+  cursor: zoom-in;
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.gallery__item[data-mobile] .gallery__open {
+  max-width: 13rem;
+  margin-inline: auto;
+}
+
+.gallery__open .frame {
+  transition: border-color var(--dur-base) var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .gallery__open:hover {
+    transform: translateY(-3px);
+  }
+
+  .gallery__open:hover .frame {
+    border-color: var(--accent-line);
+  }
+}
+
+.gallery__caption {
+  max-width: 52ch;
+  margin-top: var(--sp-3);
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.gallery__item[data-mobile] .gallery__caption {
+  max-width: 13rem;
+  margin-inline: auto;
+}
+
+/* Visor: `<dialog>` nativo en la capa superior. El fondo es oscuro en los dos
+   temas, así que el texto se fija claro aquí dentro. */
+.lightbox {
+  --foreground: #eceae6;
+  --muted: #a3a09a;
+  --surface-raised: #26272b;
+  max-width: min(94vw, 92rem);
+  max-height: 94dvh;
+  margin: auto;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--foreground);
+  overflow: visible;
+}
+
+.lightbox::backdrop {
+  background: rgba(10, 10, 11, 0.88);
+}
+
+.lightbox[open] {
+  animation: lightbox-in 0.32s var(--ease-out);
+}
+
+.lightbox[open]::backdrop {
+  animation: backdrop-in 0.32s var(--ease-out);
+}
+
+@keyframes lightbox-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+
+@keyframes backdrop-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.lightbox__inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.lightbox__img {
+  width: auto;
+  max-width: 100%;
+  max-height: calc(94dvh - 4.5rem);
+  margin-inline: auto;
+  border-radius: var(--r-md);
+  object-fit: contain;
+}
+
+.lightbox__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+}
+
+.lightbox__caption {
+  flex: 1;
+  font-size: 0.92rem;
+}
+
+.lightbox__count {
+  color: var(--muted);
+}
+
+.lightbox__controls {
+  display: flex;
+  gap: 2px;
+}
+
+/* ── Siguiente proyecto ─────────────────────────────────────────────── */
+.next-project {
+  display: grid;
+  align-items: center;
+  gap: var(--sp-6);
+  margin-top: var(--sp-10);
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  overflow: hidden;
+  transition: border-color var(--dur-base) var(--ease-out);
+}
+
+@media (min-width: 768px) {
+  .next-project {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 20rem);
+  }
+}
+
+.next-project__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.next-project__label {
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.next-project__title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.5rem);
+  font-weight: 650;
+  font-stretch: var(--title-stretch);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  transition: color var(--dur-base) var(--ease-out);
+}
+
+.next-project__title svg {
+  flex-shrink: 0;
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.next-project__line {
+  max-width: 40ch;
+  color: var(--muted);
+}
+
+.next-project__media {
+  max-height: 12rem;
+  overflow: hidden;
+  border-radius: var(--r-md);
+}
+
+.next-project__media .frame--phone {
+  max-width: 9rem;
+  margin-inline: auto;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .next-project:hover {
+    border-color: var(--border-strong);
+  }
+
+  .next-project:hover .next-project__title {
+    color: var(--accent);
+  }
+
+  .next-project:hover .next-project__title svg {
+    transform: translateX(4px);
+  }
+}

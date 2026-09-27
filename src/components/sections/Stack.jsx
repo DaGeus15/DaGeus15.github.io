@@ -1,56 +1,42 @@
-import Image from "next/image";
 import SectionHeading from "./SectionHeading";
-import BentoTile from "@/components/bento/BentoTile";
 
 /**
- * Stack en rejilla bento, agrupado como en el CV. Cada grupo lleva una frase
- * de evidencia —dónde se usó de verdad—: una lista de tecnologías sin
- * contexto no le dice nada a un reclutador; "95% de cobertura con Mockito", sí.
+ * Stack como una banda de filas: el grupo, lo que uso (con icono monocromo) y
+ * el resto en texto, y la prueba de dónde lo usé de verdad. Una lista de
+ * tecnologías sin contexto no le dice nada a un reclutador; "95% de cobertura
+ * con Mockito", sí.
  *
- * Todo el contenido se ve sin hover (en táctil y con teclado no lo hay); el
- * hover sólo enciende el color de la capa.
+ * Los iconos son máscaras en el color del texto: los logotipos a todo color
+ * convertían la sección en un muestrario de marcas.
  */
 export default function Stack({ t }) {
   return (
     <section id="stack" className="section" aria-labelledby="stack-title">
-      <SectionHeading
-        id="stack"
-        title={t.sections.stack.title}
-        intro={t.sections.stack.intro}
-      />
+      <SectionHeading id="stack" title={t.sections.stack.title} intro={t.sections.stack.intro} />
 
-      <div className="bento">
-        <ul className="bento__grid bento__grid--stack">
-          {t.skills.map((group) => (
-            <li className="bento__item reveal" data-span={group.span} key={group.id}>
-              <BentoTile layer={group.layer} className="stack-tile">
-                <h3 className="layer-label">{group.title}</h3>
-
-                <ul className="stack-tile__primary">
-                  {group.primary.map((tech) => (
-                    <li key={tech.name}>
-                      <span className="tech-icon">
-                        <Image src={tech.icon} alt="" width={28} height={28} />
-                      </span>
-                      {tech.name}
-                    </li>
-                  ))}
-                </ul>
-
-                <p className="stack-tile__proof">{group.proof}</p>
-
-                <ul className="tag-list">
-                  {group.tools.map((tool) => (
-                    <li className="tag" key={tool}>
-                      {tool}
-                    </li>
-                  ))}
-                </ul>
-              </BentoTile>
-            </li>
-          ))}
-        </ul>
-      </div>
+      <ul className="stack-list">
+        {t.skills.map((group) => (
+          <li className="stack-row reveal" key={group.id}>
+            <h3 className="stack-row__title">{group.title}</h3>
+            <div className="stack-row__tech">
+              <ul className="stack-row__primary">
+                {group.primary.map((tech) => (
+                  <li key={tech.name}>
+                    <span
+                      className="stack-row__icon"
+                      style={{ maskImage: `url(${tech.icon})` }}
+                      aria-hidden="true"
+                    />
+                    {tech.name}
+                  </li>
+                ))}
+              </ul>
+              <p className="stack-row__tools mono">{group.tools.join(" · ")}</p>
+            </div>
+            <p className="stack-row__proof">{group.proof}</p>
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }

@@ -1,4 +1,4 @@
-/** Enlaces profesionales. Van en la columna fija y en Contacto. */
+/** Enlaces profesionales. Van en Contacto. */
 export const social = [
   { id: "github", name: "GitHub", url: "https://github.com/DaGeus15", handle: "github.com/dageus15" },
   {

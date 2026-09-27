@@ -1,55 +1,45 @@
-import Link from "next/link";
-import { FiArrowUpRight } from "react-icons/fi";
 import SectionHeading from "./SectionHeading";
-import ProjectCard from "@/components/project/ProjectCard";
+import WorkCard from "@/components/project/WorkCard";
 import { projectPath } from "@/lib/locales";
 
 /**
- * Proyectos: primero de la página, porque con un año de experiencia son la
- * prueba más fuerte. Los destacados van grandes y en vertical, con su
- * diagrama; el resto, en una lista compacta. Todos llevan a su caso de
- * estudio.
+ * Trabajo seleccionado: primero de la página, porque con un año de
+ * experiencia los sistemas construidos son la prueba más fuerte. Rejilla
+ * asimétrica: KAPHIY (en producción) a todo el ancho y los otros cuatro en
+ * 7 + 5 / 5 + 7. Todos llevan a su caso de estudio.
  */
+const SIZES = ["wide", "large", "small", "small", "large"];
+
 export default function Projects({ t }) {
   const { ui, lang } = t;
-  const featured = t.projects.filter((p) => p.featured);
-  const others = t.projects.filter((p) => !p.featured);
+  const labels = { caseStudy: ui.caseStudy, inProduction: ui.inProduction };
 
   return (
     <section id="projects" className="section" aria-labelledby="projects-title">
-      <SectionHeading
-        id="projects"
-        title={t.sections.projects.title}
-        intro={t.sections.projects.intro}
-      />
+      <SectionHeading id="projects" title={t.sections.projects.title} intro={t.sections.projects.intro} />
 
-      <ol className="project-stack">
-        {featured.map((project) => (
-          <li className="reveal" key={project.id}>
-            <ProjectCard project={project} ui={ui} lang={lang} />
+      <ul className="work-grid">
+        {t.projects.map((p, i) => (
+          <li className="work-grid__item reveal" data-size={SIZES[i] ?? "small"} key={p.id}>
+            <WorkCard
+              size={SIZES[i] ?? "small"}
+              href={projectPath(lang, p.id)}
+              labels={labels}
+              project={{
+                title: p.title,
+                subtitle: p.subtitle,
+                year: p.year,
+                status: p.status,
+                context: p.context,
+                tone: p.tone,
+                metrics: p.metrics,
+                cover: p.cover,
+                inset: p.inset,
+              }}
+            />
           </li>
         ))}
-      </ol>
-
-      {others.length > 0 && (
-        <div className="project-others reveal">
-          <h3 className="subhead">{ui.otherProjects}</h3>
-          <ul className="project-list">
-            {others.map((p) => (
-              <li key={p.id}>
-                <Link href={projectPath(lang, p.id)} className="project-row">
-                  <span className="project-row__text">
-                    <span className="project-row__title">{p.title}</span>
-                    <span className="project-row__summary">{p.summary}</span>
-                  </span>
-                  <span className="project-row__tech mono">{p.tech.slice(0, 3).join(" · ")}</span>
-                  <FiArrowUpRight className="project-row__arrow" aria-hidden="true" />
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+      </ul>
     </section>
   );
 }

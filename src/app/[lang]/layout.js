@@ -56,15 +56,15 @@ export async function generateMetadata({ params }) {
 /**
  * `themeColor` va en `viewport`, no en `metadata` (ver
  * node_modules/next/dist/docs/.../generate-viewport.md). `viewportFit: "cover"`
- * habilita env(safe-area-inset-*) para la cabecera móvil.
+ * habilita env(safe-area-inset-*) para la píldora de móvil, que va abajo.
  */
 export const viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f4f1ec" },
-    { media: "(prefers-color-scheme: dark)", color: "#0a0e11" },
+    { media: "(prefers-color-scheme: light)", color: "#f1f1ee" },
+    { media: "(prefers-color-scheme: dark)", color: "#111214" },
   ],
 };
 

@@ -2,9 +2,9 @@
    Hoja de estilos raíz.
 
    Orden: los tokens definen las variables, base resetea y pone la
-   tipografía, shell coloca el armazón y después van los módulos. Cada módulo
-   lleva sus propios @media junto a lo que ajustan; no hay un mobile.css
-   aparte.
+   tipografía y los controles compartidos, y después van los módulos. Cada
+   módulo lleva sus propios @media junto a lo que ajustan; no hay un
+   mobile.css aparte.
 
    Para tocar el aspecto global (colores, espaciado, radios, duraciones),
    editá `src/styles/tokens.css`.
@@ -12,7 +12,7 @@
 
 @import "../styles/tokens.css";
 @import "../styles/base.css";
-@import "../styles/shell.css";
-@import "../styles/content.css";
-@import "../styles/bento.css";
+@import "../styles/nav.css";
+@import "../styles/home.css";
+@import "../styles/case.css";
 @import "../styles/diagram.css";

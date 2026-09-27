@@ -34,7 +34,17 @@ export function getContent(lang) {
         ? { key: m.key, value: entry.value, label: entry.label }
         : { key: m.key, value: m.value, label: entry };
     });
-    return { ...p, ...t, metrics, nodes: t.nodes ?? {} };
+    // Cada captura lleva su pie en copy.js (`shots[id]`); el `alt` es el pie.
+    const withCaption = (shot) => shot && { ...shot, caption: t.shots?.[shot.id] ?? "" };
+    return {
+      ...p,
+      ...t,
+      metrics,
+      nodes: t.nodes ?? {},
+      cover: withCaption(p.cover),
+      inset: withCaption(p.inset),
+      gallery: (p.gallery ?? []).map(withCaption),
+    };
   });
 
   const content = {
@@ -45,6 +55,7 @@ export function getContent(lang) {
     social,
     nav: navBase.map((s) => ({ ...s, label: c.nav[s.id] })),
     sections: c.sections,
+    hero: c.hero,
     experience: c.experience.map((role) => ({
       ...experienceBase.find((e) => e.id === role.id),
       ...role,

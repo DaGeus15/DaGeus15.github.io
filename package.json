@@ -11,11 +11,13 @@
     "predeploy": "npm run build",
     "deploy": "gh-pages -d out --dotfiles",
     "og": "node scripts/og/build-og.mjs",
-    "icons": "node scripts/brand/build-icons.mjs"
+    "icons": "node scripts/brand/build-icons.mjs",
+    "shots": "node scripts/projects/build-shots.mjs"
   },
   "dependencies": {
     "framer-motion": "^12.40.0",
     "next": "16.2.6",
+    "ogl": "^1.0.11",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-icons": "^5.6.0"

@@ -1,0 +1,243 @@
+/* ==========================================================================
+   Píldora de navegación (SiteNav.jsx), menú del CV y pie
+   ========================================================================== */
+
+/* Arriba y centrada en escritorio. Es el único cristal del sitio: lo único
+   que se desplaza por encima del contenido. Ningún ancestro lleva opacity,
+   filter ni mask (lo convertirían en backdrop root y dejaría de ver el
+   fondo). */
+.site-nav {
+  position: fixed;
+  top: var(--sp-4);
+  left: 50%;
+  z-index: 200;
+  transform: translateX(-50%);
+  max-width: calc(100% - 2 * var(--sp-4));
+}
+
+.site-nav__pill {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+  height: var(--nav-h);
+  padding: 0 0.3rem 0 0.35rem;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border-strong);
+  background: var(--nav-bg);
+  backdrop-filter: var(--glass-thick);
+  box-shadow: var(--shadow-float);
+}
+
+.site-nav__name {
+  padding: 0 0.85rem 0 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 650;
+  font-stretch: var(--title-stretch);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.site-nav__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  height: 2.5rem;
+  padding: 0 0.85rem 0 0.7rem;
+  border-radius: var(--r-pill);
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 550;
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out);
+}
+
+.site-nav__back:hover {
+  color: var(--foreground);
+  background: var(--surface-raised);
+}
+
+.site-nav__back svg {
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.site-nav__back:hover svg {
+  transform: translateX(-2px);
+}
+
+.site-nav__links {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding-inline: var(--sp-2);
+  border-inline: 1px solid var(--border);
+}
+
+.site-nav__link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: 2.35rem;
+  padding: 0 0.8rem;
+  border-radius: var(--r-pill);
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 550;
+  white-space: nowrap;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.site-nav__link:hover,
+.site-nav__link[aria-current] {
+  color: var(--foreground);
+}
+
+/* El indicador de la activa se desliza entre enlaces (layoutId de Framer:
+   transform, no left/width). Va detrás de la etiqueta. */
+.site-nav__active {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--surface-raised);
+}
+
+.site-nav__label {
+  position: relative;
+}
+
+.site-nav__prefs {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding-left: var(--sp-1);
+}
+
+.site-nav__cv {
+  margin-right: var(--sp-1);
+}
+
+.site-nav__cv .btn {
+  border-radius: var(--r-pill);
+}
+
+/* Móvil: abajo, donde está el pulgar, con tres secciones, el idioma y el
+   tema. El nombre ya está enorme en la portada y el CV tiene su botón allí.
+   Va DESPUÉS de las reglas base: con la misma especificidad, gana la última. */
+@media (max-width: 1023px) {
+  .site-nav {
+    top: auto;
+    bottom: calc(var(--sp-3) + env(safe-area-inset-bottom));
+  }
+
+  .site-nav__name,
+  .site-nav__links li:not([data-mobile]) {
+    display: none;
+  }
+
+  .site-nav__links {
+    padding-inline: var(--sp-1);
+    border-left: none;
+  }
+
+  .site-nav__link {
+    padding: 0 0.7rem;
+  }
+
+  .site-nav[data-variant="home"] .site-nav__cv {
+    display: none;
+  }
+}
+
+/* ── CV ─────────────────────────────────────────────────────────────── */
+.cv-download {
+  position: relative;
+}
+
+.cv-menu {
+  position: absolute;
+  bottom: calc(100% + var(--sp-2));
+  left: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 12rem;
+  padding: var(--sp-1);
+  border-radius: var(--r-md);
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  box-shadow: var(--shadow-float);
+  transform-origin: bottom left;
+}
+
+.cv-menu[data-placement="down"] {
+  top: calc(100% + var(--sp-2));
+  bottom: auto;
+  transform-origin: top left;
+}
+
+/* En la píldora el botón está a la derecha: el menú se alinea a ese lado. */
+.site-nav .cv-menu {
+  right: 0;
+  left: auto;
+  transform-origin: top right;
+}
+
+/* En móvil la píldora está abajo: el menú se abre hacia arriba. */
+@media (max-width: 1023px) {
+  .site-nav .cv-menu[data-placement="down"] {
+    top: auto;
+    bottom: calc(100% + var(--sp-3));
+    transform-origin: bottom right;
+  }
+}
+
+.cv-menu__item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  min-height: 2.5rem;
+  padding: 0 var(--sp-3);
+  border-radius: var(--r-sm);
+  font-size: 0.86rem;
+  font-weight: 550;
+  white-space: nowrap;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+}
+
+.cv-menu__item:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.cv-menu__code {
+  width: 1.75rem;
+  padding: 0.1rem 0;
+  border-radius: 5px;
+  border: 1px solid var(--border-strong);
+  font-size: 0.66rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* ── Pie ────────────────────────────────────────────────────────────── */
+.site-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--sp-2) var(--sp-5);
+  margin-top: var(--sp-10);
+  padding-block: var(--sp-5) var(--sp-7);
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+/* Que la píldora de abajo no tape el pie. */
+@media (max-width: 1023px) {
+  .site-footer {
+    padding-bottom: calc(var(--nav-h) + var(--sp-8) + env(safe-area-inset-bottom));
+  }
+}

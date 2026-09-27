@@ -1,5 +1,6 @@
 /* ==========================================================================
-   Reset, tipografía base y preferencias de accesibilidad
+   Reset, tipografía base, superficies del navegador, controles compartidos y
+   entradas
    ========================================================================== */
 
 *,
@@ -13,6 +14,8 @@
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
+  /* Las anclas no quedan debajo de la píldora fija. */
+  scroll-padding-top: var(--nav-clear);
 }
 
 /* Escala fluida en monitores grandes: toda la escala está en `rem`, así que
@@ -21,6 +24,13 @@ html {
 @media (min-width: 1440px) {
   html {
     font-size: clamp(16px, calc(16px + (100vw - 1440px) * 0.0035), 19px);
+  }
+}
+
+/* En móvil la píldora va abajo: arriba basta con un respiro. */
+@media (max-width: 1023px) {
+  html {
+    scroll-padding-top: var(--sp-5);
   }
 }
 
@@ -35,9 +45,23 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   overflow-x: hidden;
+  caret-color: var(--accent);
   transition:
     background-color var(--dur-slow) var(--ease-out),
     color var(--dur-slow) var(--ease-out);
+}
+
+/* Grano: una capa fija pintada una vez, por encima de todo y sin eventos.
+   Estática: no se mueve con el scroll ni con el cursor. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  pointer-events: none;
+  background-image: var(--grain);
+  background-size: 220px 220px;
+  opacity: var(--grain-opacity);
 }
 
 a {
@@ -59,7 +83,8 @@ ol {
 }
 
 img,
-svg {
+svg,
+canvas {
   display: block;
   max-width: 100%;
 }
@@ -73,7 +98,19 @@ strong {
   font-weight: 650;
 }
 
-/* Foco visible y coherente (sólo con teclado). */
+/* Nombres de código en la prosa (columnas, archivos, tipos). */
+code {
+  padding: 0.1em 0.35em;
+  border-radius: 6px;
+  background: var(--surface-raised);
+  color: var(--foreground);
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+}
+
+/* ── Superficies del navegador ────────────────────────────────────────
+   Lo que no dibujamos también lleva la paleta: foco, selección, cursor de
+   texto, barras de desplazamiento y cifras tabulares. */
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
@@ -81,8 +118,13 @@ strong {
 }
 
 ::selection {
-  background: var(--accent);
-  color: #ffffff;
+  background: var(--accent-fill);
+  color: var(--on-accent);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--faint) transparent;
 }
 
 .sr-only {
@@ -101,11 +143,11 @@ strong {
   position: fixed;
   top: var(--sp-3);
   left: var(--sp-3);
-  z-index: 200;
+  z-index: 400;
   padding: var(--sp-2) var(--sp-4);
   border-radius: var(--r-sm);
   background: var(--accent-fill);
-  color: #ffffff;
+  color: var(--on-accent);
   font-weight: 600;
   transform: translateY(-200%);
   transition: transform var(--dur-fast) var(--ease-out);
@@ -115,23 +157,18 @@ strong {
   transform: none;
 }
 
-/* ── Scrollbars ───────────────────────────────────────────────────────── */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: var(--border-strong) transparent;
-}
-
 /* ── Texto compartido ─────────────────────────────────────────────────── */
 .mono {
   font-family: var(--font-mono);
   font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
   letter-spacing: 0;
 }
 
 .prose {
   max-width: var(--measure);
   color: var(--muted);
-  font-size: 1rem;
+  font-size: 1.02rem;
   line-height: 1.75;
 }
 
@@ -139,7 +176,7 @@ strong {
   margin-top: var(--sp-4);
 }
 
-/* Enlace de texto: subrayado fino que se engrosa con el hover. */
+/* Enlace de texto: subrayado fino que toma el color con el hover. */
 .text-link {
   color: var(--foreground);
   text-decoration: underline;
@@ -156,27 +193,147 @@ strong {
   text-decoration-color: currentColor;
 }
 
+.inline-icon {
+  display: inline;
+  margin-left: 0.2em;
+  vertical-align: -0.1em;
+}
+
+/* ── Botones ──────────────────────────────────────────────────────────
+   Una forma: 10px de radio, 44px de alto (objetivo táctil). Primario en
+   ascua con texto oscuro; secundario con borde. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  height: 2.75rem;
+  padding: 0 1.2rem;
+  border-radius: var(--r-sm);
+  border: 1px solid transparent;
+  font-size: 0.92rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.btn--primary {
+  background: var(--accent-fill);
+  color: var(--on-accent);
+}
+
+.btn--primary:hover {
+  background: var(--accent-fill-hover);
+}
+
+.btn--ghost {
+  border-color: var(--border-strong);
+  color: var(--foreground);
+}
+
+.btn--ghost:hover {
+  border-color: var(--foreground);
+}
+
+.btn--sm {
+  height: 2.25rem;
+  padding: 0 0.9rem;
+  font-size: 0.84rem;
+}
+
+.btn:active {
+  transform: scale(0.97);
+  transition-duration: 100ms;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.icon-btn,
+.pref-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--r-pill);
+  color: var(--muted);
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out);
+}
+
+.icon-btn:hover,
+.pref-btn:hover {
+  color: var(--foreground);
+  background: var(--surface-raised);
+}
+
+.icon-btn:active,
+.pref-btn:active {
+  transform: scale(0.94);
+}
+
+.icon-btn svg,
+.pref-btn svg {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.pref-btn.mono {
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+.pref-btn__icon {
+  display: grid;
+}
+
+/* Enlace estirado: el `::after` del título cubre la tarjeta entera. Lo que
+   tenga que pulsarse aparte va por encima con su propio z-index. */
+.stretched-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+}
+
+.stretched-link:focus-visible {
+  outline: none;
+}
+
+.stretched-link:focus-visible::after {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
 /* ── Entradas ─────────────────────────────────────────────────────────
    Dos mecanismos, los dos en CSS para que funcionen antes de hidratar y sin
    JavaScript:
 
-   · `.enter`: al cargar, en cascada (`--i` es la posición). Para la columna
-     fija, que está a la vista desde el primer fotograma.
+   · `.enter`: al cargar, en cascada (`--i` es la posición). Para la
+     portada, que está a la vista desde el primer fotograma.
    · `.reveal`: ligado al scroll con `animation-timeline: view()`. Donde no
-     hay soporte (Firefox, por ahora) el contenido simplemente está: el peor
-     caso es "no se nota", nunca "no se ve".
+     hay soporte el contenido simplemente está: el peor caso es "no se nota",
+     nunca "no se ve".
 
    Sólo opacity y transform, y pocos píxeles: es movimiento pequeño, así que
    anima también con movimiento reducido (ver AGENTS.md). */
 .enter {
-  animation: enter 0.7s var(--ease-out) both;
-  animation-delay: calc(var(--i, 0) * var(--stagger) + 80ms);
+  animation: enter 0.8s var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * var(--stagger) + 60ms);
 }
 
 @keyframes enter {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(14px);
   }
 }
 
@@ -184,14 +341,14 @@ strong {
   .reveal {
     animation: reveal linear both;
     animation-timeline: view();
-    animation-range: entry 0% entry 55%;
+    animation-range: entry 0% entry 45%;
   }
 }
 
 @keyframes reveal {
   from {
     opacity: 0;
-    transform: translateY(18px);
+    transform: translateY(24px);
   }
 }
 

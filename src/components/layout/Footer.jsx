@@ -3,6 +3,7 @@ export default function Footer({ t }) {
   return (
     <footer className="site-footer">
       <p>{t.ui.footer}</p>
+      <p className="mono">© {new Date().getFullYear()} {t.profile.name}</p>
     </footer>
   );
 }
