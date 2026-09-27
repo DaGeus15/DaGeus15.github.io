@@ -151,6 +151,22 @@ silencio.
   más (la caída de las losas, el giro de la pila, los paquetes de los
   diagramas) hace el mismo gesto en corto o más lento. Peor caso: "suave",
   nunca "quieto".
+- **El cambio de tema es una View Transition** (`apply()` en `lib/theme.jsx`,
+  250ms en `base.css`): un fundido de la página entera. No pongas
+  transiciones de color en `body` ni en superficies para el tema: llegaban
+  cada una a su ritmo y durante medio segundo se veía un fondo oscuro con
+  tarjetas ya claras.
+- **Entradas y salidas de lo que aparece, en CSS moderno**: `@starting-style`
+  para la entrada y `transition: …, display … allow-discrete, overlay …
+  allow-discrete` para que un `<dialog>` que se cierra no desaparezca antes
+  de terminar su salida. Sale por el mismo camino que entró, y más rápido.
+- **Respuesta al pulsar en todo lo pulsable**: `:active` con `scale(0.96–0.99)`
+  y 160ms (en móvil no hay hover que confirme el toque). Si el elemento ya
+  tiene una animación de entrada que anima `transform` con relleno, usá la
+  propiedad `scale`, que no se pisa con ella.
+- **Nada de hover en lo que no se puede pulsar** (tecnologías del stack, el
+  retrato): un hover promete un clic. Si algo tiene que responder, primero
+  tiene que llevar a algún sitio.
 - **Nada perpetuo salvo lo pequeño**: los paquetes SMIL de los diagramas, que
   además se pausan fuera de pantalla. Sin latidos ni pulsos.
 - **No ramifiques el árbol renderizado según `useReducedMotion()` o una media

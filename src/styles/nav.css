@@ -84,7 +84,14 @@
   font-size: 0.86rem;
   font-weight: 550;
   white-space: nowrap;
-  transition: color var(--dur-fast) var(--ease-out);
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    transform 160ms var(--ease-out);
+}
+
+/* Respuesta al pulsar, sobre todo en móvil, donde no hay hover. */
+.site-nav__link:active {
+  transform: scale(0.96);
 }
 
 .site-nav__link:hover,
@@ -204,12 +211,17 @@
   white-space: nowrap;
   transition:
     background-color var(--dur-fast) var(--ease-out),
-    color var(--dur-fast) var(--ease-out);
+    color var(--dur-fast) var(--ease-out),
+    transform 160ms var(--ease-out);
 }
 
 .cv-menu__item:hover {
   background: var(--accent-soft);
   color: var(--accent);
+}
+
+.cv-menu__item:active {
+  transform: scale(0.98);
 }
 
 .cv-menu__code {

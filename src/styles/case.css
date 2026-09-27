@@ -318,9 +318,19 @@
   transition: border-color var(--dur-base) var(--ease-out);
 }
 
+/* Pulsar una captura la hunde un poco (es grande: 0.99, no 0.97). */
+.gallery__open:active {
+  transform: scale(0.99);
+  transition-duration: 160ms;
+}
+
 @media (hover: hover) and (pointer: fine) {
   .gallery__open:hover {
     transform: translateY(-3px);
+  }
+
+  .gallery__open:hover:active {
+    transform: translateY(-3px) scale(0.99);
   }
 
   .gallery__open:hover .frame {
@@ -357,28 +367,50 @@
   overflow: visible;
 }
 
-.lightbox::backdrop {
-  background: rgba(10, 10, 11, 0.88);
+/* Entra y sale por el mismo camino: fundido con una escala mínima. Al
+   cerrar, el diálogo pierde `[open]` y pasaría a `display: none` en el acto;
+   `allow-discrete` en `display` y `overlay` lo retiene hasta que termina la
+   salida. La entrada parte de `@starting-style`. Salir es más rápido que
+   entrar: 180ms frente a 320ms. */
+.lightbox {
+  opacity: 0;
+  transform: scale(0.98);
+  transition:
+    opacity 180ms var(--ease-out),
+    transform 180ms var(--ease-out),
+    overlay 180ms allow-discrete,
+    display 180ms allow-discrete;
 }
 
 .lightbox[open] {
-  animation: lightbox-in 0.32s var(--ease-out);
+  opacity: 1;
+  transform: none;
+  transition-duration: 320ms;
 }
 
-.lightbox[open]::backdrop {
-  animation: backdrop-in 0.32s var(--ease-out);
-}
-
-@keyframes lightbox-in {
-  from {
+@starting-style {
+  .lightbox[open] {
     opacity: 0;
     transform: scale(0.97);
   }
 }
 
-@keyframes backdrop-in {
-  from {
-    opacity: 0;
+.lightbox::backdrop {
+  background: rgba(10, 10, 11, 0);
+  transition:
+    background-color 180ms var(--ease-out),
+    overlay 180ms allow-discrete,
+    display 180ms allow-discrete;
+}
+
+.lightbox[open]::backdrop {
+  background: rgba(10, 10, 11, 0.88);
+  transition-duration: 320ms;
+}
+
+@starting-style {
+  .lightbox[open]::backdrop {
+    background: rgba(10, 10, 11, 0);
   }
 }
 
@@ -400,6 +432,31 @@
   margin-inline: auto;
   border-radius: var(--r-md);
   object-fit: contain;
+  transition:
+    opacity 220ms var(--ease-out),
+    transform 220ms var(--ease-out);
+}
+
+/* Al pasar de captura, la nueva llega desde el lado hacia el que se avanza.
+   Con movimiento reducido, sólo el fundido. */
+@starting-style {
+  .lightbox__inner[data-dir="next"] .lightbox__img {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+
+  .lightbox__inner[data-dir="prev"] .lightbox__img {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @starting-style {
+    .lightbox__inner[data-dir] .lightbox__img {
+      transform: none;
+    }
+  }
 }
 
 .lightbox__bar {

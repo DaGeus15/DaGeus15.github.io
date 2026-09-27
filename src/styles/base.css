@@ -46,9 +46,22 @@ body {
   text-rendering: optimizeLegibility;
   overflow-x: hidden;
   caret-color: var(--accent);
-  transition:
-    background-color var(--dur-slow) var(--ease-out),
-    color var(--dur-slow) var(--ease-out);
+}
+
+/* Cambio de tema: un fundido de la página entera (View Transition, ver
+   `lib/theme.jsx`), no transiciones de color sueltas que llegan cada una a su
+   ritmo. Sólo opacidad. Con movimiento reducido, más corto, no quieto. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 250ms;
+  animation-timing-function: var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 150ms;
+  }
 }
 
 /* Grano: una capa fija pintada una vez, por encima de todo y sin eventos.

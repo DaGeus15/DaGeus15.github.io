@@ -34,12 +34,24 @@ const storedPreference = () => {
   }
 };
 
-function apply(theme, source) {
-  const root = document.documentElement;
-  root.setAttribute("data-theme", theme);
-  root.setAttribute("data-theme-source", source);
-  root.style.colorScheme = theme;
-  window.dispatchEvent(new Event(THEME_EVENT));
+/**
+ * Aplica el tema. Con `animate`, el cambio va dentro de una View Transition:
+ * el navegador fotografía la página antes y después y las funde (250ms, ver
+ * `base.css`). Antes el fondo transicionaba 0.5s mientras tarjetas y texto
+ * cambiaban de golpe, y durante medio segundo se veía un fondo oscuro con
+ * tarjetas ya claras. Sin soporte, o con la pestaña oculta, el cambio es
+ * instantáneo, que también es coherente.
+ */
+function apply(theme, source, { animate = false } = {}) {
+  const run = () => {
+    const root = document.documentElement;
+    root.setAttribute("data-theme", theme);
+    root.setAttribute("data-theme-source", source);
+    root.style.colorScheme = theme;
+    window.dispatchEvent(new Event(THEME_EVENT));
+  };
+  if (animate && document.startViewTransition && !document.hidden) document.startViewTransition(run);
+  else run();
 }
 
 /**
@@ -69,7 +81,7 @@ const subscribe = (callback) => {
   // El navegador cambió de modo. Sólo manda si no hay override del visitante.
   const onSystemChange = () => {
     if (document.documentElement.getAttribute("data-theme-source") === "user") return;
-    apply(media.matches ? "dark" : "light", "system");
+    apply(media.matches ? "dark" : "light", "system", { animate: true });
   };
 
   // Otra pestaña tocó la preferencia: hay que resolverla de nuevo aquí.
@@ -107,7 +119,7 @@ export function ThemeProvider({ children }) {
       } catch {
         /* modo privado / storage bloqueado — el tema sigue aplicándose */
       }
-      apply(next, "system");
+      apply(next, "system", { animate: true });
       return;
     }
 
@@ -116,7 +128,7 @@ export function ThemeProvider({ children }) {
     } catch {
       /* modo privado / storage bloqueado — el tema sigue aplicándose */
     }
-    apply(next, "user");
+    apply(next, "user", { animate: true });
   }, []);
 
   const toggleTheme = useCallback(() => {

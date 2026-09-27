@@ -14,21 +14,29 @@ import Frame from "./Frame";
  * de la imagen cierra.
  *
  * El diálogo está siempre en el árbol (mismo HTML en servidor y cliente);
- * sólo cambia la captura que muestra. `labels` y `openLabel` llegan ya
+ * sólo cambia la captura que muestra. Al pasar de captura, la nueva entra
+ * desde el lado hacia el que se avanza (`data-dir`, `@starting-style` en
+ * case.css): la imagen se vuelve a montar por su `key`. Al abrir no hay
+ * dirección: entra el diálogo entero. `labels` y `openLabel` llegan ya
  * resueltos: las funciones de `ui` no cruzan a un componente de cliente.
  */
 export default function Gallery({ shots, labels }) {
   const dialogRef = useRef(null);
   const [index, setIndex] = useState(0);
+  const [dir, setDir] = useState(null);
   const shot = shots[index];
   const many = shots.length > 1;
 
   const open = (i) => {
     setIndex(i);
+    setDir(null);
     dialogRef.current?.showModal();
   };
   const close = () => dialogRef.current?.close();
-  const step = (delta) => setIndex((i) => (i + delta + shots.length) % shots.length);
+  const step = (delta) => {
+    setDir(delta > 0 ? "next" : "prev");
+    setIndex((i) => (i + delta + shots.length) % shots.length);
+  };
 
   return (
     <>
@@ -58,7 +66,7 @@ export default function Gallery({ shots, labels }) {
           if (e.key === "ArrowLeft") step(-1);
         }}
       >
-        <div className="lightbox__inner" data-mobile={shot.mobile || undefined}>
+        <div className="lightbox__inner" data-mobile={shot.mobile || undefined} data-dir={dir || undefined}>
           <Image
             key={shot.id}
             src={shot.src}
