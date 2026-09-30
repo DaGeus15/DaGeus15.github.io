@@ -2,10 +2,9 @@
    Píldora de navegación (SiteNav.jsx), menú del CV y pie
    ========================================================================== */
 
-/* Arriba y centrada en escritorio. Es el único cristal del sitio: lo único
-   que se desplaza por encima del contenido. Ningún ancestro lleva opacity,
-   filter ni mask (lo convertirían en backdrop root y dejaría de ver el
-   fondo). */
+/* Arriba y centrada en escritorio. Cristal: se desplaza por encima del
+   contenido. Ningún ancestro lleva opacity, filter ni mask (lo convertirían
+   en backdrop root y dejaría de ver el fondo). */
 .site-nav {
   position: fixed;
   top: var(--sp-4);
@@ -21,11 +20,66 @@
   gap: var(--sp-1);
   height: var(--nav-h);
   padding: 0 0.3rem 0 0.35rem;
+  /* Sobre cristal, el texto secundario es el de alto contraste (ver
+     --glass-ink-muted en tokens.css). Vale también para el menú del CV. */
+  --muted: var(--glass-ink-muted);
+  position: relative;
   border-radius: var(--r-pill);
-  border: 1px solid var(--border-strong);
-  background: var(--nav-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+/* ── Cristal de la píldora ──────────────────────────────────────────────
+   Aproximación web de un material translúcido (no es el Liquid Glass de
+   Apple, que no existe para la web): desenfoque con saturación alta, un
+   tinte, un brillo cenital y un filo especular.
+
+   `backdrop-filter` sólo muestrea lo que queda JUSTO detrás de la caja: una
+   captura que se acerca no tiñe el cristal hasta que ya está debajo, y el
+   cristal se lee plano. Por eso la capa que desenfoca es tres veces más alta
+   que la píldora, hacia donde llega el contenido, y el contenedor la recorta
+   a la forma de la píldora (overflow + radio, que no crean backdrop root).
+   Va en su propio elemento, detrás del contenido (z-index -1 dentro del
+   contexto de `.site-nav`), y no en la píldora: si la píldora llevara el
+   filtro, el menú del CV que vive dentro no podría ser cristal. */
+.site-nav__glass {
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.site-nav__glass-blur {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 300%;
   backdrop-filter: var(--glass-thick);
-  box-shadow: var(--shadow-float);
+}
+
+/* El tinte y el brillo, encima del desenfoque y del tamaño de la píldora. */
+.site-nav__glass::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--glass-sheen), var(--glass-bg);
+}
+
+/* Filo especular: 1px más brillante arriba a la izquierda, que se apaga y
+   vuelve suave abajo a la derecha. Una máscara deja sólo el borde. */
+.site-nav__pill::after,
+.cv-menu::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  padding: 1px;
+  border-radius: inherit;
+  background: var(--glass-specular);
+  mask-image: linear-gradient(#000 0 0), linear-gradient(#000 0 0);
+  mask-clip: content-box, border-box;
+  mask-composite: exclude;
+  pointer-events: none;
 }
 
 .site-nav__name {
@@ -136,6 +190,11 @@
     bottom: calc(var(--sp-3) + env(safe-area-inset-bottom));
   }
 
+  /* Abajo, lo que se acerca viene de arriba: la capa crece hacia arriba. */
+  .site-nav__glass-blur {
+    inset: auto 0 0;
+  }
+
   .site-nav__name,
   .site-nav__links li:not([data-mobile]) {
     display: none;
@@ -171,9 +230,14 @@
   min-width: 12rem;
   padding: var(--sp-1);
   border-radius: var(--r-md);
-  border: 1px solid var(--border-strong);
-  background: var(--surface);
-  box-shadow: var(--shadow-float);
+  border: 1px solid var(--glass-border);
+  /* Cristal más denso que la píldora: lleva texto pequeño que se lee sobre
+     lo que haya debajo. Es cristal de verdad también dentro de la píldora,
+     porque el filtro de ésta va en una capa hermana (`.site-nav__glass`). */
+  --muted: var(--glass-ink-muted);
+  background: var(--glass-sheen), var(--glass-bg-thick);
+  backdrop-filter: var(--glass-thick);
+  box-shadow: var(--glass-shadow);
   transform-origin: bottom left;
 }
 

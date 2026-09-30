@@ -73,7 +73,8 @@ En los textos podés usar `**negrita**` y `` `código` ``; lo renderiza
 
 Viven en `public/assets/projects/<id>/` en WebP. Se generan desde los informes
 de cada proyecto con `npm run shots` (`scripts/projects/build-shots.mjs`), que
-recorta la barra del navegador, difumina correos y nombres de terceros y
+recorta la barra del navegador, difumina correos y nombres de terceros, tapa
+las caras de la cámara (opción `face`), hace recortes de portada (`crop`) y
 convierte a WebP. La carpeta de origen se define en
 `scripts/projects/source-map.mjs`, que es local y no se sube:
 

@@ -16,6 +16,7 @@
  *            tarjeta de la portada usa las dos primeras.
  *   tech     Stack, como en el CV.
  *   repo     URL del repositorio, o null si el código es privado.
+ *   live     URL de la aplicación publicada, si la hay (sale en la ficha).
  *   tone     "dark" si las capturas son oscuras: la tarjeta invierte su
  *            superficie para que la ventana no flote sobre un blanco.
  *   cover    Captura principal (tarjeta y cabecera del caso). `inset` es la
@@ -45,6 +46,20 @@ const kaphiy = {
   chat: shot("kaphiy", "pwa-chat", 647, 1400),
   kds: shot("kaphiy", "kitchen-display", 594, 841),
   tests: shot("kaphiy", "tests", 1115, 517),
+};
+
+/* Fiado: lo que hice (el flujo biométrico, la sesión y la portada). La cámara
+   de la prueba de vida va difuminada (es un compañero) con el óvalo guía
+   redibujado. */
+const fiado = {
+  home: shot("fiado", "home", 944, 447),
+  liveness: shot("fiado", "liveness", 866, 758),
+  /* Sólo el recuadro de la cámara, para superponerlo en la tarjeta. */
+  focus: shot("fiado", "liveness-focus", 413, 400),
+  document: shot("fiado", "identity-document", 866, 646),
+  confirmed: shot("fiado", "identity-confirmed", 865, 508),
+  step: shot("fiado", "biometric-step", 787, 800),
+  verified: shot("fiado", "biometric-verified", 865, 613),
 };
 
 const gasoline = {
@@ -128,6 +143,56 @@ export const projects = [
         { from: "api", to: "db" },
         { from: "api", to: "kitchen", label: "WebSocket" },
         { from: "api", to: "erp", label: "REST", async: true },
+      ],
+    },
+  },
+  {
+    id: "fiado",
+    year: "2026",
+    team: 6,
+    /* Sin `value`: "2 de 3" se traduce. */
+    metrics: [{ key: "gestures" }, { key: "handoff", value: "QR + SSE" }, { key: "tests", value: "30" }, { key: "landmarks", value: "68" }],
+    tech: [
+      "NestJS",
+      "Prisma",
+      "PostgreSQL",
+      "Next.js",
+      "TypeScript",
+      "face-api",
+      "TensorFlow.js (WASM)",
+      "Server-Sent Events",
+      "Vitest",
+      "Vercel",
+      "Render",
+    ],
+    repo: null,
+    live: "https://fiado-zeta.vercel.app/",
+    cover: fiado.step,
+    inset: fiado.focus,
+    gallery: [fiado.document, fiado.liveness, fiado.confirmed, fiado.step, fiado.verified, fiado.home],
+    /* Mis nodos (sesión, biometría y traspaso al celular) en latón; los
+       simuladores, del resto del equipo, como contexto. */
+    diagram: {
+      width: 640,
+      height: 250,
+      nodes: [
+        { id: "web", x: 82, y: 70, tech: "Next.js · face-api.js" },
+        { id: "phone", x: 82, y: 180, tech: "Next.js · QR" },
+        { id: "api", label: "API", x: 300, y: 125, tech: "NestJS · Prisma" },
+        { id: "auth", x: 300, y: 32, accent: true, tech: "cookies · scrypt" },
+        { id: "biometrics", x: 530, y: 40, accent: true, tech: "face-api · WASM" },
+        { id: "handoff", x: 530, y: 125, accent: true, tech: "SSE · 10 min" },
+        { id: "simulators", x: 530, y: 210, tech: "PDF" },
+        { id: "db", label: "PostgreSQL", x: 300, y: 222, tech: "Neon" },
+      ],
+      edges: [
+        { from: "web", to: "api", label: "HTTPS" },
+        { from: "phone", to: "api", label: "HTTPS" },
+        { from: "api", to: "auth" },
+        { from: "api", to: "biometrics" },
+        { from: "api", to: "handoff" },
+        { from: "api", to: "simulators" },
+        { from: "api", to: "db" },
       ],
     },
   },

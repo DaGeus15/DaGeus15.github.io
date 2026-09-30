@@ -56,10 +56,23 @@
   /* Aire que la píldora fija deja libre arriba (escritorio) o abajo (móvil). */
   --nav-clear: calc(var(--nav-h) + var(--sp-6));
 
-  /* Cristal: sólo la píldora de navegación, que se desplaza sobre contenido. */
-  --glass-blur: 16px;
-  --glass-saturate: 140%;
+  /* Cristal: lo que flota sobre contenido (la píldora, el menú del CV, las
+     etiquetas de la pila, los controles sobre capturas y el fondo del visor).
+     El peso sale de aquí para que `prefers-reduced-transparency` lo apague.
+     La saturación alta es lo que lo hace cristal y no niebla: el color de lo
+     que pasa por debajo se aviva en vez de lavarse. */
+  --glass-blur: 20px;
+  --glass-saturate: 180%;
   --glass-thick: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  /* Filo especular: la luz entra por arriba a la izquierda y rebota abajo a
+     la derecha. Lo pinta `.glass-edge` (light.css) con una máscara de borde. */
+  --glass-specular: linear-gradient(
+    135deg,
+    var(--glass-rim),
+    transparent 32%,
+    transparent 68%,
+    var(--glass-rim-soft)
+  );
 
   /* Grano del fondo: ruido fractal pintado una vez, fijo. Es lo que hace que
      el color se lea "mate" y no plano de pantalla. */
@@ -127,8 +140,25 @@
   --shadow-card: 0 40px 80px -30px rgba(0, 0, 0, 0.6);
   --shadow-window: inset 0 1px 0 var(--inner-light), 0 30px 60px -30px rgba(0, 0, 0, 0.75);
   --shadow-float: 0 14px 36px -14px rgba(0, 0, 0, 0.65);
-  --nav-bg: rgba(21, 28, 37, 0.74);
   --danger: #f29b8b;
+
+  /* Cristal oscuro: marino al 70%, un brillo cenital y el filo de luz.
+     Peor caso calculado: una captura blanca justo debajo deja el fondo en
+     un gris de ~#5a5d61. Por eso el texto secundario dentro del cristal no
+     es --muted (1.9:1 ahí) sino --glass-ink-muted (4.7:1): "vibrancy",
+     más claro sobre un fondo que cambia. */
+  --glass-bg: rgba(21, 28, 37, 0.7);
+  --glass-ink-muted: #d2d5d9;
+  --glass-bg-thick: rgba(21, 28, 37, 0.82);
+  --glass-sheen: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0) 60%);
+  --glass-border: rgba(220, 230, 245, 0.12);
+  --glass-rim: rgba(255, 255, 255, 0.34);
+  --glass-rim-soft: rgba(255, 255, 255, 0.1);
+  --glass-lens: rgba(255, 255, 255, 0.08);
+  --glass-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.22),
+    0 18px 40px -18px rgba(0, 0, 0, 0.7);
 
   /* Tarjeta invertida para capturas oscuras (ver `tone` en projects.js). */
   --tone-dark-bg: #0b1016;
@@ -184,8 +214,22 @@
   --shadow-card: 0 30px 60px -36px rgba(20, 32, 48, 0.28);
   --shadow-window: inset 0 1px 0 var(--inner-light), 0 26px 50px -30px rgba(20, 32, 48, 0.35);
   --shadow-float: 0 12px 28px -14px rgba(20, 32, 48, 0.3);
-  --nav-bg: rgba(251, 250, 247, 0.8);
   --danger: #b42318;
+
+  /* Peor caso en claro: una captura marina debajo (~#bababa). --muted daría
+     3.8:1; --glass-ink-muted, 6:1. */
+  --glass-bg: rgba(251, 250, 247, 0.72);
+  --glass-ink-muted: #2f3a48;
+  --glass-bg-thick: rgba(251, 250, 247, 0.84);
+  --glass-sheen: linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.12) 60%);
+  --glass-border: rgba(20, 32, 48, 0.1);
+  --glass-rim: rgba(255, 255, 255, 1);
+  --glass-rim-soft: rgba(255, 255, 255, 0.55);
+  --glass-lens: rgba(255, 255, 255, 0.78);
+  --glass-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -1px 0 rgba(20, 32, 48, 0.04),
+    0 14px 32px -16px rgba(20, 32, 48, 0.3);
 
   /* En claro, las tarjetas de capturas oscuras son marinas. */
   --tone-dark-bg: #142030;

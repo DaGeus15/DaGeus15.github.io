@@ -33,7 +33,11 @@ silencio.
 - **Sólo lo que hice yo.** En la Junta de Agua de Miñarica el sistema lo hizo
   un equipo y lo mío es el **módulo contable**: título, capturas, diagrama y
   cifras son de ese módulo; la facturación SRI y el resto salen sólo como
-  contexto (`scope` en `copy.js`). Lo mismo para cualquier proyecto de equipo.
+  contexto (`scope` en `copy.js`). En Fiado lo mío es el flujo biométrico
+  (prueba de vida, comparación con la cédula, traspaso al celular), el
+  registro y la sesión, y la portada; los simuladores y el panel son del
+  equipo. Lo mismo para cualquier proyecto de
+  equipo.
 
 ## Contenido e idioma
 
@@ -74,7 +78,10 @@ silencio.
   compañeros o clientes se difuminan (`blur`), la barra del navegador se
   recorta (`cropTop`) y lo que no se puede limpiar (fotos con personas,
   listas de clientes reales, contenido de prueba impresentable) no entra.
-  Mirá cada captura a tamaño real antes de añadirla.
+  Una cámara con la cara de alguien (la prueba de vida de Fiado) se tapa con
+  `face`: difumina el video hasta que no se reconoce a nadie y redibuja el
+  óvalo guía, que es lo que explica la captura. Mirá cada captura a tamaño
+  real antes de añadirla.
 - **`w`/`h` en `projects.js` son los píxeles reales del archivo**: reservan
   el hueco antes de que cargue (sin saltos de maquetación). Si regenerás una
   captura, actualizalos.
@@ -118,13 +125,33 @@ silencio.
 
 ## Cristal
 
-- **Sólo la píldora de navegación lleva `backdrop-filter`**: es lo único que
-  se desplaza sobre contenido. Tarjetas, paneles y el fondo del visor son
-  opacos. Si añadís otro cristal: nunca dentro de otro (muestrea la salida ya
-  desenfocada), ningún ancestro con `opacity` < 1, `filter`, `mask` o
-  `will-change: opacity` (lo convierte en backdrop root y deja de ver el
-  fondo), y el peso sale de `--glass-blur` para que
-  `prefers-reduced-transparency` lo apague.
+- **Cristal sólo en lo que FLOTA sobre contenido**: la píldora, el menú del
+  CV y el fondo del visor (que atenúa y desenfoca la página para enfocar la
+  captura). Tarjetas, paneles y todo lo que se desplaza con la página son
+  opacos: un cristal sobre un fondo liso no se ve (es decoración) y un
+  `backdrop-filter` en contenido que se desplaza repinta en cada fotograma.
+- **El material es uno, en tokens** (`--glass-*`): desenfoque con saturación
+  alta (180%: el color de debajo se aviva, no se lava), tinte, brillo
+  cenital (`--glass-sheen`), sombra con filo interior (`--glass-shadow`) y
+  un filo especular de 1px (`--glass-specular`, pintado con una máscara de
+  borde). Es una aproximación web: el Liquid Glass de Apple no existe en CSS.
+- **Texto sobre cristal con "vibrancy"**: dentro del cristal `--muted` pasa a
+  `--glass-ink-muted`. El peor caso es una captura blanca (o marina, en
+  claro) justo debajo; con el gris normal los enlaces caían a ~2:1.
+- **La capa que desenfoca es más grande que la píldora** y se recorta con
+  `overflow` + radio (`.site-nav__glass`): `backdrop-filter` sólo muestrea
+  lo que está justo detrás, y sin esto el color llega de golpe cuando el
+  contenido ya está debajo. Crece hacia donde llega el contenido (abajo en
+  escritorio, arriba en móvil).
+- **Nunca un cristal dentro de otro, y ningún ancestro con `opacity` < 1,
+  `filter`, `mask`, `clip-path` o `backdrop-filter`** (lo convierten en
+  backdrop root y deja de ver la página). Por eso el filtro de la píldora va
+  en una capa hermana y no en la píldora: así el menú del CV, que vive
+  dentro, es cristal de verdad. En el visor, la barra de controles es una
+  lente clara SIN su propio filtro, porque ya está sobre el fondo esmerilado.
+- **Con `prefers-reduced-transparency` o `prefers-contrast: more`** el
+  cristal es una superficie sólida (`base.css`): sin desenfoque, un tinte al
+  70% dejaría el texto sobre lo que pase por debajo.
 - **No escribas `-webkit-backdrop-filter` ni `-webkit-mask` a mano.** Lightning
   CSS se queda con la versión prefijada y el efecto desaparece del build.
 

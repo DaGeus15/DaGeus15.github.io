@@ -374,9 +374,24 @@ code {
   }
 }
 
+/* Sin transparencia (o con más contraste): el cristal pasa a ser una
+   superficie sólida con su borde. Sin desenfoque, un tinte al 62% dejaría
+   el texto de la píldora sobre lo que pase por debajo. */
 @media (prefers-reduced-transparency: reduce) {
-  :root {
+  :root,
+  [data-theme] {
     --glass-blur: 0px;
     --glass-saturate: 100%;
+    --glass-bg: var(--surface);
+    --glass-bg-thick: var(--surface);
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root,
+  [data-theme] {
+    --glass-bg: var(--surface);
+    --glass-bg-thick: var(--surface);
+    --glass-border: var(--border-strong);
   }
 }

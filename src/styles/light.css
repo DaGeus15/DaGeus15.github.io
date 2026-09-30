@@ -50,22 +50,12 @@ body {
   background: var(--tone-dark-grad);
 }
 
-/* ── Controles ──────────────────────────────────────────────────────── */
-.site-nav__pill {
-  box-shadow:
-    inset 0 1px 0 var(--inner-light),
-    var(--shadow-float);
-}
-
+/* ── Controles ──────────────────────────────────────────────────────────
+   La píldora y el menú del CV son cristal: su luz está en nav.css. El
+   indicador de la sección activa es una lente más clara sobre ese cristal. */
 .site-nav__active {
-  box-shadow: inset 0 1px 0 var(--inner-light);
-}
-
-.cv-menu {
-  background: var(--surface-grad);
-  box-shadow:
-    inset 0 1px 0 var(--inner-light),
-    var(--shadow-float);
+  background: var(--glass-lens);
+  box-shadow: inset 0 1px 0 var(--glass-rim-soft);
 }
 
 .btn--primary {

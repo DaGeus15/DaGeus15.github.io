@@ -137,6 +137,17 @@ export default async function CaseStudy({ params }) {
                 )}
               </dd>
             </div>
+            {project.live && (
+              <div>
+                <dt>{ui.live}</dt>
+                <dd>
+                  <a href={project.live} target="_blank" rel="noopener noreferrer" className="text-link">
+                    {new URL(project.live).host}
+                    <FiArrowUpRight className="inline-icon" aria-hidden="true" />
+                  </a>
+                </dd>
+              </div>
+            )}
           </dl>
         </div>
 
@@ -145,7 +156,9 @@ export default async function CaseStudy({ params }) {
         </div>
 
         <CaseSection title={ui.theSystem}>
-          <p className="prose">{project.description[0]}</p>
+          <p className="prose">
+            <RichText>{project.description[0]}</RichText>
+          </p>
         </CaseSection>
 
         {project.diagram && (
@@ -161,7 +174,9 @@ export default async function CaseStudy({ params }) {
 
         {project.description[1] && (
           <CaseSection title={ui.decisions}>
-            <p className="prose">{project.description[1]}</p>
+            <p className="prose">
+            <RichText>{project.description[1]}</RichText>
+          </p>
           </CaseSection>
         )}
 

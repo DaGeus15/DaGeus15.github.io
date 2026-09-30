@@ -38,6 +38,7 @@ export const copy = {
       switchLang: "Read in English",
       inProduction: "En producción",
       privateCode: "Código privado",
+      live: "En línea",
       sourceCode: "Código",
       caseStudy: "Ver caso de estudio",
       architecture: "Arquitectura",
@@ -104,7 +105,7 @@ export const copy = {
       projects: {
         title: "Trabajo seleccionado",
         intro:
-          "Cinco sistemas, uno en producción. Cada uno tiene su caso de estudio con capturas, arquitectura y las decisiones que tomé.",
+          "Seis sistemas, uno en producción. Cada uno tiene su caso de estudio con capturas, arquitectura y las decisiones que tomé.",
       },
       experience: { title: "Experiencia" },
       stack: {
@@ -190,6 +191,58 @@ export const copy = {
           "pwa-chat": "La PWA del comensal: el menú de Praliné y la entrada al chat con el agente.",
           "kitchen-display": "El panel de cocina (KDS): pedidos por mesa, en tiempo real.",
           tests: "La suite de pruebas del panel de cocina, en verde.",
+        },
+      },
+      fiado: {
+        title: "Fiado",
+        subtitle: "Verificación facial en vivo para una cooperativa de ahorro y crédito",
+        summary:
+          "Simulador de créditos e inversiones para una cooperativa. Mi parte: confirmar la identidad de quien invierte con una prueba de vida en vivo y la comparación de su rostro con la cédula (también desde el celular), el registro y el inicio de sesión, y la portada.",
+        client: "Proyecto académico · Ingeniería Económica para Software, UTA",
+        description: [
+          "Fiado simula los servicios digitales de una cooperativa de ahorro y crédito: créditos con los sistemas francés y alemán, con su tabla de amortización en PDF, e inversiones a plazo fijo que se solicitan en línea. Para abrir una póliza, igual que en la app de un banco, hay que demostrar que eres el titular de la cédula. Esa verificación biométrica es mi parte, junto con las cuentas y la sesión de las que depende, y la portada.",
+          "La detección en el navegador sólo guía; decide el servidor. El cliente pide dos gestos al azar, acompaña a la persona con el óvalo y envía un fotograma de frente, uno por gesto y otro de frente al cerrar. El servidor comprueba que todos son la misma persona, que cada gesto se hizo y que el rostro coincide con el de la cédula: una foto o un video grabado de antemano no sirven. Y el reconocimiento está detrás de una interfaz (`BiometricProvider`): cambiar face-api por un proveedor comercial no toca el resto.",
+        ],
+        features: [
+          "Al registrarse, la cuenta existe pero no puede operar hasta que un rostro en vivo coincide con la foto de la cédula. Tras cinco intentos fallidos se bloquea y la desbloquea un administrador.",
+          "Prueba de vida por reto y respuesta: el servidor sortea dos gestos de tres (girar a la izquierda, a la derecha o sonreír) en una sesión de un solo uso que vence en tres minutos.",
+          "face-api corre en el backend NestJS sobre WebAssembly, sin GPU ni binarios nativos, y valida cada gesto sobre los 68 puntos faciales del fotograma.",
+          "La comparación con la cédula usa descriptores faciales de 128 dimensiones. El umbral y los intentos se configuran, y cada intento queda auditado con sus puntajes y el motivo del rechazo.",
+          "Sin cámara, se sigue en el celular con un QR de diez minutos. La computadora ve en vivo, por Server-Sent Events, en qué paso va el celular y si se cerró (latidos cada dos segundos). Los tokens se guardan como SHA-256.",
+          "La misma verificación sirve para el registro, la solicitud de una inversión y la recuperación de la contraseña.",
+          "Registro e inicio de sesión con cookies httpOnly. El refresh token rota en cada renovación y reusar uno ya rotado revoca toda su familia: una cookie robada no sobrevive a su dueño. Contraseñas con scrypt de `node:crypto`, sin dependencias nativas.",
+          "La portada muestra una simulación real (sistema francés) y los productos desde la API, con apariciones al desplazar que respetan el movimiento reducido.",
+          "**30 pruebas unitarias** del módulo (las métricas de los gestos y el proveedor con rostros reales) y pruebas e2e de todo el flujo, con un proveedor simulado determinista.",
+        ],
+        challenge: {
+          title: "Dos caras en una cédula",
+          body: "La primera versión exigía exactamente un rostro por imagen y rechazaba casi todas las cédulas: la ecuatoriana trae, además del retrato, un retrato fantasma más pequeño, y las fotos llegaban a veces giradas. Ahora en la cédula se toma el rostro más grande, se prueba a enderezar la foto si no aparece, y el descriptor sale de un recorte del retrato a resolución completa, no de la imagen reducida. En la selfie, un segundo rostro sólo invalida la captura si es claro y de tamaño parecido al principal: un cuadro en la pared o alguien que pasa al fondo ya no tumban la verificación.",
+        },
+        role: "El flujo biométrico de punta a punta: el módulo de biometría en NestJS y Prisma (prueba de vida, comparación facial y auditoría de intentos), la confirmación de identidad del registro, el traspaso al celular con QR y Server-Sent Events, y sus pantallas guiadas en Next.js. Además, el registro y el inicio de sesión con rotación de refresh tokens, y la portada del sitio. En un equipo de seis.",
+        scope:
+          "El resto del sistema lo hizo el equipo: los simuladores de crédito (francés y alemán) y de inversiones, la tabla de amortización en PDF y el panel de administración. Esas partes no son mías: aquí sólo aparece lo que hice yo.",
+        metrics: {
+          gestures: { value: "2 de 3", label: "gestos al azar, sorteados por el servidor" },
+          handoff: "seguir en el celular, en vivo en la computadora",
+          tests: "pruebas unitarias del módulo biométrico",
+          landmarks: "puntos faciales para validar cada gesto",
+        },
+        nodes: {
+          web: "Portal web",
+          phone: "Celular",
+          auth: "Sesión",
+          biometrics: "Biometría",
+          handoff: "Traspaso QR",
+          simulators: "Simuladores",
+        },
+        shots: {
+          "identity-document": "Paso 1: la foto de la cédula, con qué hacer y qué evitar, y el consentimiento para los datos biométricos.",
+          liveness: "Prueba de vida: el servidor pidió girar la cabeza a la izquierda. El rostro va difuminado a propósito.",
+          "liveness-focus": "La prueba de vida pide un gesto sorteado por el servidor dentro del óvalo guía.",
+          "identity-confirmed": "Identidad confirmada: la cuenta ya puede operar.",
+          "biometric-step": "La verificación dentro de la solicitud de una póliza: consejos antes de empezar y la opción de seguir en el celular.",
+          "biometric-verified": "Verificación superada, con la concordancia con la cédula.",
+          home: "La portada: una simulación real de crédito y el sello de identidad verificada.",
         },
       },
       gasoline: {
@@ -439,6 +492,7 @@ export const copy = {
       switchLang: "Leer en español",
       inProduction: "In production",
       privateCode: "Private code",
+      live: "Live",
       sourceCode: "Code",
       caseStudy: "Read case study",
       architecture: "Architecture",
@@ -502,7 +556,7 @@ export const copy = {
       projects: {
         title: "Selected work",
         intro:
-          "Five systems, one of them in production. Each has its own case study with screenshots, architecture and the decisions I made.",
+          "Six systems, one of them in production. Each has its own case study with screenshots, architecture and the decisions I made.",
       },
       experience: { title: "Experience" },
       stack: {
@@ -586,6 +640,58 @@ export const copy = {
           "pwa-chat": "The customer PWA: Praliné's menu and the way into the chat with the agent.",
           "kitchen-display": "The kitchen board (KDS): orders by table, in real time.",
           tests: "The kitchen board's test suite, all green.",
+        },
+      },
+      fiado: {
+        title: "Fiado",
+        subtitle: "Live face verification for a credit union",
+        summary:
+          "A loan and investment simulator for a credit union. My part: confirming who is investing with a live liveness check and a match of their face against their ID card (from a phone too), sign-up and sign-in, and the landing page.",
+        client: "Academic project · Engineering Economics for Software, UTA",
+        description: [
+          "Fiado simulates the digital services of a credit union: loans with the French and German amortization systems, with the schedule as a PDF, and fixed-term investments you apply for online. To open one, just like in a banking app, you have to prove you are the holder of the ID card. That biometric verification is my part, along with the accounts and sessions it depends on, and the landing page.",
+          "Detection in the browser only guides; the server decides. The client asks for two random gestures, guides the person with the oval and sends a frontal frame, one per gesture and a closing frontal one. The server checks that they are all the same person, that each gesture was made and that the face matches the one on the ID: a photo or a pre-recorded video won't pass. And recognition sits behind an interface (`BiometricProvider`): swapping face-api for a commercial provider leaves the rest untouched.",
+        ],
+        features: [
+          "After signing up, the account exists but can't operate until a live face matches the ID card photo. After five failed attempts it locks, and an administrator unlocks it.",
+          "Challenge-response liveness: the server draws two of three gestures (turn left, turn right or smile) in a single-use session that expires in three minutes.",
+          "face-api runs in the NestJS backend on WebAssembly, with no GPU or native binaries, and checks each gesture on the frame's 68 facial landmarks.",
+          "The ID match uses 128-dimension face descriptors. The threshold and attempts are configurable, and every attempt is audited with its scores and the reason for a rejection.",
+          "Without a camera, you continue on your phone through a ten-minute QR code. The computer sees live, over Server-Sent Events, which step the phone is on and whether it was closed (a heartbeat every two seconds). Tokens are stored as SHA-256.",
+          "The same verification covers sign-up, investment applications and password recovery.",
+          "Sign-up and sign-in with httpOnly cookies. The refresh token rotates on every renewal, and reusing an already-rotated one revokes its whole family: a stolen cookie doesn't outlive its owner. Passwords use scrypt from `node:crypto`, with no native dependencies.",
+          "The landing page shows a real simulation (French system) and the products from the API, with scroll reveals that respect reduced motion.",
+          "**30 unit tests** for the module (the gesture metrics and the provider with real faces) and e2e tests for the whole flow, with a deterministic simulated provider.",
+        ],
+        challenge: {
+          title: "Two faces on one ID card",
+          body: "The first version required exactly one face per image and rejected almost every ID card: the Ecuadorian one carries a smaller ghost portrait next to the main one, and photos sometimes arrived rotated. Now the largest face on the card is used, the photo is straightened if no face shows up, and the descriptor comes from a full-resolution crop of the portrait, not the downscaled image. On the selfie, a second face only invalidates the capture if it is clear and close in size to the main one: a picture on the wall or someone walking behind no longer breaks the verification.",
+        },
+        role: "The biometric flow end to end: the biometrics module in NestJS and Prisma (liveness, face matching and attempt auditing), sign-up identity confirmation, the handoff to the phone with a QR code and Server-Sent Events, and their guided screens in Next.js. Also sign-up and sign-in with refresh-token rotation, and the site's landing page. In a team of six.",
+        scope:
+          "The rest of the system was built by the team: the loan (French and German) and investment simulators, the PDF amortization schedule and the admin panel. Those parts aren't mine: only what I built is shown here.",
+        metrics: {
+          gestures: { value: "2 of 3", label: "random gestures, drawn by the server" },
+          handoff: "continue on the phone, live on the computer",
+          tests: "unit tests for the biometrics module",
+          landmarks: "facial landmarks to check each gesture",
+        },
+        nodes: {
+          web: "Web portal",
+          phone: "Phone",
+          auth: "Session",
+          biometrics: "Biometrics",
+          handoff: "QR handoff",
+          simulators: "Simulators",
+        },
+        shots: {
+          "identity-document": "Step 1: the ID card photo, with what to do and avoid, and consent for the biometric data.",
+          liveness: "Liveness check: the server asked to turn the head left. The face is blurred on purpose.",
+          "liveness-focus": "The liveness check asks for a gesture drawn by the server, inside the guide oval.",
+          "identity-confirmed": "Identity confirmed: the account can now operate.",
+          "biometric-step": "Verification inside an investment application: tips before starting and the option to continue on a phone.",
+          "biometric-verified": "Verification passed, with the match against the ID card.",
+          home: "The landing page: a real loan simulation and the verified-identity badge.",
         },
       },
       gasoline: {
