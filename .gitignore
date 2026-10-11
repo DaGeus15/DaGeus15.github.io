@@ -50,3 +50,6 @@ scripts/projects/source-map.mjs
 
 # Instantáneas de las revisiones de diseño.
 .impeccable/
+
+# Registro local de skills instaladas (npx skills); las skills viven en .claude/skills/
+skills-lock.json

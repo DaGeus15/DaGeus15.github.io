@@ -84,15 +84,35 @@
   gap: 5%;
 }
 
-.shot-stage[data-layout="phones"] .shot-stage__cover {
-  width: 38%;
-  max-width: 22rem;
+/* Teléfonos (KAPHIY): un alto máximo según la pantalla, no según el ancho.
+   A 1400px de alto, por ancho llegaban a ocupar más que la pantalla. */
+.shot-stage[data-layout="phones"] .frame {
+  flex: 0 1 auto;
+  max-width: 46%;
+}
+
+.shot-stage[data-layout="phones"] .frame__img {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: min(60dvh, 34rem);
 }
 
 .shot-stage[data-layout="phones"] .shot-stage__inset {
   order: -1;
-  width: 27%;
-  max-width: 16rem;
+}
+
+.shot-stage[data-layout="phones"] .shot-stage__inset .frame__img {
+  max-height: min(48dvh, 27rem);
+}
+
+/* Una captura más alta que 16:10 se ve desde arriba en una ventana 16:10
+   (`is-tall`, ShotStage.jsx): la cabecera de un caso es un plano de
+   situación, no la captura entera, y no debe ocupar la pantalla. */
+.shot-stage__cover.is-tall .frame__img {
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  object-position: top center;
 }
 
 /* ── Introducción y ficha ───────────────────────────────────────────── */
@@ -281,25 +301,35 @@
   font-size: 0.84rem;
 }
 
-/* ── Galería ────────────────────────────────────────────────────────── */
+/* ── Galería ────────────────────────────────────────────────────────────
+   Las capturas son equivalentes, así que van en mosaicos IGUALES: un marco
+   16:10 con la captura centrada sobre un paspartú, sin recortarla y sin
+   ampliarla por encima de su tamaño (así entra igual una web 2:1, una casi
+   cuadrada, un teléfono 9:20 o una pequeña de 564 px). Antes cada mosaico
+   tomaba el alto de su imagen: filas desiguales y teléfonos de un palmo
+   junto a ventanas bajas. Entera, se ve en el visor.
+   Columnas (`data-cols`, Gallery.jsx): 2 con 2 o 4 capturas, 3 con el
+   resto, para que las filas cierren parejas. */
 .gallery {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(14rem, 100%), 1fr));
-  grid-auto-flow: dense;
+  grid-template-columns: repeat(var(--gallery-cols, 2), minmax(0, 1fr));
   gap: var(--sp-7) var(--sp-5);
 }
 
-.gallery__item {
-  grid-column: span 2;
+.gallery[data-cols="3"] {
+  --gallery-cols: 3;
 }
 
-.gallery__item[data-mobile] {
-  grid-column: span 1;
+/* Tablet: como mucho dos por fila. Móvil: una, que en dos no se leen. */
+@media (max-width: 1023px) {
+  .gallery[data-cols="3"] {
+    --gallery-cols: 2;
+  }
 }
 
 @media (max-width: 639px) {
-  .gallery__item {
-    grid-column: auto;
+  .gallery[data-cols] {
+    --gallery-cols: 1;
   }
 }
 
@@ -311,13 +341,37 @@
   transition: transform var(--dur-base) var(--ease-out);
 }
 
-.gallery__item[data-mobile] .gallery__open {
-  max-width: 13rem;
-  margin-inline: auto;
+/* El mosaico: el marco de siempre, con proporción fija y la captura
+   encajada dentro (los porcentajes de max-* se resuelven contra el área de
+   la rejilla, que tiene alto por la proporción). */
+.gallery__open .frame,
+.gallery__open .frame--phone {
+  display: grid;
+  /* Una celda de tamaño definido: sin esto el contenido estiraba el mosaico
+     (el `min-height: auto` de aspect-ratio) y el max-height de la imagen
+     no tenía contra qué resolverse. */
+  grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+  place-items: center;
+  aspect-ratio: 16 / 10;
+  min-height: 0;
+  overflow: hidden;
+  padding: var(--sp-3);
+  border-radius: var(--r-md);
+  background: var(--surface-sunken);
+  transition: border-color var(--dur-base) var(--ease-out);
 }
 
-.gallery__open .frame {
-  transition: border-color var(--dur-base) var(--ease-out);
+.gallery__open .frame__img {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 6px;
+  box-shadow: 0 6px 16px -10px rgba(0, 0, 0, 0.45);
+}
+
+.gallery__open .frame--phone .frame__img {
+  border-radius: 12px;
 }
 
 /* Pulsar una captura la hunde un poco (es grande: 0.99, no 0.97). */
@@ -346,11 +400,7 @@
   color: var(--muted);
   font-size: 0.88rem;
   line-height: 1.5;
-}
-
-.gallery__item[data-mobile] .gallery__caption {
-  max-width: 13rem;
-  margin-inline: auto;
+  text-wrap: pretty;
 }
 
 /* Visor: `<dialog>` nativo en la capa superior. El fondo es oscuro en los dos
@@ -431,6 +481,56 @@
   .lightbox[open]::backdrop {
     background: rgba(9, 13, 19, 0.94);
   }
+}
+
+/* De la portada al caso: la captura de la tarjeta crece hasta la portada del
+   caso y vuelve al regresar (<ViewTransition share="morph"> en WorkCard y
+   ShotStage). 400ms: lo bastante lento para registrarse, lo bastante rápido
+   para sentirse directo. Un desenfoque leve a mitad de camino tapa el
+   reescalado de píxeles. Con movimiento reducido no viaja: sólo el fundido
+   de la página. */
+::view-transition-group(.morph) {
+  animation-duration: 400ms;
+  animation-timing-function: var(--ease-out);
+}
+
+::view-transition-image-pair(.morph) {
+  animation-name: morph-blur;
+  animation-duration: 400ms;
+}
+
+@keyframes morph-blur {
+  35% {
+    filter: blur(2px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(.morph),
+  ::view-transition-image-pair(.morph) {
+    animation-duration: 0s;
+  }
+}
+
+/* La captura viaja entre su miniatura y el visor (`morph` en Gallery.jsx):
+   abrir 340ms, cerrar más rápido, 240ms, como cualquier salida. El resto de
+   la página se funde con la regla general de base.css. */
+::view-transition-group(shot) {
+  animation-duration: 340ms;
+  animation-timing-function: var(--ease-out);
+}
+
+:root[data-vt="shot-close"]::view-transition-group(shot) {
+  animation-duration: 240ms;
+}
+
+::view-transition-old(shot),
+::view-transition-new(shot) {
+  animation-duration: inherit;
+  /* La miniatura y el visor son la misma imagen: que no se deforme si los
+     redondeos difieren un píxel. */
+  height: 100%;
+  object-fit: contain;
 }
 
 .lightbox__inner {

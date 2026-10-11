@@ -82,6 +82,17 @@ silencio.
   `face`: difumina el video hasta que no se reconoce a nadie y redibuja el
   óvalo guía, que es lo que explica la captura. Mirá cada captura a tamaño
   real antes de añadirla.
+- **La cabecera de un caso es un plano de situación, no la captura
+  entera.** Una captura más alta que 16:10 se ve desde arriba en una ventana
+  16:10 (`is-tall`, ShotStage.jsx) y los teléfonos tienen un alto máximo
+  según la pantalla (`dvh`). La de Fiado (787×800) llegó a medir más que la
+  pantalla. Entera, en la galería y en el visor.
+- **La galería son mosaicos IGUALES** (16:10, la captura centrada sobre un
+  paspartú, sin recortar ni ampliar por encima de su tamaño): las capturas
+  son equivalentes y mezclan webs 2:1, casi cuadradas, teléfonos 9:20 y una
+  de 564 px. Con el alto de cada imagen, las filas salían desiguales. Dos
+  columnas con 2 o 4 capturas, tres con el resto (para que las filas
+  cierren parejas); dos en tablet, una en móvil.
 - **`w`/`h` en `projects.js` son los píxeles reales del archivo**: reservan
   el hueco antes de que cargue (sin saltos de maquetación). Si regenerás una
   captura, actualizalos.
@@ -152,6 +163,19 @@ silencio.
 - **Con `prefers-reduced-transparency` o `prefers-contrast: more`** el
   cristal es una superficie sólida (`base.css`): sin desenfoque, un tinte al
   70% dejaría el texto sobre lo que pase por debajo.
+- **El cristal marca jerarquía, así que no va en todo.** Es para lo que
+  flota o se pulsa (píldora, lente, menú, visor, botones secundarios,
+  enlaces de contacto) y para la pila, que es la firma del sitio. Las
+  pastillas de los logotipos del stack lo IMITAN sin `backdrop-filter`
+  (`--tile-*`). El retrato y las fichas de la experiencia llegaron a llevarlo
+  y volvieron a ser mate: cristal en todas partes es el patrón de "sitio
+  hecho por IA" y deja de distinguir nada.
+- **Todo lo que se pulsa es píldora** (botones, enlaces de contacto, la
+  píldora y su lente); los campos llevan `--r-sm` y las tarjetas `--r-lg`.
+- **El filo de lo enlazable atrapa la luz** (`data-rim` + `SpecularRim.jsx`):
+  en tarjetas de trabajo, siguiente proyecto y el formulario, el borde se
+  enciende en latón alrededor del puntero. Un listener para toda la página,
+  el rectángulo se mide al entrar, y sólo con ratón.
 - **No escribas `-webkit-backdrop-filter` ni `-webkit-mask` a mano.** Lightning
   CSS se queda con la versión prefijada y el efecto desaparece del build.
 
@@ -162,11 +186,31 @@ silencio.
   Sin GSAP, Three.js ni react-spring: Three.js pesaba ~130 KB comprimidos
   para cuatro cajas; OGL, ~15 KB. Nada rebota: no hay gestos con inercia.
 - **Un solo momento de autor**: las losas de la portada caen y se apilan al
-  cargar. El resto del movimiento es respuesta (hover, puntero, scroll), no
-  decoración.
+  cargar y, cuando entra la escena de cristal, una luz baja UNA vez por las
+  capas (de Cliente a Infra, como una petición). El resto del movimiento es
+  respuesta (hover, puntero, scroll), no decoración.
 - **Sólo `transform` y `opacity` en lo que se anima por fotograma.** El
-  indicador de la píldora es `layoutId` (transform), el subrayado del correo
-  es `scaleX`, la inclinación de las tarjetas es `rotateX/Y`.
+  subrayado del correo es `scaleX`. Excepción documentada: la lente de la
+  píldora (`LiquidLens.jsx`) cambia de `width` (además de `translateX`): va
+  en posición absoluta, así que no mueve nada más, y un `clip-path` le
+  recortaba el borde y la sombra que la hacen leerse como cristal elevado.
+  Sus dos bordes van con springs distintos y se estira como una gota.
+- **Un gesto por pieza.** Las tarjetas de trabajo se inclinaban, su captura
+  pequeña se movía aparte, el filo se encendía y el título cambiaba: cuatro
+  efectos a la vez se leían como demo. Quedan el filo de luz y el título.
+- **Las cosas salen de donde se tocaron** (View Transitions):
+  · Galería → visor: la captura crece desde su miniatura y vuelve a ella al
+    cerrar (X, Escape o clic fuera), o a la de la captura que se esté
+    viendo; si esa miniatura no está en pantalla, fundido (`morph` en
+    `Gallery.jsx`).
+  · Portada → caso: la captura de la tarjeta crece hasta la portada del caso
+    y vuelve al regresar (`<ViewTransition name="cover-<id>" share="morph">`
+    en `WorkCard` y `ShotStage`, con `experimental.viewTransition`).
+  Con movimiento reducido no viajan: queda el fundido.
+- **El diagrama se construye una vez** al entrar en pantalla (nodos en
+  cascada, conexiones que se dibujan, paquetes al final): explica el sistema
+  en el orden en que se lee. Sólo si al hidratar todavía no se veía; sin JS
+  se ve entero.
 - **Las entradas son CSS**, para que funcionen antes de hidratar y sin JS:
   `.enter` (cascada al cargar, `--i` es el orden) y `.reveal` (ligada al scroll
   con `animation-timeline: view()`; sin soporte, el contenido simplemente
@@ -178,11 +222,12 @@ silencio.
   más (la caída de las losas, el giro de la pila, los paquetes de los
   diagramas) hace el mismo gesto en corto o más lento. Peor caso: "suave",
   nunca "quieto".
-- **El cambio de tema es una View Transition** (`apply()` en `lib/theme.jsx`,
-  250ms en `base.css`): un fundido de la página entera. No pongas
-  transiciones de color en `body` ni en superficies para el tema: llegaban
-  cada una a su ritmo y durante medio segundo se veía un fondo oscuro con
-  tarjetas ya claras.
+- **El cambio de tema es una View Transition** (`apply()` en `lib/theme.jsx`):
+  desde el botón, el tema nuevo se revela en un círculo que crece desde él
+  (`[data-vt="reveal"]` en `base.css`); si cambia el sistema o hay
+  movimiento reducido, un fundido de 250ms. No pongas transiciones de color
+  en `body` ni en superficies para el tema: llegaban cada una a su ritmo y
+  durante medio segundo se veía un fondo oscuro con tarjetas ya claras.
 - **Entradas y salidas de lo que aparece, en CSS moderno**: `@starting-style`
   para la entrada y `transition: …, display … allow-discrete, overlay …
   allow-discrete` para que un `<dialog>` que se cierra no desaparezca antes
@@ -191,9 +236,18 @@ silencio.
   y 160ms (en móvil no hay hover que confirme el toque). Si el elemento ya
   tiene una animación de entrada que anima `transform` con relleno, usá la
   propiedad `scale`, que no se pisa con ella.
-- **Nada de hover en lo que no se puede pulsar** (tecnologías del stack, el
-  retrato): un hover promete un clic. Si algo tiene que responder, primero
-  tiene que llevar a algún sitio.
+- **Lo que no se puede pulsar no PROMETE un clic** (tecnologías del stack,
+  viñetas de la experiencia, el retrato): nada de cursor de mano, color de
+  acento en el texto ni elevación de la pieza entera. Sí vale un **resaltado
+  de lectura**: la fila del stack con un velo tenue y sus pastillas que se
+  elevan una tras otra, la viñeta bajo el puntero que se aclara y alarga su
+  raya. Marca qué se está leyendo, no adónde lleva.
+- **Los botones responden como cristal**: suben 1px, la sombra se alarga y
+  un destello los cruza (sólo `transform`). Los secundarios y los enlaces de
+  contacto son pastillas de cristal (`--tile-*`); idioma y tema muestran una
+  mini lente (`--lens-*`) al pasar. La lente de la sección activa es cristal
+  elevado: en claro, blanco sobre blanco sólo se distingue por su borde y su
+  sombra.
 - **Nada perpetuo salvo lo pequeño**: los paquetes SMIL de los diagramas, que
   además se pausan fuera de pantalla. Sin latidos ni pulsos.
 - **No ramifiques el árbol renderizado según `useReducedMotion()` o una media
@@ -212,8 +266,14 @@ silencio.
 
 - **El SVG es el primer pintado y el respaldo; OGL sólo añade interacción.**
   `SystemStack.jsx` pinta la pila en SVG isométrico desde el build (con la
-  entrada en CSS); `stackScene.js` se importa dinámicamente después de esa
-  entrada y del primer inactivo, y sustituye al SVG en la MISMA pose.
+  entrada en CSS); `stackScene.js` se descarga en paralelo desde el montaje
+  y se monta cuando las losas terminan de caer (~1.45s), en la MISMA pose.
+  Antes esperaba además a un momento inactivo y el SVG plano se veía hasta
+  3s: al cargar parecía que el cristal "parpadeaba".
+- **El SVG imita el cristal** (degradado lechoso arriba, cantos con
+  degradado, filo de luz en el tramo que mira a la luz, núcleo con brillo;
+  tokens `--stack-svg-*`), para que el relevo se lea como "se enciende la
+  luz" y no como un cambio de material.
 - **Las dos capas comparten geometría** (`stackGeometry.js`): la cámara de la
   escena es ortográfica e isométrica, así que el SVG puede calcular la misma
   proyección y el relevo es un fundido invisible. Si tocás tamaños o
@@ -222,8 +282,25 @@ silencio.
   objetivo (puntero, scroll, tema) y se para al llegar; fuera de pantalla no
   pinta. DPR ≤2 con ratón y ≤1.5 en táctil. Sin WebGL 2 no monta y se queda
   el SVG.
+- **Las losas son Liquid Glass, no vidrio.** La primera versión era cristal
+  "de verdad" (cajas de canto recto, biseles grises, reflejos de estudio) y
+  se veía como un pisapapeles fuera de lugar junto a la píldora. La
+  referencia es el material de Apple: piezas de esquinas redondeadas
+  (`SLAB.radius`, contorno de `roundedOutline`, compartido con el SVG),
+  cuerpo esmerilado y lechoso, brillo interior junto al borde y un filo de
+  luz que entra por la izquierda y queda en sombra al otro lado. Casi no
+  refleja el entorno: deja pasar la luz.
+- **Dos pasadas y sin Three.js.** Los núcleos (la placa luminosa de cada
+  capa) se pintan en una textura; el cristal la muestrea desenfocada (cinco
+  muestras: el esmerilado) y desplazada según la normal, con dispersión sólo
+  en el bisel. El bisel lo inclina el shader con la distancia al contorno
+  redondeado (una SDF), no la malla. Es la versión ligera de los bloques de
+  cristal de HyperFrames (Three.js, un HDR de 1,6 MB y materiales físicos):
+  aquí cuesta lo que pesa OGL.
 - **Los colores de la escena salen de los tokens** (`--stack-*`, en
-  hexadecimal) y se releen al cambiar `data-theme`.
+  hexadecimal o número) y se releen al cambiar `data-theme`. En claro el
+  cristal se define por filos y reflejos oscuros: un brillo blanco sobre
+  papel sólo lava la losa.
 - **Las etiquetas son HTML**, no texto en textura: nítidas, con la fuente
   real. El CSS las deja en la esquina de su losa en reposo (`--x`/`--y`); la
   escena las mueve con `transform` y el centrado va en `translate`, para no
@@ -235,10 +312,13 @@ silencio.
   el polígono del SVG si no hay escena); pone `data-active` y avisa a la
   escena, que levanta la losa. Un clic en la losa sigue el enlace de su
   etiqueta. El lienzo no recibe eventos: los atiende el contenedor.
-- **Contexto perdido = SVG.** Si el contexto WebGL llega perdido (un lienzo
-  reutilizado tras desmontar, que libera el suyo) o se pierde en marcha, la
-  escena no monta o se retira y vuelve el SVG. Sin esto, cada recarga en
-  caliente llenaba la consola de errores de `Program.use`.
+- **Contexto perdido = SVG.** Si el contexto WebGL llega perdido o se pierde
+  en marcha, la escena no monta o se retira y vuelve el SVG. Sin esto, cada
+  recarga en caliente llenaba la consola de errores de `Program.use`.
+- **El lienzo lo crea el efecto, no el JSX.** Cada montaje estrena un
+  `<canvas>` con su propio contexto y lo retira al desmontar. Reutilizar el
+  del montaje anterior (lo que hace una recarga en caliente) lo daba ya
+  liberado: la pila se quedaba en SVG plano hasta recargar la página.
 
 ## Layout y CSS
 
@@ -246,6 +326,16 @@ silencio.
   encima, portada dividida y píldora arriba; por debajo, una columna y la
   píldora abajo (donde está el pulgar), con tres secciones. Lo que depende
   del ancho de una TARJETA usa `@container` (la tarjeta ancha de KAPHIY).
+- **Toques de 44px en táctil** (`pointer: coarse`): enlaces de la píldora
+  (`--nav-link-h`, que también da la altura de la lente), idioma, tema y
+  botones de icono. Para que quepan tres secciones en un teléfono de 360px,
+  la píldora móvil es compacta (menos relleno, letra 0.82rem); por debajo de
+  360px deja Trabajo y Contacto. Medilo: el tema llegó a salirse de la
+  pantalla en 320px sin que nada se viera roto en 375px.
+- **El nombre de la portada va siempre en dos líneas**: su tamaño no pasa
+  del 12% del ancho de su columna (`cqi`, la columna es contenedor). Con la
+  raíz que crece en monitores grandes, "Daylé García" se partía y quedaban
+  tres líneas.
 - **Un `@media` que sobrescribe una regla va DESPUÉS de ella.** Con la misma
   especificidad gana la última: la barra móvil salió visible en escritorio y
   los botones de tema duplicados en móvil por tener el `@media` delante. Cada

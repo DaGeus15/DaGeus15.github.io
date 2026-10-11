@@ -120,6 +120,7 @@
 }
 
 .site-nav__links {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 2px;
@@ -131,7 +132,7 @@
   position: relative;
   display: inline-flex;
   align-items: center;
-  height: 2.35rem;
+  height: var(--nav-link-h);
   padding: 0 0.8rem;
   border-radius: var(--r-pill);
   color: var(--muted);
@@ -153,13 +154,42 @@
   color: var(--foreground);
 }
 
-/* El indicador de la activa se desliza entre enlaces (layoutId de Framer:
-   transform, no left/width). Va detrás de la etiqueta. */
+/* La lente de la activa (LiquidLens.jsx): cristal elevado sobre el cristal
+   de la píldora, que se mueve con `translateX` y cambia de ancho. Va detrás
+   de las etiquetas. Su `li` no tiene caja. */
+.site-nav__lens {
+  display: contents;
+}
+
 .site-nav__active {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  height: var(--nav-link-h);
+  translate: 0 -50%;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--lens-border);
+  background: var(--lens-bg);
+  box-shadow: var(--lens-shadow);
+  pointer-events: none;
+}
+
+/* Hover: una lente tenue bajo el enlace, sin volumen; la activa es la que
+   lo tiene. Sólo con ratón (en táctil se quedaría pegada). */
+.site-nav__link::before {
+  content: "";
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: var(--surface-raised);
+  background: var(--lens-hover);
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .site-nav__link:not([aria-current]):hover::before {
+    opacity: 1;
+  }
 }
 
 .site-nav__label {
@@ -175,10 +205,6 @@
 
 .site-nav__cv {
   margin-right: var(--sp-1);
-}
-
-.site-nav__cv .btn {
-  border-radius: var(--r-pill);
 }
 
 /* Móvil: abajo, donde está el pulgar, con tres secciones, el idioma y el
@@ -200,17 +226,50 @@
     display: none;
   }
 
+  /* Compacta: tres secciones, idioma y tema con toques de 44px tienen que
+     caber en un teléfono de 360px. */
   .site-nav__links {
+    gap: 0;
     padding-inline: var(--sp-1);
     border-left: none;
   }
 
   .site-nav__link {
-    padding: 0 0.7rem;
+    padding: 0 0.5rem;
+    font-size: 0.82rem;
   }
 
   .site-nav[data-variant="home"] .site-nav__cv {
     display: none;
+  }
+}
+
+/* Táctil: enlaces, idioma y tema de 44px (el mínimo para un dedo); la
+   lente sigue la altura del enlace (--nav-link-h). */
+@media (pointer: coarse) {
+  :root {
+    --nav-link-h: 2.75rem;
+  }
+
+  /* Y lo mismo para los botones de icono (copiar el correo, el visor). */
+  .pref-btn,
+  .icon-btn {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+}
+
+/* Teléfonos muy estrechos (320-359px): tres secciones, idioma y tema no
+   caben con toques de 44px; el tema se salía de la pantalla. Quedan Trabajo
+   y Contacto (la prueba y la acción); "Sobre mí" está al bajar. Desde 360px
+   (los teléfonos de hoy: 360, 375, 390, 393, 412…) caben las tres. */
+@media (max-width: 359px) {
+  .site-nav__links li:has(> [data-id="about"]) {
+    display: none;
+  }
+
+  .site-nav__link {
+    padding: 0 0.6rem;
   }
 }
 

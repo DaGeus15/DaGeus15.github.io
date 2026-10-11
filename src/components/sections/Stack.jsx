@@ -7,7 +7,8 @@ import SectionHeading from "./SectionHeading";
  * con Mockito", sí.
  *
  * Los iconos son máscaras en el color del texto: los logotipos a todo color
- * convertían la sección en un muestrario de marcas.
+ * convertían la sección en un muestrario de marcas. Van en pastillas de
+ * cristal del mismo lenguaje que la pila de la portada.
  *
  * Cada fila tiene id (`stack-<grupo>`): la pila de la portada enlaza aquí, y
  * la fila a la que se llega se marca un momento (`:target`).
@@ -25,11 +26,11 @@ export default function Stack({ t }) {
               <ul className="stack-row__primary">
                 {group.primary.map((tech) => (
                   <li key={tech.name}>
-                    <span
-                      className="stack-row__icon"
-                      style={{ maskImage: `url(${tech.icon})` }}
-                      aria-hidden="true"
-                    />
+                    {/* El logotipo, en una pastilla de cristal (sin
+                        desenfoque: la fila se desplaza con la página). */}
+                    <span className="stack-row__tile" aria-hidden="true">
+                      <span className="stack-row__icon" style={{ maskImage: `url(${tech.icon})` }} />
+                    </span>
                     {tech.name}
                   </li>
                 ))}

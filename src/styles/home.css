@@ -34,8 +34,16 @@
   }
 }
 
+/* El nombre va en dos líneas ("Daylé García" / "Fernández") en cualquier
+   pantalla. El tamaño sale de la ventana pero no pasa del 12% del ancho de
+   su columna (`cqi`): en monitores grandes la raíz crece y "Daylé García"
+   se partía en dos, dejando el nombre en tres líneas. */
+.hero__text {
+  container-type: inline-size;
+}
+
 .hero__name {
-  font-size: clamp(2.6rem, 0.8rem + 5.4vw, 6rem);
+  font-size: min(clamp(2.6rem, 0.8rem + 5.4vw, 6rem), 12cqi);
   font-weight: 680;
   font-stretch: var(--display-stretch);
   line-height: 0.94;
@@ -44,6 +52,7 @@
 
 .hero__name span {
   display: block;
+  white-space: nowrap;
 }
 
 .hero__role {
@@ -150,24 +159,80 @@
     stroke var(--dur-slow) var(--ease-out);
 }
 
+/* El cristal en SVG (primer pintado): los degradados de los <defs> de
+   SystemStack.jsx, coloreados aquí con los tokens de la escena, para que el
+   relevo con el lienzo sea "se enciende la luz" y no un cambio de material. */
 .stack3d__face.is-top {
-  fill: var(--stack-top);
+  fill: url(#stack3d-top);
 }
 
 .stack3d__face.is-left {
-  fill: var(--stack-left);
+  fill: url(#stack3d-body);
 }
 
-.stack3d__face.is-right {
-  fill: var(--stack-right);
+.stack3d__stop.is-top-hi {
+  stop-color: var(--stack-glass-tint);
+  stop-opacity: var(--stack-svg-top-hi);
 }
 
-.stack3d__slab[data-accent] .stack3d__face {
+.stack3d__stop.is-top-lo {
+  stop-color: var(--stack-svg-shade);
+  stop-opacity: var(--stack-svg-top-lo);
+}
+
+.stack3d__stop.is-body-hi {
+  stop-color: var(--stack-svg-shade);
+  stop-opacity: var(--stack-svg-body-hi);
+}
+
+.stack3d__stop.is-body-lo {
+  stop-color: var(--stack-svg-shade);
+  stop-opacity: var(--stack-svg-body-lo);
+}
+
+.stack3d__stop.is-core-glow {
+  stop-color: var(--stack-svg-core-glow);
+}
+
+.stack3d__stop.is-core {
+  stop-color: var(--stack-core);
+}
+
+.stack3d__stop.is-core-accent-glow {
+  stop-color: var(--stack-svg-core-accent-glow);
+}
+
+.stack3d__stop.is-core-accent {
+  stop-color: var(--stack-core-accent);
+}
+
+/* El filo de luz: el tramo del contorno que mira hacia la luz. */
+.stack3d__rim {
+  fill: none;
+  stroke: var(--stack-rim-light);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.85;
+  vector-effect: non-scaling-stroke;
+}
+
+/* El núcleo se ve a través de la cara superior, que es translúcida. */
+.stack3d__core {
+  fill: url(#stack3d-core);
+  stroke: var(--stack-core-edge);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.stack3d__slab[data-accent] .stack3d__core {
+  fill: url(#stack3d-core-accent);
+  stroke: var(--stack-core-accent-edge);
+}
+
+.stack3d__slab[data-accent] .stack3d__face,
+.stack3d__slab[data-accent] .stack3d__rim {
   stroke: var(--stack-accent-edge);
-}
-
-.stack3d__slab[data-accent] .is-top {
-  fill: var(--stack-accent-top);
 }
 
 /* Hover (o foco en su etiqueta): la losa sube y enciende el filo. En el SVG
@@ -186,12 +251,9 @@
   transform: translateY(-14px);
 }
 
-.stack3d__slab[data-active] .stack3d__face {
+.stack3d__slab[data-active] .stack3d__face,
+.stack3d__slab[data-active] .stack3d__rim {
   stroke: var(--stack-accent-edge);
-}
-
-.stack3d__slab[data-active]:not([data-accent]) .is-top {
-  fill: var(--stack-top-hover);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -563,19 +625,16 @@
 }
 
 /* Escenario de las capturas: se sale por abajo y por la derecha de la
-   tarjeta, que lo recorta. La perspectiva vive aquí; la inclinación la pone
-   WorkCard.jsx en `.work-card__stage`. */
+   tarjeta, que lo recorta. Quieto: el gesto de la tarjeta es su filo. */
 .work-card__media {
   position: relative;
   flex: 1;
   min-height: 15rem;
-  perspective: 1400px;
 }
 
 .work-card__stage {
   position: absolute;
   inset: var(--sp-1) calc(var(--sp-8) * -1) calc(var(--sp-9) * -1) clamp(1.35rem, 1rem + 1.2vw, 2.25rem);
-  transform-style: preserve-3d;
 }
 
 .work-card__cover {
@@ -760,6 +819,46 @@
   font-weight: 600;
 }
 
+.role__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+}
+
+/* Fichas mate (no se pulsan, así que no son cristal): sólo un borde. */
+.role__chip {
+  padding: 0.3rem 0.65rem;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border-strong);
+  color: var(--foreground);
+  font-size: 0.78rem;
+}
+
+/* Resaltado de lectura: la viñeta bajo el puntero se aclara y su raya se
+   alarga en latón. No promete un clic (sin cursor de mano ni elevación):
+   ayuda a seguir la línea en una lista densa. Sólo con ratón. */
+.role__bullets li {
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.role__bullets li::before {
+  transform-origin: left center;
+  transition:
+    transform var(--dur-base) var(--ease-out),
+    background-color var(--dur-base) var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .role__bullets li:hover {
+    color: var(--foreground);
+  }
+
+  .role__bullets li:hover::before {
+    background: var(--accent);
+    transform: scaleX(1.6);
+  }
+}
+
 /* ── Stack ──────────────────────────────────────────────────────────── */
 .stack-list {
   border-top: 1px solid var(--border);
@@ -795,14 +894,86 @@
 .stack-row__primary li {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.65rem;
   font-size: 1.05rem;
   font-weight: 600;
+}
+
+/* Pastilla de cristal del logotipo: el mismo lenguaje que las losas de la
+   portada (degradado cenital, filo de luz arriba, reflejo diagonal y sombra
+   corta), pero sin backdrop-filter: la fila se desplaza con la página y un
+   desenfoque ahí repintaría en cada fotograma (ver "Cristal" en AGENTS.md).
+   Estática: no se puede pulsar, así que no responde al hover. */
+.stack-row__tile {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: 0.7rem;
+  border: 1px solid var(--tile-border);
+  background: var(--tile-grad);
+  box-shadow: var(--tile-shadow);
+}
+
+.stack-row__tile::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--tile-sheen) 0%, transparent 46%);
+  pointer-events: none;
+}
+
+/* Resaltado de lectura de la fila: un velo tenue que se desvanece hacia la
+   derecha y las pastillas que se elevan una tras otra, como teclas. No
+   promete un clic (ni cursor de mano ni color de acento en el texto): marca
+   qué fila se está leyendo. Sólo con ratón. */
+.stack-row {
+  position: relative;
+}
+
+.stack-row::before {
+  content: "";
+  position: absolute;
+  inset: 0 calc(var(--sp-3) * -1);
+  border-radius: var(--r-md);
+  background: linear-gradient(90deg, var(--lens-hover), transparent 85%);
+  opacity: 0;
+  transition: opacity var(--dur-base) var(--ease-out);
+  pointer-events: none;
+}
+
+.stack-row__tile {
+  transition:
+    translate var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .stack-row:hover::before {
+    opacity: 1;
+  }
+
+  .stack-row:hover .stack-row__tile {
+    translate: 0 -2px;
+    box-shadow: var(--tile-shadow), var(--btn-lift);
+  }
+
+  .stack-row__primary li:nth-child(2) .stack-row__tile {
+    transition-delay: 40ms;
+  }
+
+  .stack-row__primary li:nth-child(3) .stack-row__tile {
+    transition-delay: 80ms;
+  }
 }
 
 /* Logotipo como máscara: toma el color del texto, monocromo en los dos
    temas. La imagen de la máscara llega en línea desde Stack.jsx. */
 .stack-row__icon {
+  position: relative;
   width: 1.15rem;
   height: 1.15rem;
   flex-shrink: 0;
@@ -861,6 +1032,9 @@
   }
 }
 
+/* El retrato, mate: una foto con su borde de 1px. Llegó a llevar una placa
+   de cristal, pero el cristal en todas partes deja de marcar jerarquía (ver
+   "Cristal" en AGENTS.md): se queda para lo que flota o se pulsa. */
 .about__portrait {
   max-width: 26rem;
 }
@@ -869,6 +1043,7 @@
   width: 100%;
   border-radius: var(--r-lg);
   border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
 }
 
 /* En móvil, entero ocupaba la pantalla: recorte de cara y hombros, más
@@ -1060,7 +1235,9 @@
   height: 2.75rem;
   padding: 0 1rem;
   border-radius: var(--r-pill);
-  border: 1px solid var(--border-strong);
+  border: 1px solid var(--tile-border);
+  background: var(--tile-grad);
+  box-shadow: var(--tile-shadow);
   font-size: 0.92rem;
   font-weight: 600;
   transition:
@@ -1069,7 +1246,7 @@
 }
 
 .contact-link:hover {
-  border-color: var(--foreground);
+  border-color: var(--border-strong);
 }
 
 .contact-link:active {

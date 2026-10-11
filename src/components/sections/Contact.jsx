@@ -45,7 +45,7 @@ export default function Contact({ t }) {
         </ul>
       </div>
 
-      <div className="contact__form reveal">
+      <div className="contact__form reveal" data-rim>
         <h3 className="contact__form-title">{ui.orForm}</h3>
         <ContactForm />
       </div>

@@ -27,6 +27,7 @@ export default function Projects({ t }) {
               href={projectPath(lang, p.id)}
               labels={labels}
               project={{
+                id: p.id,
                 title: p.title,
                 subtitle: p.subtitle,
                 year: p.year,

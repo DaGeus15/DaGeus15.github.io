@@ -18,9 +18,10 @@ export const EASE_OUT = [0.23, 1, 0.32, 1];
 export const spring = {
   /** Interacciones directas: hover, pulsación. */
   snappy: { type: "spring", bounce: 0, visualDuration: 0.25 },
-  /** Inclinación de las capturas de una tarjeta: más lenta que el cursor, se
-      lee como peso y no como retraso. */
-  tilt: { type: "spring", bounce: 0, visualDuration: 0.45 },
+  /** Los dos bordes de la lente de la píldora: el de delante llega antes y el
+      de detrás lo sigue, y la lente se estira como una gota. */
+  lead: { type: "spring", bounce: 0, visualDuration: 0.2 },
+  trail: { type: "spring", bounce: 0, visualDuration: 0.42 },
 };
 
 /** Transiciones por duración, para fundidos. */

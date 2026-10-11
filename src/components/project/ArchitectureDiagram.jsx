@@ -113,7 +113,31 @@ export default function ArchitectureDiagram({ diagram, labels, title, legend }) 
       else svg.pauseAnimations();
     });
     io.observe(svg);
-    return () => io.disconnect();
+
+    // Construcción: una vez, al entrar en pantalla, el diagrama se arma (los
+    // nodos en cascada, después las conexiones se dibujan y por último
+    // arrancan los paquetes). Explica el sistema en el orden en que se lee.
+    // Sólo si al hidratar todavía no se ve: lo que ya está a la vista no se
+    // esconde para volver a aparecer. Sin JS se ve entero, como siempre.
+    const r = svg.getBoundingClientRect();
+    let build = null;
+    if (r.top > window.innerHeight * 0.9) {
+      svg.dataset.build = "pending";
+      build = new IntersectionObserver(
+        ([entry]) => {
+          if (!entry.isIntersecting) return;
+          svg.dataset.build = "run";
+          build.disconnect();
+        },
+        { threshold: 0.35 },
+      );
+      build.observe(svg);
+    }
+
+    return () => {
+      io.disconnect();
+      build?.disconnect();
+    };
   }, []);
 
   return (
@@ -143,8 +167,15 @@ export default function ArchitectureDiagram({ diagram, labels, title, legend }) 
 
           <g className="diagram__edges">
             {edges.map((e) => (
-              <g key={e.key} className={e.async ? "diagram__edge is-async" : "diagram__edge"}>
-                <path d={e.d} markerEnd={`url(#${arrowId})`} />
+              <g
+                key={e.key}
+                className={e.async ? "diagram__edge is-async" : "diagram__edge"}
+                style={{ "--e": e.index }}
+              >
+                {/* `pathLength` normaliza el trazo a 1 para dibujarlo al
+                    construirse; las asíncronas no, que su discontinuo se
+                    mide en unidades reales. */}
+                <path d={e.d} markerEnd={`url(#${arrowId})`} pathLength={e.async ? undefined : 1} />
                 {e.label && (
                   <text x={e.lx} y={e.ly} textAnchor={e.anchor} className="diagram__protocol">
                     {e.label}
@@ -180,8 +211,8 @@ export default function ArchitectureDiagram({ diagram, labels, title, legend }) 
           </g>
 
           <g className="diagram__nodes">
-            {Object.values(nodes).map((n) => (
-              <g key={n.id} className="diagram__node" data-accent={n.accent || undefined}>
+            {Object.values(nodes).map((n, i) => (
+              <g key={n.id} className="diagram__node" data-accent={n.accent || undefined} style={{ "--n": i }}>
                 <rect x={n.l} y={n.t} width={n.w} height={n.h} rx="8" />
                 <text
                   x={n.x}

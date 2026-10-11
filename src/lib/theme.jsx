@@ -42,16 +42,36 @@ const storedPreference = () => {
  * tarjetas ya claras. Sin soporte, o con la pestaña oculta, el cambio es
  * instantáneo, que también es coherente.
  */
-function apply(theme, source, { animate = false } = {}) {
+function apply(theme, source, { animate = false, origin = null } = {}) {
+  const root = document.documentElement;
   const run = () => {
-    const root = document.documentElement;
     root.setAttribute("data-theme", theme);
     root.setAttribute("data-theme-source", source);
     root.style.colorScheme = theme;
     window.dispatchEvent(new Event(THEME_EVENT));
   };
-  if (animate && document.startViewTransition && !document.hidden) document.startViewTransition(run);
-  else run();
+  if (!animate || !document.startViewTransition || document.hidden) {
+    run();
+    return;
+  }
+  // Desde el botón: el tema nuevo se revela en un círculo que crece desde su
+  // centro hasta la esquina más lejana (ver `[data-vt="reveal"]` en base.css).
+  // También con movimiento reducido (más corto): es un recorte que se abre,
+  // sin desplazar ni escalar nada, tan suave como un fundido. Antes se
+  // apagaba, y con "Efectos de animación" desactivados en Windows (muy
+  // común) nadie lo veía. Si el cambio viene del sistema, fundido.
+  if (origin) {
+    const { x, y } = origin;
+    const r = Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y));
+    root.style.setProperty("--vt-x", `${x}px`);
+    root.style.setProperty("--vt-y", `${y}px`);
+    root.style.setProperty("--vt-r", `${r}px`);
+    root.dataset.vt = "reveal";
+  }
+  const transition = document.startViewTransition(run);
+  transition.finished.finally(() => {
+    delete root.dataset.vt;
+  });
 }
 
 /**
@@ -110,7 +130,8 @@ export function ThemeProvider({ children }) {
   const snapshot = useSyncExternalStore(subscribe, readSnapshot, () => SERVER_SNAPSHOT);
   const [theme, source] = snapshot.split("|");
 
-  const setTheme = useCallback((next) => {
+  /** `origin` ({ x, y } en la ventana): desde dónde se revela el tema nuevo. */
+  const setTheme = useCallback((next, origin = null) => {
     if (next === systemTheme()) {
       // Coincide con el navegador: se borra el override para seguir al
       // sistema a partir de ahora.
@@ -119,7 +140,7 @@ export function ThemeProvider({ children }) {
       } catch {
         /* modo privado / storage bloqueado — el tema sigue aplicándose */
       }
-      apply(next, "system", { animate: true });
+      apply(next, "system", { animate: true, origin });
       return;
     }
 
@@ -128,12 +149,18 @@ export function ThemeProvider({ children }) {
     } catch {
       /* modo privado / storage bloqueado — el tema sigue aplicándose */
     }
-    apply(next, "user", { animate: true });
+    apply(next, "user", { animate: true, origin });
   }, []);
 
-  const toggleTheme = useCallback(() => {
-    setTheme(document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark");
-  }, [setTheme]);
+  /** `from`: el botón pulsado; el tema nuevo crece desde su centro. */
+  const toggleTheme = useCallback(
+    (from) => {
+      const rect = from?.getBoundingClientRect?.();
+      const origin = rect ? { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 } : null;
+      setTheme(document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark", origin);
+    },
+    [setTheme],
+  );
 
   return (
     <ThemeContext.Provider

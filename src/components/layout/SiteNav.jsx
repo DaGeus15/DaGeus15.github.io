@@ -1,13 +1,13 @@
 "use client";
 
+import { useRef } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { FiArrowLeft } from "react-icons/fi";
 import LangSwitch from "./LangSwitch";
+import LiquidLens from "./LiquidLens";
 import CvDownload from "@/components/ui/CvDownload";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import useScrollSpy from "@/lib/useScrollSpy";
-import { spring } from "@/lib/motion";
 import { sectionIds } from "@/content/navigation";
 
 /* La portada (`#top`) también se observa: al volver arriba no queda marcada
@@ -21,9 +21,9 @@ const NO_IDS = [];
  * (donde está el pulgar). Es lo único que se desplaza por encima del
  * contenido, así que es el único cristal del sitio.
  *
- * En la portada lleva las secciones con un indicador que se desliza a la
- * activa (`layoutId`: se anima con transform). En un caso de estudio, la
- * vuelta al portafolio. En los dos, el CV, el idioma y el tema.
+ * En la portada lleva las secciones con una lente de cristal que se estira
+ * hasta la activa (`LiquidLens`). En un caso de estudio, la vuelta al
+ * portafolio. En los dos, el CV, el idioma y el tema.
  *
  * `labels` son sólo las cadenas que usa: el objeto `ui` entero lleva funciones
  * y no puede cruzar a un componente de cliente.
@@ -31,6 +31,7 @@ const NO_IDS = [];
 export default function SiteNav({ variant = "home", items = [], labels, name, homeHref, backHref, lang, langHref }) {
   const isHome = variant === "home";
   const [active] = useScrollSpy(isHome ? SPY_IDS : NO_IDS);
+  const listRef = useRef(null);
 
   return (
     <header className="site-nav" data-variant={variant}>
@@ -61,19 +62,22 @@ export default function SiteNav({ variant = "home", items = [], labels, name, ho
         )}
 
         {isHome && (
-          <ul className="site-nav__links">
+          <ul className="site-nav__links" ref={listRef}>
+            {/* La lente vive en la lista (posicionada respecto a ella), en un
+                `li` sin caja ni semántica para que la lista siga siendo válida. */}
+            <li className="site-nav__lens" role="presentation" aria-hidden="true">
+              <LiquidLens listRef={listRef} active={active} />
+            </li>
             {items.map((item) => {
               const isActive = item.id === active;
               return (
                 <li key={item.id} data-mobile={item.mobile || undefined}>
                   <a
                     href={`#${item.id}`}
+                    data-id={item.id}
                     className="site-nav__link"
                     aria-current={isActive ? "location" : undefined}
                   >
-                    {isActive && (
-                      <motion.span layoutId="site-nav-active" className="site-nav__active" transition={spring.snappy} />
-                    )}
                     <span className="site-nav__label">{item.label}</span>
                   </a>
                 </li>

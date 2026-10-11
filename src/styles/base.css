@@ -64,6 +64,35 @@ body {
   }
 }
 
+/* Desde el botón de tema: el tema viejo se queda quieto y el nuevo se revela
+   en un círculo que crece desde el botón (`apply()` en lib/theme.jsx pone el
+   centro y el radio). Sólo el clic lo pide; si cambia el sistema, fundido.
+   Con movimiento reducido también ocurre, más corto: no desplaza ni escala
+   nada, sólo abre un recorte. */
+:root[data-vt="reveal"]::view-transition-old(root) {
+  animation: none;
+}
+
+:root[data-vt="reveal"]::view-transition-new(root) {
+  animation: theme-reveal 560ms var(--ease-in-out);
+  mix-blend-mode: normal;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root[data-vt="reveal"]::view-transition-new(root) {
+    animation-duration: 380ms;
+  }
+}
+
+@keyframes theme-reveal {
+  from {
+    clip-path: circle(0 at var(--vt-x) var(--vt-y));
+  }
+  to {
+    clip-path: circle(var(--vt-r) at var(--vt-x) var(--vt-y));
+  }
+}
+
 /* Grano: una capa fija pintada una vez, por encima de todo y sin eventos.
    Estática: no se mueve con el scroll ni con el cursor. */
 body::after {
@@ -221,8 +250,11 @@ code {
   justify-content: center;
   gap: 0.55rem;
   height: 2.75rem;
-  padding: 0 1.2rem;
-  border-radius: var(--r-sm);
+  padding: 0 1.3rem;
+  /* Todo lo que se pulsa es píldora (botones, enlaces de contacto, la
+     píldora y su lente): el lenguaje del Liquid Glass. Los campos llevan
+     --r-sm y las tarjetas --r-lg; un sistema, no esquinas sueltas. */
+  border-radius: var(--r-pill);
   border: 1px solid transparent;
   font-size: 0.92rem;
   font-weight: 600;
@@ -235,6 +267,7 @@ code {
 }
 
 .btn--primary {
+  --btn-shine: rgba(255, 255, 255, 0.5);
   background: var(--accent-fill);
   color: var(--on-accent);
 }
@@ -243,13 +276,71 @@ code {
   background: var(--accent-fill-hover);
 }
 
+/* El secundario es una pastilla de cristal (el material de los logotipos
+   del stack): degradado cenital, filo de luz arriba, sombra corta. */
 .btn--ghost {
-  border-color: var(--border-strong);
+  --btn-shine: var(--tile-sheen);
+  border-color: var(--tile-border);
+  background: var(--tile-grad);
+  box-shadow: var(--tile-shadow);
   color: var(--foreground);
 }
 
 .btn--ghost:hover {
-  border-color: var(--foreground);
+  border-color: var(--border-strong);
+}
+
+/* Hover de los botones (y de los enlaces de contacto, que son botones con
+   otra forma): suben 1px, la sombra se alarga y un destello de luz los
+   cruza de lado a lado, como un reflejo que pasa por un cristal. El destello
+   sólo usa transform; se va al salir sin animar (ya está fuera del botón).
+   La elevación va en `translate` para no pisar el `scale` de `:active`. */
+.btn,
+.contact-link {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.btn::after,
+.contact-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(110deg, transparent 30%, var(--btn-shine, var(--tile-sheen)) 50%, transparent 70%);
+  transform: translateX(-110%);
+  pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .btn,
+  .contact-link {
+    transition:
+      background-color var(--dur-fast) var(--ease-out),
+      border-color var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out),
+      box-shadow var(--dur-base) var(--ease-out),
+      translate var(--dur-base) var(--ease-out),
+      transform var(--dur-fast) var(--ease-out);
+  }
+
+  .btn:not(:disabled):hover,
+  .contact-link:hover {
+    translate: 0 -1px;
+    box-shadow: var(--btn-lift);
+  }
+
+  .btn--ghost:not(:disabled):hover,
+  .contact-link:hover {
+    box-shadow: var(--tile-shadow), var(--btn-lift);
+  }
+
+  .btn:not(:disabled):hover::after,
+  .contact-link:hover::after {
+    transform: translateX(110%);
+    transition: transform 700ms var(--ease-out);
+  }
 }
 
 .btn--sm {
@@ -281,10 +372,26 @@ code {
     background-color var(--dur-fast) var(--ease-out);
 }
 
-.icon-btn:hover,
-.pref-btn:hover {
+.icon-btn:hover {
   color: var(--foreground);
   background: var(--surface-raised);
+}
+
+/* Idioma y tema viven en la píldora: al pasar, una mini lente como la de
+   la sección activa. */
+.pref-btn {
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
+}
+
+.pref-btn:hover {
+  color: var(--foreground);
+  background: var(--lens-bg);
+  box-shadow:
+    inset 0 0 0 1px var(--lens-border),
+    var(--lens-shadow);
 }
 
 .icon-btn:active,

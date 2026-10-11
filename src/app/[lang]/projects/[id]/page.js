@@ -101,7 +101,7 @@ export default async function CaseStudy({ params }) {
         </header>
 
         <div className="case-cover enter" style={{ "--i": 3 }} data-tone={project.tone}>
-          <ShotStage cover={project.cover} inset={project.inset} eager />
+          <ShotStage cover={project.cover} inset={project.inset} eager transitionName={`cover-${project.id}`} />
         </div>
 
         <div className="case-intro enter" style={{ "--i": 4 }}>
@@ -227,7 +227,7 @@ export default async function CaseStudy({ params }) {
           </ul>
         </CaseSection>
 
-        <Link href={projectPath(lang, next.id)} className="next-project reveal">
+        <Link href={projectPath(lang, next.id)} className="next-project reveal" data-rim>
           <span className="next-project__text">
             <span className="next-project__label">{ui.nextProject}</span>
             <span className="next-project__title">

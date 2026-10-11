@@ -1,11 +1,7 @@
-"use client";
-
-import { useRef } from "react";
+import { ViewTransition } from "react";
 import Link from "next/link";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { FiArrowRight } from "react-icons/fi";
 import Frame from "./Frame";
-import { spring } from "@/lib/motion";
 
 /**
  * Tarjeta de proyecto de la portada: título, una línea, dos cifras y sus
@@ -14,50 +10,18 @@ import { spring } from "@/lib/motion";
  * veces.
  *
  * Toda la tarjeta lleva al caso con el enlace estirado (el `<a>` es el
- * título). Con ratón, el escenario de las capturas se inclina hacia el
- * cursor (unos grados, con perspectiva) y el teléfono superpuesto se desplaza
- * un poco más que la ventana: parallax de dos planos. Sólo transform, por
- * motion values; el rectángulo se mide al entrar, no en cada movimiento.
+ * título). Con ratón responde con UN gesto: su filo atrapa la luz donde está
+ * el puntero (`data-rim`, ver SpecularRim.jsx). Antes además se inclinaba y
+ * la captura pequeña se movía aparte: cuatro efectos a la vez en la misma
+ * tarjeta se leían como demo, no como respuesta. Sin estado ni efectos, es
+ * un componente de servidor.
  */
 export default function WorkCard({ project, href, size, labels }) {
-  const rect = useRef(null);
-  const tiltX = useMotionValue(0);
-  const tiltY = useMotionValue(0);
-  const rotateX = useSpring(tiltX, spring.tilt);
-  const rotateY = useSpring(tiltY, spring.tilt);
-  const insetX = useTransform(rotateY, (v) => v * 2.2);
-  const insetY = useTransform(rotateX, (v) => v * -2.2);
-
   const { cover, inset, metrics = [] } = project;
   const layout = cover.mobile ? "phones" : "window";
 
   return (
-    <article
-      className="work-card"
-      data-size={size}
-      data-tone={project.tone}
-      data-layout={layout}
-      onPointerEnter={(e) => {
-        rect.current = e.currentTarget.getBoundingClientRect();
-      }}
-      onPointerMove={(e) => {
-        if (e.pointerType !== "mouse") return;
-        rect.current ??= e.currentTarget.getBoundingClientRect();
-        const { left, top, width, height } = rect.current;
-        const nx = ((e.clientX - left) / width) * 2 - 1;
-        const ny = ((e.clientY - top) / height) * 2 - 1;
-        tiltY.set(nx * 4);
-        tiltX.set(ny * -3);
-      }}
-      onPointerLeave={() => {
-        rect.current = null;
-        tiltX.set(0);
-        tiltY.set(0);
-      }}
-      onWheel={() => {
-        rect.current = null;
-      }}
-    >
+    <article className="work-card" data-rim data-size={size} data-tone={project.tone} data-layout={layout}>
       <div className="work-card__body">
         <p className="work-card__meta mono">
           <span>{project.year}</span>
@@ -89,14 +53,18 @@ export default function WorkCard({ project, href, size, labels }) {
       </div>
 
       <div className="work-card__media" aria-hidden="true">
-        <motion.div className="work-card__stage" style={{ rotateX, rotateY }}>
-          <Frame shot={cover} className="work-card__cover" />
+        <div className="work-card__stage">
+          {/* Mismo nombre que la portada del caso: al abrirlo, la captura
+              crece desde aquí (ShotStage.jsx). */}
+          <ViewTransition name={`cover-${project.id}`} share="morph">
+            <Frame shot={cover} className="work-card__cover" />
+          </ViewTransition>
           {inset && (
-            <motion.span className="work-card__inset" style={{ x: insetX, y: insetY }}>
+            <span className="work-card__inset">
               <Frame shot={inset} />
-            </motion.span>
+            </span>
           )}
-        </motion.div>
+        </div>
       </div>
     </article>
   );

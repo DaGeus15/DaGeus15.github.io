@@ -15,7 +15,7 @@ export default function ThemeToggle() {
   return (
     <button
       type="button"
-      onClick={toggleTheme}
+      onClick={(e) => toggleTheme(e.currentTarget)}
       className="pref-btn"
       aria-label={isDark ? ui.toLightMode : ui.toDarkMode}
       title={followsSystem ? ui.themeFollows(mode) : ui.themePinned(mode)}

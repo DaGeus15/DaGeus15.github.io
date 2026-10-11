@@ -40,8 +40,9 @@
   --sp-11: 8rem;
 
   /* ── Radios ─────────────────────────────────────────────────────────
-     Una sola familia: tarjetas y ventanas en 20/14, controles en 10, la
-     píldora redonda. Nada de mezclar esquinas vivas con redondeadas. */
+     Un sistema: tarjetas y ventanas en 20/14, campos de formulario en 10, y
+     todo lo que se pulsa (botones, enlaces de contacto, píldora) redondo.
+     Nada de mezclar esquinas vivas con redondeadas. */
   --r-sm: 10px;
   --r-md: 14px;
   --r-lg: 20px;
@@ -53,6 +54,8 @@
   /* Línea de lectura: el texto corrido no pasa de aquí aunque el panel sí. */
   --measure: 66ch;
   --nav-h: 3.25rem;
+  /* Alto de un enlace de la píldora (y de su lente); 44px en táctil. */
+  --nav-link-h: 2.35rem;
   /* Aire que la píldora fija deja libre arriba (escritorio) o abajo (móvil). */
   --nav-clear: calc(var(--nav-h) + var(--sp-6));
 
@@ -134,6 +137,14 @@
   /* Luz: resplandor cenital, filo superior y reflejo interior. */
   --glow: rgba(150, 175, 210, 0.1);
   --edge-light: rgba(255, 255, 255, 0.28);
+  /* El filo que atrapa la luz bajo el puntero (`data-rim`): latón. */
+  --rim-light: rgba(224, 182, 118, 0.65);
+  /* Pastillas de cristal de los logotipos del stack. */
+  --tile-grad: linear-gradient(180deg, rgba(159, 180, 204, 0.16), rgba(159, 180, 204, 0.04));
+  --tile-border: rgba(201, 212, 226, 0.16);
+  --tile-sheen: rgba(255, 255, 255, 0.14);
+  --tile-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), inset 0 -1px 0 rgba(0, 0, 0, 0.3),
+    0 8px 16px -10px rgba(0, 0, 0, 0.7);
   --inner-light: rgba(255, 255, 255, 0.07);
 
   --grain-opacity: 0.07;
@@ -142,38 +153,70 @@
   --shadow-float: 0 14px 36px -14px rgba(0, 0, 0, 0.65);
   --danger: #f29b8b;
 
-  /* Cristal oscuro: marino al 70%, un brillo cenital y el filo de luz.
+  /* Cristal oscuro: marino al 66%, un brillo cenital y el filo de luz.
      Peor caso calculado: una captura blanca justo debajo deja el fondo en
-     un gris de ~#5a5d61. Por eso el texto secundario dentro del cristal no
-     es --muted (1.9:1 ahí) sino --glass-ink-muted (4.7:1): "vibrancy",
-     más claro sobre un fondo que cambia. */
-  --glass-bg: rgba(21, 28, 37, 0.7);
-  --glass-ink-muted: #d2d5d9;
+     un gris de ~#626467. Por eso el texto secundario dentro del cristal no
+     es --muted (1.8:1 ahí) sino --glass-ink-muted (4.6:1): "vibrancy",
+     más claro sobre un fondo que cambia.
+     El grosor (lo que lo hace leerse como cristal incluso sobre el fondo
+     liso) son las sombras interiores: luz que entra por el borde de arriba
+     y se oscurece en el de abajo, como el canto de una pieza gruesa. */
+  --glass-bg: rgba(21, 28, 37, 0.66);
+  --glass-ink-muted: #dde0e3;
   --glass-bg-thick: rgba(21, 28, 37, 0.82);
-  --glass-sheen: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0) 60%);
-  --glass-border: rgba(220, 230, 245, 0.12);
-  --glass-rim: rgba(255, 255, 255, 0.34);
-  --glass-rim-soft: rgba(255, 255, 255, 0.1);
-  --glass-lens: rgba(255, 255, 255, 0.08);
+  --glass-sheen: linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0) 60%);
+  --glass-border: rgba(220, 230, 245, 0.14);
+  --glass-rim: rgba(255, 255, 255, 0.38);
+  --glass-rim-soft: rgba(255, 255, 255, 0.12);
   --glass-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.1),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    inset 0 10px 16px -12px rgba(255, 255, 255, 0.1),
+    inset 0 -10px 18px -14px rgba(0, 0, 0, 0.55),
     0 18px 40px -18px rgba(0, 0, 0, 0.7);
+  /* La lente de la sección activa: cristal más claro y elevado. */
+  --lens-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.17), rgba(255, 255, 255, 0.05));
+  --lens-border: rgba(255, 255, 255, 0.13);
+  --lens-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.24),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.25),
+    0 6px 14px -6px rgba(0, 0, 0, 0.6);
+  --lens-hover: rgba(255, 255, 255, 0.06);
+  /* Sombra larga de un botón que sube al pasar el ratón. */
+  --btn-lift: 0 10px 22px -12px rgba(0, 0, 0, 0.75);
 
   /* Tarjeta invertida para capturas oscuras (ver `tone` en projects.js). */
   --tone-dark-bg: #0b1016;
   --tone-dark-grad: linear-gradient(190deg, #18202a, #0b1016 70%);
 
-  /* Pila 3D de la portada: una cara por orientación (arriba, izquierda,
-     derecha), el filo, y la losa propia (la API) en latón. Los lee también
-     la escena OGL, así que van en hexadecimal. */
-  --stack-top: #222c38;
-  --stack-top-hover: #2b3745;
-  --stack-left: #17202a;
-  --stack-right: #111821;
-  --stack-edge: #36444f;
-  --stack-accent-top: #2c2c29;
+  /* Pila 3D de la portada: losas de cristal con un núcleo luminoso dentro;
+     el de la API (lo mío) en latón.
+     · El SVG (primer pintado) imita el cristal con degradados (--stack-svg-*).
+     · La escena OGL lee el resto, así que van en hexadecimal (o número):
+       núcleo, tinte y cuerpo del cristal, el brillo que barre la cara de
+       arriba, y el estudio que reflejan (base, luz, filo cálido). */
+  --stack-edge: rgba(201, 212, 226, 0.4);
   --stack-accent-edge: #e0b676;
+  --stack-core: #2a3646;
+  --stack-core-edge: #4a5a6e;
+  --stack-core-accent: #b88a4a;
+  --stack-core-accent-edge: #f0cf98;
+  --stack-glass-tint: #c8d6e6;
+  --stack-glass-body: 0.07;
+  --stack-glass-sheen: 0.3;
+  /* El filo: claro hacia la luz (izquierda) y en sombra al otro lado. */
+  --stack-rim-light: #f2f5f8;
+  /* El cristal del SVG (primer pintado), para que se parezca a la escena. */
+  --stack-svg-top-hi: 0.22;
+  --stack-svg-top-lo: 0.04;
+  --stack-svg-body-hi: 0.14;
+  --stack-svg-body-lo: 0.03;
+  --stack-svg-core-glow: #4f5f73;
+  --stack-svg-shade: #c8d6e6;
+  --stack-svg-core-accent-glow: #e6c48e;
+  --stack-glass-edge: #05080c;
+  --stack-env-base: #0f151d;
+  --stack-env-key: #dfe6ef;
+  --stack-env-warm: #e0b676;
 }
 
 /* ── Tema claro: papel cálido y tinta marina ────────────────────────────
@@ -208,6 +251,12 @@
 
   --glow: rgba(255, 255, 255, 0.7);
   --edge-light: rgba(255, 255, 255, 1);
+  --rim-light: rgba(132, 89, 34, 0.55);
+  --tile-grad: linear-gradient(180deg, #ffffff, rgba(255, 255, 255, 0.55));
+  --tile-border: rgba(20, 32, 48, 0.12);
+  --tile-sheen: rgba(255, 255, 255, 0.9);
+  --tile-shadow: inset 0 1px 0 #ffffff, inset 0 -1px 0 rgba(20, 32, 48, 0.06),
+    0 8px 16px -10px rgba(20, 32, 48, 0.35);
   --inner-light: rgba(255, 255, 255, 0.8);
 
   --grain-opacity: 0.05;
@@ -216,30 +265,62 @@
   --shadow-float: 0 12px 28px -14px rgba(20, 32, 48, 0.3);
   --danger: #b42318;
 
-  /* Peor caso en claro: una captura marina debajo (~#bababa). --muted daría
-     3.8:1; --glass-ink-muted, 6:1. */
-  --glass-bg: rgba(251, 250, 247, 0.72);
-  --glass-ink-muted: #2f3a48;
+  /* Cristal claro al 56%: al 72% con brillo blanco se leía como una píldora
+     blanca opaca y la lente activa (blanca) desaparecía. Peor caso: una
+     captura marina debajo (~#959595); el texto pasa con --foreground (5.5:1)
+     y --glass-ink-muted (4.7:1). El grosor, en las sombras interiores. */
+  --glass-bg: rgba(251, 250, 247, 0.56);
+  --glass-ink-muted: #1f2b3a;
   --glass-bg-thick: rgba(251, 250, 247, 0.84);
-  --glass-sheen: linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.12) 60%);
-  --glass-border: rgba(20, 32, 48, 0.1);
+  --glass-sheen: linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0) 55%);
+  --glass-border: rgba(20, 32, 48, 0.12);
   --glass-rim: rgba(255, 255, 255, 1);
   --glass-rim-soft: rgba(255, 255, 255, 0.55);
-  --glass-lens: rgba(255, 255, 255, 0.78);
   --glass-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.9),
-    inset 0 -1px 0 rgba(20, 32, 48, 0.04),
-    0 14px 32px -16px rgba(20, 32, 48, 0.3);
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 10px 16px -12px rgba(255, 255, 255, 0.85),
+    inset 0 -10px 18px -14px rgba(20, 32, 48, 0.22),
+    0 14px 32px -16px rgba(20, 32, 48, 0.32);
+  /* La lente activa: blanca, con borde y sombra para que se lea elevada
+     sobre el cristal (sin eso, blanco sobre blanco no se distingue). */
+  --lens-bg: linear-gradient(180deg, #ffffff, rgba(255, 255, 255, 0.78));
+  --lens-border: rgba(20, 32, 48, 0.11);
+  --lens-shadow:
+    inset 0 1px 0 #ffffff,
+    inset 0 -1px 0 rgba(20, 32, 48, 0.06),
+    0 1px 2px rgba(20, 32, 48, 0.12),
+    0 6px 14px -6px rgba(20, 32, 48, 0.3);
+  --lens-hover: rgba(20, 32, 48, 0.06);
+  --btn-lift: 0 10px 22px -12px rgba(20, 32, 48, 0.45);
 
   /* En claro, las tarjetas de capturas oscuras son marinas. */
   --tone-dark-bg: #142030;
   --tone-dark-grad: linear-gradient(190deg, #1f2f45, #142030 70%);
 
-  --stack-top: #fdfcfa;
-  --stack-top-hover: #ffffff;
-  --stack-left: #e9e5de;
-  --stack-right: #dbd6cd;
-  --stack-edge: #bdb5a8;
-  --stack-accent-top: #f5ead8;
-  --stack-accent-edge: #a8762f;
+  /* En claro el cristal se define por sus filos y reflejos oscuros: un
+     brillo blanco sobre papel no se ve, sólo lava la losa. */
+  --stack-edge: rgba(34, 50, 74, 0.5);
+  --stack-accent-edge: #845922;
+  --stack-core: #ccd5df;
+  --stack-core-edge: #7b8ca0;
+  --stack-core-accent: #e2c290;
+  --stack-core-accent-edge: #845922;
+  /* Lechoso y luminoso, no gris: el cuerpo blanco lleva casi todo, y el
+     filo marino en el lado de la sombra es lo que lo recorta del papel. */
+  --stack-glass-tint: #ffffff;
+  --stack-glass-body: 0.24;
+  --stack-glass-sheen: 0.25;
+  --stack-rim-light: #ffffff;
+  --stack-svg-top-hi: 0.85;
+  --stack-svg-top-lo: 0.45;
+  --stack-svg-body-hi: 0.65;
+  --stack-svg-body-lo: 0.3;
+  --stack-svg-core-glow: #ffffff;
+  /* Cantos y sombra de la cara: el gris del cristal de la escena. */
+  --stack-svg-shade: #aab4c1;
+  --stack-svg-core-accent-glow: #f6e3c2;
+  --stack-glass-edge: #34465e;
+  --stack-env-base: #c4ccd6;
+  --stack-env-key: #f4f6f8;
+  --stack-env-warm: #a8762f;
 }

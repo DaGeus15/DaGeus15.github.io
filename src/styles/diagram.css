@@ -88,6 +88,66 @@
   fill: var(--accent);
 }
 
+/* ── Construcción (ArchitectureDiagram.jsx, una vez al entrar en vista) ──
+   `pending`: oculto hasta verse. `run`: los nodos aparecen en cascada
+   (50ms entre uno y otro), las conexiones síncronas se dibujan y las
+   asíncronas se funden, y al final llegan los paquetes. Sólo transform,
+   opacity y el desplazamiento del trazo. */
+.diagram__svg[data-build="pending"] :is(.diagram__node, .diagram__edge, .diagram__packets) {
+  opacity: 0;
+}
+
+.diagram__svg[data-build="run"] .diagram__node {
+  animation: diagram-node 420ms var(--ease-out) both;
+  animation-delay: calc(var(--n) * 50ms);
+}
+
+.diagram__svg[data-build="run"] .diagram__edge {
+  animation: diagram-fade 260ms var(--ease-out) both;
+  animation-delay: calc(220ms + var(--e) * 60ms);
+}
+
+.diagram__svg[data-build="run"] .diagram__edge:not(.is-async) path {
+  stroke-dasharray: 1;
+  animation: diagram-draw 600ms var(--ease-out) both;
+  animation-delay: calc(220ms + var(--e) * 60ms);
+}
+
+.diagram__svg[data-build="run"] .diagram__packets {
+  animation: diagram-fade 400ms var(--ease-out) 1000ms both;
+}
+
+@keyframes diagram-node {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+@keyframes diagram-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes diagram-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+
+/* Con movimiento reducido, el mismo orden en un fundido corto: sin
+   desplazamiento ni trazo que se dibuja. */
+@media (prefers-reduced-motion: reduce) {
+  .diagram__svg[data-build="run"] :is(.diagram__node, .diagram__edge, .diagram__packets) {
+    animation: diagram-fade 200ms var(--ease-out) both;
+  }
+
+  .diagram__svg[data-build="run"] .diagram__edge:not(.is-async) path {
+    animation: none;
+  }
+}
+
 .diagram__legend {
   display: flex;
   gap: var(--sp-5);

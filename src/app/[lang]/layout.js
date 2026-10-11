@@ -2,6 +2,7 @@ import localFont from "next/font/local";
 import { MotionConfig } from "framer-motion";
 import { ThemeProvider, themeInitScript } from "@/lib/theme";
 import { LanguageProvider } from "@/lib/i18n";
+import SpecularRim from "@/components/ui/SpecularRim";
 import { LANGS, SITE_URL, homePath } from "@/lib/locales";
 import { getContent } from "@/lib/content";
 import profile from "@/content/profile";
@@ -87,6 +88,7 @@ export default async function LangLayout({ children, params }) {
             <ThemeProvider>{children}</ThemeProvider>
           </LanguageProvider>
         </MotionConfig>
+        <SpecularRim />
       </body>
     </html>
   );

@@ -35,10 +35,16 @@ export default function Experience({ t }) {
                 ))}
               </ul>
               {role.stack?.length > 0 && (
-                <p className="role__stack">
+                <div className="role__stack">
                   <span className="role__stack-label">{ui.roleStack}</span>
-                  <span className="mono">{role.stack.map((s) => s.name).join(" · ")}</span>
-                </p>
+                  <ul className="role__chips">
+                    {role.stack.map((s) => (
+                      <li key={s.name} className="role__chip mono">
+                        {s.name}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               )}
             </div>
           </li>

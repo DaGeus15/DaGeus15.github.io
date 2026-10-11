@@ -5,8 +5,9 @@ import { VIEW, slabShape } from "./stackGeometry";
 
 /**
  * La pila de la portada: las cuatro capas de un sistema (cliente, API, datos,
- * infraestructura) como losas mate. Es la pieza propia del sitio: cuenta en
- * una imagen en qué capas trabajo, y la de la API, que es la mía, va en latón.
+ * infraestructura) como losas de cristal con un núcleo luminoso dentro. Es la
+ * pieza propia del sitio: cuenta en una imagen en qué capas trabajo, y la de
+ * la API, que es la mía, va en latón.
  * Además es un índice: cada losa lleva a su grupo en la sección Stack.
  *
  * Dos capas con el mismo dibujo:
@@ -33,7 +34,6 @@ import { VIEW, slabShape } from "./stackGeometry";
  */
 export default function SystemStack({ layers }) {
   const wrapRef = useRef(null);
-  const canvasRef = useRef(null);
   const labelRefs = useRef([]);
   const linkRefs = useRef([]);
   const slabRefs = useRef([]);
@@ -67,14 +67,27 @@ export default function SystemStack({ layers }) {
 
   useEffect(() => {
     const wrap = wrapRef.current;
-    const canvas = canvasRef.current;
     let disposed = false;
+    let canvas = null;
 
-    // Después de la entrada CSS y cuando el hilo esté libre: la escena no
-    // compite con el primer pintado ni con la animación de llegada.
+    // El fragmento de la escena se descarga YA, en paralelo con la entrada;
+    // se monta cuando las losas terminan de caer (~1.45s, ver `slab-drop` en
+    // home.css), sin esperar a un momento inactivo: antes el SVG (sin
+    // cristal) se veía hasta 3s y el relevo se notaba como un parpadeo.
+    const scene = import("./stackScene");
     const start = async () => {
-      const { mountStack } = await import("./stackScene");
+      const { mountStack } = await scene;
       if (disposed) return;
+      // El lienzo se crea aquí, no en el JSX: cada montaje estrena uno con su
+      // propio contexto. Reutilizar el del montaje anterior (lo que hace una
+      // recarga en caliente) lo daba ya liberado y se quedaba el SVG.
+      canvas = document.createElement("canvas");
+      canvas.className = "stack3d__canvas";
+      canvas.setAttribute("aria-hidden", "true");
+      wrap.insertBefore(canvas, wrap.querySelector(".stack3d__labels"));
+      // Que el navegador registre su opacidad 0 antes de que la escena ponga
+      // `data-ready`: así el relevo con el SVG es un fundido y no un salto.
+      canvas.getBoundingClientRect();
       sceneRef.current = mountStack({
         wrap,
         canvas,
@@ -85,18 +98,14 @@ export default function SystemStack({ layers }) {
       if (activeRef.current >= 0) sceneRef.current?.setHover(activeRef.current);
     };
 
-    let idleId = null;
-    const timer = setTimeout(() => {
-      if (window.requestIdleCallback) idleId = window.requestIdleCallback(start, { timeout: 1500 });
-      else start();
-    }, 1500);
+    const timer = setTimeout(start, 1450);
 
     return () => {
       disposed = true;
       clearTimeout(timer);
-      if (idleId !== null) window.cancelIdleCallback?.(idleId);
       sceneRef.current?.dispose();
       sceneRef.current = null;
+      canvas?.remove();
     };
   }, [layers]);
 
@@ -117,6 +126,29 @@ export default function SystemStack({ layers }) {
       }}
     >
       <svg className="stack3d__svg" viewBox={`0 0 ${VIEW.w} ${VIEW.h}`} aria-hidden="true">
+        {/* El cristal en SVG, lo más parecido a la escena para que el relevo
+            no se note: cara superior lechosa (más clara arriba a la
+            izquierda), cantos con degradado vertical y núcleos con un brillo
+            en el centro. Los colores, en home.css (`.stack3d__stop`). Una
+            sola pila por página, así que los ids son fijos. */}
+        <defs>
+          <linearGradient id="stack3d-top" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" className="stack3d__stop is-top-hi" />
+            <stop offset="1" className="stack3d__stop is-top-lo" />
+          </linearGradient>
+          <linearGradient id="stack3d-body" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" className="stack3d__stop is-body-hi" />
+            <stop offset="1" className="stack3d__stop is-body-lo" />
+          </linearGradient>
+          <radialGradient id="stack3d-core">
+            <stop offset="0" className="stack3d__stop is-core-glow" />
+            <stop offset="1" className="stack3d__stop is-core" />
+          </radialGradient>
+          <radialGradient id="stack3d-core-accent">
+            <stop offset="0" className="stack3d__stop is-core-accent-glow" />
+            <stop offset="1" className="stack3d__stop is-core-accent" />
+          </radialGradient>
+        </defs>
         {/* De abajo arriba: la de encima tapa a la de debajo. */}
         {layers
           .map((layer, i) => ({ layer, i, shape: shapes[i] }))
@@ -133,15 +165,16 @@ export default function SystemStack({ layers }) {
               style={{ "--i": layers.length - 1 - i }}
             >
               <g className="stack3d__lift">
-                <polygon points={shape.left} className="stack3d__face is-left" />
-                <polygon points={shape.right} className="stack3d__face is-right" />
+                {/* Cristal: la silueta (los cantos), el núcleo que se ve
+                    dentro y la cara superior translúcida encima. */}
+                <polygon points={shape.body} className="stack3d__face is-left" />
+                <polygon points={shape.core} className="stack3d__core" />
                 <polygon points={shape.top} className="stack3d__face is-top" />
+                <path d={shape.rim} className="stack3d__rim" />
               </g>
             </g>
           ))}
       </svg>
-
-      <canvas ref={canvasRef} className="stack3d__canvas" aria-hidden="true" />
 
       <ul className="stack3d__labels">
         {layers.map((layer, i) => (
