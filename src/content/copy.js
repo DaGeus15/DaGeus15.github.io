@@ -41,6 +41,12 @@ export const copy = {
       live: "En línea",
       sourceCode: "Código",
       caseStudy: "Ver caso de estudio",
+      moreOnGithub: "Más proyectos en GitHub",
+      readMinutes: (n) => `${n} min de lectura`,
+      fromProject: "Del proyecto",
+      readNote: "Leer la nota",
+      nextNote: "Siguiente nota",
+      seeCaseStudy: (title) => `Ver el caso de estudio de ${title}`,
       architecture: "Arquitectura",
       sync: "síncrono",
       async: "asíncrono",
@@ -89,6 +95,7 @@ export const copy = {
     nav: {
       projects: "Trabajo",
       experience: "Experiencia",
+      notes: "Notas",
       stack: "Stack",
       about: "Sobre mí",
       contact: "Contacto",
@@ -109,6 +116,10 @@ export const copy = {
           "Seis sistemas, uno en producción. Cada uno tiene su caso de estudio con capturas, arquitectura y las decisiones que tomé.",
       },
       experience: { title: "Experiencia" },
+      notes: {
+        title: "Notas",
+        intro: "Lo que aprendí resolviendo un problema concreto, con el código real.",
+      },
       stack: {
         title: "Stack",
         intro: "Agrupado por capa, con dónde lo he usado de verdad.",
@@ -129,6 +140,8 @@ export const copy = {
         "Construyo software de punta a punta: microservicios en Java y Spring Boot, APIs REST y pruebas que sostienen producción.",
       location: "Ambato, Ecuador",
       citizenship: "Ciudadanía española (UE), sin necesidad de visado",
+      /* Señal de la portada. Si dejo de buscar, se borra y desaparece. */
+      availability: "Disponible para nuevas oportunidades",
       summary: [
         "Desarrollo software con foco en Java y Spring Boot. En **Alquimiasoft** construyo microservicios (APIs REST, lógica de negocio y persistencia en PostgreSQL), los documento con Swagger/OpenAPI y los cubro con pruebas en Mockito, dentro de un equipo Scrum.",
         "Fuera del trabajo construyo sistemas completos con NestJS y Next.js; uno de ellos, **KAPHIY**, está en producción en una cafetería real. Lo que más me interesa es lo que pasa entre el código y producción: pruebas, contenedores, CI/CD y código que otros puedan mantener.",
@@ -154,6 +167,57 @@ export const copy = {
         ],
       },
     ],
+
+    /* Notas técnicas (estructura y código en `notes.js`). El cuerpo es una
+       lista de bloques: una cadena es un párrafo (con `**negrita**` y
+       `` `código` ``), `{ h }` un subtítulo y `{ code }` un fragmento de
+       `notes.js`. Hechos sacados del código y del historial de git. */
+    notes: {
+      "refresh-token-rotation": {
+        title: "Rotar el refresh token sin echar a nadie por un doble clic",
+        summary:
+          "Cada renovación cambia el token y reusar uno viejo cierra la sesión entera. La trampa: dos pestañas renovando a la vez parecen un robo.",
+        body: [
+          "En Fiado, el simulador de créditos e inversiones que hicimos en equipo para una cooperativa, me tocaron el registro y la sesión. La sesión vive en dos cookies httpOnly: un access token (un JWT de 15 minutos) y un refresh token de 30 días para pedir otro sin volver a escribir la contraseña. El que importa es el segundo: quien lo tenga se queda con la cuenta un mes.",
+          { h: "Opaco, y en la base sólo su huella" },
+          "El refresh token no es un JWT: son 32 bytes aleatorios. Su validez no está en el token sino en una fila de `AuthSession`, así que se puede revocar de verdad. En la base se guarda su SHA-256, no el token: si se filtrara la tabla, no serviría para entrar.",
+          { code: "token" },
+          "Y la cookie sólo viaja a `/api/auth`: el navegador ni siquiera la adjunta en el resto de peticiones a la API.",
+          { code: "cookie" },
+          { h: "Cada renovación lo cambia" },
+          "Al renovar, el token usado queda marcado (`rotatedAt`) y se emite otro de la misma **familia** (`familyId`: una por inicio de sesión). Cada token sirve una sola vez. Si llega uno que ya se usó, alguien más tiene una copia: el dueño o un ladrón, y el servidor no puede saber cuál. Así que revoca la familia entera y los dos tienen que volver a entrar. Una cookie robada no sobrevive a la siguiente renovación de su dueño.",
+          { code: "reuse" },
+          { h: "La trampa: dos pestañas a la vez" },
+          "Si dos peticiones renuevan con el mismo token casi al mismo tiempo (dos pestañas, un doble clic, un reintento), las dos lo leen como válido. La segunda en escribir lo encontraría ya rotado y, con la regla de arriba, cerraría la sesión de alguien que no hizo nada malo.",
+          "Por eso el token no se marca leyendo y después escribiendo, sino con **una sola escritura condicionada a su estado**:",
+          { code: "race" },
+          "La base decide quién gana: sólo una de las dos escrituras encuentra la fila sin rotar. La que pierde recibe un 401 y no revoca nada; la cookie nueva que dejó la ganadora sirve para las dos pestañas. La alarma de robo sólo salta cuando el token ya estaba rotado al leerlo, no en un empate.",
+          { h: "Lo que me llevo" },
+          "Una regla de seguridad que castiga el reúso tiene que distinguir el reúso de la concurrencia. Esa distinción no se puede hacer en la aplicación con dos consultas seguidas: hay que dejársela a la base, en una escritura atómica.",
+        ],
+      },
+      "id-card-two-faces": {
+        title: "La cédula ecuatoriana tiene dos caras",
+        summary:
+          "La verificación facial funcionaba con las fotos de prueba y rechazaba casi todas las cédulas reales. Cuatro arreglos, y un umbral calibrado con datos.",
+        body: [
+          "En Fiado, para abrir una inversión hay que demostrar que eres el titular de la cédula: una prueba de vida con la cámara y la comparación de tu rostro con la foto del documento. Lo hice con face-api en el backend NestJS, sobre WebAssembly, sin GPU ni binarios nativos. La primera versión funcionaba perfecto con las fotos de muestra y rechazaba casi todas las cédulas reales.",
+          { h: "Dos rostros donde esperaba uno" },
+          "La regla era: exactamente un rostro por imagen, para que nadie se verifique con otra persona al lado. Pero la cédula ecuatoriana trae, además del retrato, un **retrato fantasma** más pequeño, así que toda cédula \"tenía dos personas\". En la cédula, entonces, cuenta el rostro más grande: los detecto todos y los ordeno por área.",
+          { code: "largest" },
+          { h: "En la selfie, ¿cuándo cuenta un segundo rostro?" },
+          "En el fotograma en vivo la regla sí tiene que existir, pero contar cualquier rostro era demasiado: un cuadro en la pared, alguien que pasa al fondo o un falso positivo tumbaban la verificación. Ahora un segundo rostro sólo invalida la captura si el detector está seguro (confianza de 0,7 o más) **y** si mide al menos un cuarto del principal.",
+          { code: "relevant" },
+          { h: "Fotos giradas y retratos diminutos" },
+          "Otros dos fallos venían de la foto, no de la persona. Las fotos tomadas con el celular llegaban a veces giradas y el detector no encontraba nada: si no aparece un rostro, pruebo girando la imagen 90° hasta dar la vuelta completa. Y el retrato ocupa poco de la cédula: buscarlo en la imagen reducida a 1280 px está bien, pero sacar de ahí el descriptor pierde detalle. El descriptor sale de un recorte del retrato a resolución completa.",
+          { h: "Un umbral medido, no el de siempre" },
+          "face-api suele usar una distancia de 0,6 entre descriptores para decir \"misma persona\". Con las fotos de muestra, la misma persona quedaba entre 0,05 y 0,35, y personas distintas desde 0,47. Una cédula real (impresa, con hologramas, con una foto de hace años) aleja al titular de su selfie, así que el umbral quedó en 0,5: acepta al titular sin llegar al 0,6. Y se configura por entorno, porque con más cédulas reales habría que volver a medirlo.",
+          { code: "threshold" },
+          { h: "Lo que no hace" },
+          "Esta prueba de vida detiene una foto impresa o en pantalla, que no gira ni sonríe cuando se le pide. No sustituye a un detector pasivo certificado (ISO/IEC 30107-3) contra máscaras o deepfakes en tiempo real. Por eso el reconocimiento está detrás de una interfaz (`BiometricProvider`): cambiar face-api por un proveedor comercial no toca el resto del sistema.",
+        ],
+      },
+    },
 
     projects: {
       kaphiy: {
@@ -500,6 +564,12 @@ export const copy = {
       live: "Live",
       sourceCode: "Code",
       caseStudy: "Read case study",
+      moreOnGithub: "More projects on GitHub",
+      readMinutes: (n) => `${n} min read`,
+      fromProject: "From the project",
+      readNote: "Read the note",
+      nextNote: "Next note",
+      seeCaseStudy: (title) => `See the ${title} case study`,
       architecture: "Architecture",
       sync: "sync",
       async: "async",
@@ -548,6 +618,7 @@ export const copy = {
     nav: {
       projects: "Work",
       experience: "Experience",
+      notes: "Notes",
       stack: "Stack",
       about: "About",
       contact: "Contact",
@@ -565,6 +636,10 @@ export const copy = {
           "Six systems, one of them in production. Each has its own case study with screenshots, architecture and the decisions I made.",
       },
       experience: { title: "Experience" },
+      notes: {
+        title: "Notes",
+        intro: "What I learned solving a specific problem, with the real code.",
+      },
       stack: {
         title: "Stack",
         intro: "Grouped by layer, with where I've actually used it.",
@@ -583,6 +658,7 @@ export const copy = {
         "I build software end to end: Java and Spring Boot microservices, REST APIs and tests that hold up in production.",
       location: "Ambato, Ecuador",
       citizenship: "Spanish (EU) citizen, no visa sponsorship required",
+      availability: "Open to new opportunities",
       summary: [
         "Software engineer focused on Java and Spring Boot. At **Alquimiasoft** I build microservices (REST APIs, business logic and PostgreSQL persistence), document them with Swagger/OpenAPI and cover them with Mockito tests, as part of a Scrum team.",
         "Outside work I build complete systems with NestJS and Next.js; one of them, **KAPHIY**, runs in production at a real coffee shop. What interests me most is what happens between the code and production: tests, containers, CI/CD and code other people can maintain.",
@@ -608,6 +684,53 @@ export const copy = {
         ],
       },
     ],
+
+    notes: {
+      "refresh-token-rotation": {
+        title: "Rotating refresh tokens without logging anyone out on a double click",
+        summary:
+          "Every refresh swaps the token, and reusing an old one ends the whole session. The catch: two tabs refreshing at once look like theft.",
+        body: [
+          "In Fiado, the loan and investment simulator we built as a team for a credit union, I owned sign-up and sessions. A session lives in two httpOnly cookies: an access token (a 15-minute JWT) and a 30-day refresh token to get a new one without typing the password again. The second one is what matters: whoever holds it keeps the account for a month.",
+          { h: "Opaque, and only its fingerprint in the database" },
+          "The refresh token is not a JWT: it is 32 random bytes. Its validity lives in an `AuthSession` row, not in the token, so it can really be revoked. The database stores its SHA-256, not the token: a leaked table would not let anyone in.",
+          { code: "token" },
+          "And the cookie is only sent to `/api/auth`: the browser doesn't even attach it to the rest of the API.",
+          { code: "cookie" },
+          { h: "Every refresh replaces it" },
+          "On refresh, the used token is marked (`rotatedAt`) and a new one is issued in the same **family** (`familyId`: one per sign-in). Each token works once. If one that was already used shows up, someone else has a copy: the owner or a thief, and the server can't tell which. So it revokes the whole family and both have to sign in again. A stolen cookie doesn't survive its owner's next refresh.",
+          { code: "reuse" },
+          { h: "The catch: two tabs at once" },
+          "If two requests refresh with the same token at almost the same time (two tabs, a double click, a retry), both read it as valid. The second one to write would find it already rotated and, under the rule above, would end the session of someone who did nothing wrong.",
+          "So the token isn't marked by reading and then writing, but with **a single write conditioned on its state**:",
+          { code: "race" },
+          "The database picks the winner: only one of the two writes finds the row unrotated. The loser gets a 401 and revokes nothing; the new cookie the winner set works for both tabs. The theft alarm only fires when the token was already rotated when read, not on a tie.",
+          { h: "What I take from it" },
+          "A security rule that punishes reuse has to tell reuse apart from concurrency. That can't be done in the application with two queries in a row: it has to be left to the database, in one atomic write.",
+        ],
+      },
+      "id-card-two-faces": {
+        title: "The Ecuadorian ID card has two faces",
+        summary:
+          "Face verification worked with the test photos and rejected almost every real ID card. Four fixes, and a threshold calibrated with data.",
+        body: [
+          "In Fiado, to open an investment you have to prove you are the holder of the ID card: a liveness check with the camera and a match of your face against the photo on the document. I built it with face-api on the NestJS backend, on WebAssembly, with no GPU or native binaries. The first version worked perfectly with the sample photos and rejected almost every real ID card.",
+          { h: "Two faces where I expected one" },
+          "The rule was: exactly one face per image, so nobody verifies with someone else next to them. But the Ecuadorian ID card carries, besides the portrait, a smaller **ghost portrait**, so every card \"had two people\". On the card, then, the largest face counts: I detect them all and sort them by area.",
+          { code: "largest" },
+          { h: "In the selfie, when does a second face count?" },
+          "In the live frame the rule does have to exist, but counting any face was too much: a picture on the wall, someone walking by in the background or a false positive brought the verification down. Now a second face only invalidates the capture if the detector is confident (0.7 or more) **and** it is at least a quarter the size of the main one.",
+          { code: "relevant" },
+          { h: "Rotated photos and tiny portraits" },
+          "Two more failures came from the photo, not the person. Photos taken with a phone sometimes arrived rotated and the detector found nothing: if no face shows up, I try rotating the image by 90° until it comes full circle. And the portrait takes up little of the card: searching for it in the image scaled down to 1280 px is fine, but taking the descriptor from there loses detail. The descriptor comes from a crop of the portrait at full resolution.",
+          { h: "A measured threshold, not the usual one" },
+          "face-api usually takes a distance of 0.6 between descriptors to mean \"same person\". With the sample photos, the same person landed between 0.05 and 0.35, and different people from 0.47. A real ID card (printed, with holograms, with a photo from years ago) pushes the holder away from their selfie, so the threshold ended up at 0.5: it accepts the holder without reaching 0.6. And it is set per environment, because with more real cards it would need measuring again.",
+          { code: "threshold" },
+          { h: "What it doesn't do" },
+          "This liveness check stops a printed or on-screen photo, which doesn't turn or smile on request. It is not a replacement for a certified passive detector (ISO/IEC 30107-3) against masks or real-time deepfakes. That is why recognition sits behind an interface (`BiometricProvider`): swapping face-api for a commercial provider leaves the rest of the system untouched.",
+        ],
+      },
+    },
 
     projects: {
       kaphiy: {

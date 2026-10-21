@@ -12,6 +12,7 @@
 export const sections = [
   { id: "projects", mobile: true },
   { id: "experience" },
+  { id: "notes" },
   { id: "stack" },
   { id: "about", mobile: true },
   { id: "contact", mobile: true },

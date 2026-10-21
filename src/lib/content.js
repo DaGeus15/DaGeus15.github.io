@@ -6,6 +6,7 @@ import experienceBase from "@/content/experience";
 import navBase from "@/content/navigation";
 import heroLayers from "@/content/hero";
 import social from "@/content/social";
+import notesBase from "@/content/notes";
 import { DEFAULT_LANG } from "./locales";
 
 /**
@@ -19,6 +20,15 @@ import { DEFAULT_LANG } from "./locales";
  * componentes de cliente usan `useContent()`, que le pasa el idioma de la ruta.
  */
 const cache = new Map();
+
+/** Minutos de lectura de una nota: el texto a 200 palabras por minuto y el
+    código más despacio (se lee línea a línea), redondeado hacia arriba. */
+function readingMinutes(body, code) {
+  const words = (text) => text.split(/\s+/).filter(Boolean).length;
+  const prose = body.reduce((n, b) => n + (typeof b === "string" ? words(b) : b.h ? words(b.h) : 0), 0);
+  const lines = Object.values(code).reduce((n, c) => n + c.source.split("\n").length, 0);
+  return Math.max(1, Math.ceil(prose / 200 + lines / 20));
+}
 
 export function getContent(lang) {
   if (cache.has(lang)) return cache.get(lang);
@@ -69,6 +79,16 @@ export function getContent(lang) {
       ...role,
     })),
     projects,
+    // Cada nota con su texto, su proyecto ya resuelto (título para el enlace
+    // al caso) y los minutos de lectura. Las más recientes primero.
+    notes: notesBase
+      .map((n) => ({
+        ...n,
+        ...c.notes[n.id],
+        projectTitle: projects.find((p) => p.id === n.project)?.title,
+        minutes: readingMinutes(c.notes[n.id].body, n.code),
+      }))
+      .sort((a, b) => b.date.localeCompare(a.date)),
     skills: skillGroups.map((g) => ({ ...g, ...c.skills[g.id] })),
     education: c.education,
     certifications: c.certifications,

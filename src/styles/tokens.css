@@ -134,6 +134,11 @@
   --accent-soft: rgba(var(--accent-rgb), 0.12);
   --accent-line: rgba(var(--accent-rgb), 0.4);
 
+  /* Estado "disponible": el único verde del sitio, y sólo en el punto de la
+     portada (una señal, no un acento: nada más lo usa). 9.8:1 sobre el fondo. */
+  --status-on: #5fd38d;
+  --status-on-rgb: 95, 211, 141;
+
   /* Luz: resplandor cenital, filo superior y reflejo interior. */
   --glow: rgba(150, 175, 210, 0.1);
   --edge-light: rgba(255, 255, 255, 0.28);
@@ -248,6 +253,9 @@
   --on-accent: #f4f1ec;
   --accent-soft: rgba(var(--accent-rgb), 0.09);
   --accent-line: rgba(var(--accent-rgb), 0.35);
+  /* 3.9:1 sobre el lienzo: suficiente para un punto (no es texto). */
+  --status-on: #1f8a4c;
+  --status-on-rgb: 31, 138, 76;
 
   --glow: rgba(255, 255, 255, 0.7);
   --edge-light: rgba(255, 255, 255, 1);

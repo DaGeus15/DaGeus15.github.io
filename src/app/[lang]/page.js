@@ -3,6 +3,7 @@ import Footer from "@/components/layout/Footer";
 import Hero from "@/components/hero/Hero";
 import Projects from "@/components/sections/Projects";
 import Experience from "@/components/sections/Experience";
+import Notes from "@/components/sections/Notes";
 import Stack from "@/components/sections/Stack";
 import About from "@/components/sections/About";
 import Contact from "@/components/sections/Contact";
@@ -20,7 +21,14 @@ import { sectionIds } from "@/content/navigation";
  * hidratan las piezas interactivas (navegación, tema, CV, pila 3D, tarjetas
  * de proyecto, formulario).
  */
-const SECTIONS = { projects: Projects, experience: Experience, stack: Stack, about: About, contact: Contact };
+const SECTIONS = {
+  projects: Projects,
+  experience: Experience,
+  notes: Notes,
+  stack: Stack,
+  about: About,
+  contact: Contact,
+};
 
 export default async function Home({ params }) {
   const { lang } = await params;

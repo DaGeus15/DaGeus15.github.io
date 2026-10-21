@@ -21,6 +21,17 @@ export const SITE_URL = "https://dageus15.github.io";
     que GitHub Pages sirve sin reescrituras. */
 export const homePath = (lang) => `/${lang}/`;
 export const projectPath = (lang, id) => `/${lang}/projects/${id}/`;
+export const notePath = (lang, id) => `/${lang}/notes/${id}/`;
+
+/** Fecha corta de una nota ("21 oct 2026" / "Oct 21, 2026"). En UTC: la
+    fecha es un día, no un instante, y no debe moverse con la zona del build. */
+export const formatDate = (lang, iso) =>
+  new Intl.DateTimeFormat(lang === "es" ? "es-EC" : "en-US", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(`${iso}T00:00:00Z`));
 
 /** Vista previa al compartir el enlace (Open Graph). Se genera con
     `npm run og` a partir de scripts/og/. */

@@ -42,6 +42,78 @@
   container-type: inline-size;
 }
 
+/* Disponibilidad: una pastilla de cristal (se pulsa: lleva al contacto) con
+   un punto verde que se ENCIENDE una vez al cargar, como una luz piloto, y
+   se queda encendido. Sin latido: un pulso perpetuo distrae de todo lo
+   demás y se lee como notificación. */
+.availability {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 2.1rem;
+  margin-bottom: var(--sp-5);
+  padding: 0 0.85rem 0 0.75rem;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--tile-border);
+  background: var(--tile-grad);
+  box-shadow: var(--tile-shadow);
+  color: var(--foreground);
+  font-size: 0.84rem;
+  font-weight: 600;
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    scale 160ms var(--ease-out);
+}
+
+.availability:active {
+  scale: 0.97;
+}
+
+.availability__dot {
+  flex-shrink: 0;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--status-on);
+  box-shadow:
+    0 0 0 3px rgba(var(--status-on-rgb), 0.18),
+    0 0 12px rgba(var(--status-on-rgb), 0.55);
+  animation: light-on 700ms var(--ease-out) 650ms both;
+}
+
+@keyframes light-on {
+  from {
+    background: var(--faint);
+    box-shadow:
+      0 0 0 3px rgba(var(--status-on-rgb), 0),
+      0 0 12px rgba(var(--status-on-rgb), 0);
+  }
+}
+
+.availability__arrow {
+  color: var(--muted);
+  transition:
+    transform var(--dur-base) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .availability:hover {
+    border-color: var(--border-strong);
+  }
+
+  .availability:hover .availability__arrow {
+    color: var(--foreground);
+    transform: translateX(2px);
+  }
+}
+
+@media (pointer: coarse) {
+  .availability {
+    min-height: 2.75rem;
+  }
+}
+
 .hero__name {
   font-size: min(clamp(2.6rem, 0.8rem + 5.4vw, 6rem), 12cqi);
   font-weight: 680;
@@ -487,6 +559,14 @@
   .work-grid {
     grid-template-columns: minmax(0, 1fr);
   }
+}
+
+/* El resto del código: la misma pastilla que los enlaces de contacto, centrada
+   bajo la rejilla, donde termina la lectura de los proyectos. */
+.work-more {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--sp-7);
 }
 
 .work-card {

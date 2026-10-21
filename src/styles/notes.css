@@ -1,0 +1,296 @@
+/* ==========================================================================
+   Notas: el índice de la portada (sections/Notes.jsx) y la página de cada
+   nota (app/[lang]/notes/[id]/page.js)
+   ========================================================================== */
+
+/* ── Índice en la portada ───────────────────────────────────────────────
+   Una fila por nota: fecha, proyecto y minutos a la izquierda (mono); el
+   título y su resumen a la derecha. El título es un enlace estirado sobre
+   toda la fila. */
+.notes-list {
+  border-top: 1px solid var(--border);
+}
+
+.note-row {
+  position: relative;
+  display: grid;
+  gap: var(--sp-2) var(--sp-8);
+  padding-block: var(--sp-6);
+  border-bottom: 1px solid var(--border);
+  transition: scale 160ms var(--ease-out);
+}
+
+@media (min-width: 1024px) {
+  .note-row {
+    grid-template-columns: 14rem minmax(0, 1fr);
+    grid-template-rows: auto auto;
+  }
+
+  .note-row__meta {
+    grid-row: 1 / span 2;
+    flex-direction: column;
+  }
+}
+
+.note-row__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1) var(--sp-3);
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.note-row__title {
+  max-width: 38ch;
+  font-size: clamp(1.2rem, 1.05rem + 0.5vw, 1.5rem);
+  font-weight: 650;
+  font-stretch: var(--title-stretch);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.note-row__link {
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+/* El enlace cubre la fila entera: se pulsa en cualquier parte. */
+.note-row__link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.note-row__arrow {
+  display: inline;
+  margin-left: 0.35em;
+  vertical-align: -0.12em;
+  color: var(--muted);
+  transition:
+    transform var(--dur-base) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+}
+
+.note-row__summary {
+  max-width: var(--measure);
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.note-row:active {
+  scale: 0.995;
+}
+
+/* Velo de lectura, como las filas del stack, más el título en acento: esta
+   fila SÍ lleva a algún sitio. */
+.note-row::before {
+  content: "";
+  position: absolute;
+  inset: 0 calc(var(--sp-3) * -1);
+  border-radius: var(--r-md);
+  background: linear-gradient(90deg, var(--lens-hover), transparent 85%);
+  opacity: 0;
+  transition: opacity var(--dur-base) var(--ease-out);
+  pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .note-row:hover::before {
+    opacity: 1;
+  }
+
+  .note-row:hover .note-row__link {
+    color: var(--accent);
+  }
+
+  .note-row:hover .note-row__arrow {
+    color: var(--accent);
+    transform: translateX(3px);
+  }
+}
+
+/* ── Página de una nota ─────────────────────────────────────────────────
+   Una columna de lectura (--measure), como un artículo. */
+.note-hero {
+  max-width: 52rem;
+  padding-top: calc(var(--nav-clear) + var(--sp-8));
+}
+
+@media (max-width: 1023px) {
+  .note-hero {
+    padding-top: var(--sp-9);
+  }
+}
+
+.note-hero__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1) var(--sp-3);
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.note-hero__title {
+  margin-top: var(--sp-4);
+  font-size: clamp(2rem, 1rem + 3.2vw, 3.75rem);
+  font-weight: 680;
+  font-stretch: var(--display-stretch);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.note-hero__lead {
+  max-width: 48ch;
+  margin-top: var(--sp-5);
+  color: var(--muted);
+  font-size: clamp(1.1rem, 1rem + 0.4vw, 1.3rem);
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+.note-body {
+  max-width: var(--measure);
+  margin-top: var(--sp-8);
+  padding-top: var(--sp-8);
+  border-top: 1px solid var(--border);
+  font-size: 1.06rem;
+  line-height: 1.75;
+}
+
+.note-body > p {
+  color: var(--muted);
+  text-wrap: pretty;
+}
+
+.note-body > p strong {
+  color: var(--foreground);
+}
+
+.note-body > * + * {
+  margin-top: var(--sp-5);
+}
+
+.note-body > h2 {
+  margin-top: var(--sp-8);
+  font-size: clamp(1.2rem, 1.1rem + 0.4vw, 1.4rem);
+  font-weight: 650;
+  font-stretch: var(--title-stretch);
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+/* Fragmento de código: el archivo de donde sale arriba y el código en una
+   superficie hundida. Se desplaza de lado en vez de partir líneas. */
+.note-code {
+  margin-block: var(--sp-6);
+  overflow: hidden;
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  background: var(--surface-sunken);
+}
+
+.note-code__file {
+  padding: var(--sp-2) var(--sp-4);
+  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 0.74rem;
+  overflow-wrap: anywhere;
+}
+
+.note-code pre {
+  overflow-x: auto;
+  padding: var(--sp-4);
+  font-size: 0.84rem;
+  line-height: 1.6;
+}
+
+.note-code code {
+  padding: 0;
+  border-radius: 0;
+  background: none;
+  font-size: inherit;
+  white-space: pre;
+}
+
+.note-code pre:focus-visible {
+  outline-offset: -2px;
+}
+
+/* ── Cierre: de qué caso sale y la siguiente nota ───────────────────── */
+.note-end {
+  max-width: var(--measure);
+  margin-top: var(--sp-9);
+  padding-top: var(--sp-6);
+  border-top: 1px solid var(--border);
+}
+
+.note-end__project {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1) var(--sp-3);
+  align-items: baseline;
+}
+
+.note-end__label {
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.next-note {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  margin-top: var(--sp-8);
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  transition:
+    border-color var(--dur-base) var(--ease-out),
+    scale 160ms var(--ease-out);
+}
+
+.next-note:active {
+  scale: 0.99;
+}
+
+.next-note__label {
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.next-note__title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: clamp(1.25rem, 1.1rem + 0.6vw, 1.6rem);
+  font-weight: 650;
+  font-stretch: var(--title-stretch);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  transition: color var(--dur-base) var(--ease-out);
+}
+
+.next-note__title svg {
+  flex-shrink: 0;
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.next-note__line {
+  color: var(--muted);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .next-note:hover {
+    border-color: var(--border-strong);
+  }
+
+  .next-note:hover .next-note__title {
+    color: var(--accent);
+  }
+
+  .next-note:hover .next-note__title svg {
+    transform: translateX(4px);
+  }
+}

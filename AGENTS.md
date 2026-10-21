@@ -24,7 +24,17 @@ silencio.
   arquitectura, las funcionalidades, el reto, la galería y el rol viven en
   `/[lang]/projects/[id]`. No repitas en la portada lo que ya está a un clic,
   y no quites del caso nada de lo que se sabe del proyecto.
-- **Una sola página, una sola forma de leerla**, más una página por proyecto.
+- **Las notas enseñan cómo pienso** (`content/notes.js`, `/[lang]/notes/[id]`).
+  En backend el trabajo no se ve en una captura; una nota cuenta un problema
+  concreto y cómo lo resolví, con el código real. Sólo código mío,
+  COMPROBADO en el historial de git del repositorio (el arreglo de zonas
+  horarias de KAPHIY parecía buen tema y lo subió un compañero), y los
+  fragmentos se recortan pero no se reescriben. Van firmadas: el texto lo
+  revisa ella antes de publicarse.
+- **La disponibilidad va arriba, encima del nombre** (`profile.availability`
+  en `copy.js`): es lo primero que pregunta un reclutador y lleva al
+  contacto. Si deja de buscar, se borra la cadena y desaparece.
+- **Una sola página, una sola forma de leerla**, más una página por proyecto y una por nota.
   Nada de modos de lectura ni "ver más" que escondan contenido: lo que está
   oculto no se lee.
 - **Los hechos salen del CV** (`public/Dayle-Garcia-Fernandez-CV-*.pdf`) **y
@@ -113,6 +123,9 @@ silencio.
   hice yo en un diagrama, la losa de la API. Nada de colores por capa. Evitá
   el naranja arcilla: es el color de las herramientas de IA y el sitio se leía
   "hecho por IA". Si cambia la foto, recuantizá; no elijas a ojo.
+  Única excepción: el verde de estado (`--status-on`), sólo en el punto de
+  "disponible" de la portada. Es una señal convencional (luz piloto), no un
+  acento: nada más lo usa.
 - **`--accent` para texto y bordes; `--accent-fill` + `--on-accent` para
   rellenos.** En oscuro el relleno es latón con texto marino; en claro el
   relleno es marino con texto de papel y el acento de texto, un bronce (5.5:1).
@@ -250,6 +263,9 @@ silencio.
   mini lente (`--lens-*`) al pasar. La lente de la sección activa es cristal
   elevado: en claro, blanco sobre blanco sólo se distingue por su borde y su
   sombra.
+- **El punto de "disponible" se enciende una vez** al cargar y se queda
+  encendido, como una luz piloto. Sin latido: un pulso perpetuo arriba de
+  la página distrae de todo lo demás y se lee como una notificación.
 - **Nada perpetuo salvo lo pequeño**: los paquetes SMIL de los diagramas, que
   además se pausan fuera de pantalla. Sin latidos ni pulsos.
 - **No ramifiques el árbol renderizado según `useReducedMotion()` o una media

@@ -51,6 +51,7 @@ actualizá estos archivos con él.
 | Nombre, correo, foto, CV                          | `content/profile.js`     |
 | Empresa y stack de cada puesto                    | `content/experience.js`  |
 | Proyectos: año, cifras, repo, stack, capturas y diagrama | `content/projects.js` |
+| Notas: fecha, proyecto y fragmentos de código     | `content/notes.js`       |
 | Grupos del stack, iconos y herramientas           | `content/skills.js`      |
 | GitHub, LinkedIn y clave del formulario           | `content/social.js`      |
 | Orden de las secciones                            | `content/navigation.js`  |
@@ -68,6 +69,16 @@ En los textos podés usar `**negrita**` y `` `código` ``; lo renderiza
    idiomas: título, línea, resumen, descripción, funcionalidades, reto, rol,
    etiquetas de las cifras y el pie de cada captura (`shots`).
 3. Su página de caso de estudio se genera sola.
+
+### Añadir una nota
+
+1. Agregá su entrada en `content/notes.js`: `id`, fecha, proyecto, etiquetas
+   y los fragmentos de código (`code`), recortados del repositorio real.
+2. Agregá su texto en `content/copy.js`, en `notes[id]`, en los dos idiomas:
+   título, resumen y `body` (cadenas = párrafos, `{ h }` = subtítulo,
+   `{ code: "<clave>" }` = un fragmento).
+3. Sale sola en la sección Notas y en `/[lang]/notes/[id]/`, con los minutos
+   de lectura calculados.
 
 ### Capturas de los proyectos
 
@@ -107,7 +118,8 @@ src/
 ├── app/
 │   ├── (root)/            `/`: redirección según el navegador
 │   ├── [lang]/            Layout (html lang, metadatos, tema) y página principal
-│   │   └── projects/[id]/ Caso de estudio
+│   │   ├── projects/[id]/ Caso de estudio
+│   │   └── notes/[id]/    Nota técnica
 │   └── globals.css        Sólo importa los módulos de styles/
 ├── content/               ← TEXTO Y DATOS (editá aquí)
 ├── lib/
@@ -123,7 +135,7 @@ src/
 ├── components/
 │   ├── hero/              Hero, SystemStack (pila 3D: SVG + escena OGL)
 │   ├── layout/            SiteNav (píldora), LangSwitch, Footer
-│   ├── sections/          Projects, Experience, Stack, About, Contact
+│   ├── sections/          Projects, Experience, Notes, Stack, About, Contact
 │   ├── project/           WorkCard, Frame, ShotStage, Gallery, ArchitectureDiagram, Metrics
 │   └── ui/                CvDownload, ThemeToggle, CopyEmail, ContactForm
 └── styles/
@@ -132,6 +144,7 @@ src/
     ├── nav.css            Píldora de navegación, menú del CV y pie
     ├── home.css           Portada, pila 3D, secciones, tarjetas de trabajo, marcos
     ├── case.css           Caso de estudio, galería y visor
+    ├── notes.css          Índice de notas y página de cada nota
     └── diagram.css        Diagramas de arquitectura
 ```
 

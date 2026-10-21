@@ -1,3 +1,4 @@
+import { FiArrowUpRight } from "react-icons/fi";
 import SectionHeading from "./SectionHeading";
 import WorkCard from "@/components/project/WorkCard";
 import { projectPath } from "@/lib/locales";
@@ -8,12 +9,14 @@ import { projectPath } from "@/lib/locales";
  * asimétrica: KAPHIY (en producción) a todo el ancho, cuatro en 7 + 5 / 5 + 7
  * y el sexto cierra otra vez a todo el ancho. Con un número impar en medio
  * quedaría una tarjeta de 5 columnas sola. Todos llevan a su caso de estudio.
+ * Al final, el resto del código en GitHub, para quien quiera más que seis.
  */
 const SIZES = ["wide", "large", "small", "small", "large", "wide"];
 
 export default function Projects({ t }) {
   const { ui, lang } = t;
   const labels = { caseStudy: ui.caseStudy, inProduction: ui.inProduction };
+  const github = t.social.find((s) => s.id === "github");
 
   return (
     <section id="projects" className="section" aria-labelledby="projects-title">
@@ -42,6 +45,16 @@ export default function Projects({ t }) {
           </li>
         ))}
       </ul>
+
+      {github && (
+        <p className="work-more reveal">
+          <a href={github.url} target="_blank" rel="noopener noreferrer" className="contact-link">
+            {ui.moreOnGithub}
+            <span className="contact-link__handle mono">{github.handle}</span>
+            <FiArrowUpRight className="contact-link__arrow" aria-hidden="true" />
+          </a>
+        </p>
+      )}
     </section>
   );
 }

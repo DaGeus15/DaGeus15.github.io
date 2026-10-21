@@ -1,4 +1,4 @@
-import { FiArrowDown, FiGlobe, FiMapPin } from "react-icons/fi";
+import { FiArrowDown, FiArrowRight, FiGlobe, FiMapPin } from "react-icons/fi";
 import CvDownload from "@/components/ui/CvDownload";
 import SystemStack from "./SystemStack";
 
@@ -7,6 +7,10 @@ import SystemStack from "./SystemStack";
  * derecha. Cuatro piezas de texto como mucho (nombre, rol, frase y la línea de
  * datos) y dos acciones: lo que un reclutador necesita en los primeros
  * segundos, sin navegación que aprender.
+ *
+ * Encima del nombre, si estoy buscando trabajo, una señal de disponibilidad
+ * con un punto verde: es lo primero que un reclutador quiere saber, y lleva
+ * al contacto, que es lo siguiente que va a hacer.
  *
  * El nombre se parte a mano en dos líneas (nombre + apellidos) para que el
  * corte no dependa del ancho.
@@ -20,17 +24,24 @@ export default function Hero({ t }) {
   return (
     <section id="top" className="hero" aria-labelledby="hero-title">
       <div className="hero__text">
-        <h1 id="hero-title" className="hero__name enter" style={{ "--i": 0 }}>
+        {profile.availability && (
+          <a href="#contact" className="availability enter" style={{ "--i": 0 }}>
+            <span className="availability__dot" aria-hidden="true" />
+            {profile.availability}
+            <FiArrowRight className="availability__arrow" aria-hidden="true" />
+          </a>
+        )}
+        <h1 id="hero-title" className="hero__name enter" style={{ "--i": 1 }}>
           <span>{first}</span> <span>{last}</span>
         </h1>
-        <p className="hero__role enter" style={{ "--i": 1 }}>
+        <p className="hero__role enter" style={{ "--i": 2 }}>
           {profile.role}
         </p>
-        <p className="hero__pitch enter" style={{ "--i": 2 }}>
+        <p className="hero__pitch enter" style={{ "--i": 3 }}>
           {profile.pitch}
         </p>
 
-        <div className="hero__actions enter" style={{ "--i": 3 }}>
+        <div className="hero__actions enter" style={{ "--i": 4 }}>
           <CvDownload placement="down" />
           <a href="#contact" className="btn btn--ghost">
             {ui.contactCta}
@@ -38,7 +49,7 @@ export default function Hero({ t }) {
           </a>
         </div>
 
-        <ul className="hero__facts enter" style={{ "--i": 4 }}>
+        <ul className="hero__facts enter" style={{ "--i": 5 }}>
           <li>
             <FiMapPin aria-hidden="true" />
             {profile.location}
