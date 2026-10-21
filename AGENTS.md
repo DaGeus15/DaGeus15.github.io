@@ -37,7 +37,9 @@ silencio.
   (prueba de vida, comparación con la cédula, traspaso al celular), el
   registro y la sesión, y la portada; los simuladores y el panel son del
   equipo. Lo mismo para cualquier proyecto de
-  equipo.
+  equipo. En la experiencia, cada web pública del puesto lleva una nota
+  que dice qué es (`linkText` en `copy.js`): Migo es el producto de la
+  empresa, no lo hice yo; la documentación de su API sí la publiqué yo.
 
 ## Contenido e idioma
 

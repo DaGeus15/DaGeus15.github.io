@@ -777,6 +777,70 @@
   font-size: 0.9rem;
 }
 
+/* Webs del puesto: el nombre con su flecha y, debajo, qué es. Son enlaces de
+   texto (como los de las certificaciones), no píldoras: van dentro de la
+   ficha del puesto y no compiten con los botones. */
+.role__links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  margin-top: var(--sp-5);
+  padding-top: var(--sp-4);
+  border-top: 1px solid var(--border);
+}
+
+.role-link {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-height: 2.75rem;
+  justify-content: center;
+  transition: scale 160ms var(--ease-out);
+}
+
+.role-link:active {
+  scale: 0.98;
+}
+
+.role-link__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  width: fit-content;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: var(--accent-line);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    text-decoration-color var(--dur-fast) var(--ease-out);
+}
+
+.role-link__arrow {
+  color: var(--muted);
+  transition:
+    transform 200ms var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+}
+
+.role-link__note {
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .role-link:hover .role-link__label {
+    color: var(--accent);
+    text-decoration-color: currentColor;
+  }
+
+  .role-link:hover .role-link__arrow {
+    color: var(--accent);
+    transform: translate(2px, -2px);
+  }
+}
+
 .role__bullets {
   display: flex;
   flex-direction: column;

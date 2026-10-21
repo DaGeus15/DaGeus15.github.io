@@ -66,6 +66,7 @@ export const copy = {
       nextShot: "Captura siguiente",
       currentRole: "Actual",
       roleStack: "Stack del puesto",
+      roleLinks: "Enlaces del puesto",
       education: "Formación",
       coursework: "Asignaturas relevantes",
       certifications: "Certificaciones",
@@ -140,6 +141,10 @@ export const copy = {
         role: "Desarrolladora Backend",
         location: "Ambato, Ecuador",
         date: "Feb 2026 – Actualidad",
+        linkText: {
+          product: { label: "Migo", note: "El sistema de facturación de la empresa" },
+          apiDocs: { label: "API de Migo", note: "Publiqué su documentación" },
+        },
         bullets: [
           "Desarrollo y mantenimiento de **microservicios en Java/Spring Boot**: APIs REST, lógica de negocio y persistencia en PostgreSQL.",
           "Entrega de **más de 10 módulos CRUD** en el API principal, incluido el de facturación y endpoints de utilidad para otros equipos.",
@@ -520,6 +525,7 @@ export const copy = {
       nextShot: "Next screenshot",
       currentRole: "Current",
       roleStack: "Stack used",
+      roleLinks: "Role links",
       education: "Education",
       coursework: "Relevant coursework",
       certifications: "Certifications",
@@ -589,6 +595,10 @@ export const copy = {
         role: "Backend Software Developer",
         location: "Ambato, Ecuador",
         date: "Feb 2026 – Present",
+        linkText: {
+          product: { label: "Migo", note: "The company's invoicing system" },
+          apiDocs: { label: "Migo API", note: "I published its documentation" },
+        },
         bullets: [
           "Build and maintain **Java/Spring Boot microservices**: REST APIs, business logic and PostgreSQL persistence.",
           "Delivered **10+ CRUD modules** in the main API service, including the invoicing module and shared utility endpoints for other teams.",
