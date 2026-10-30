@@ -101,10 +101,10 @@ export const copy = {
       contact: "Contacto",
     },
 
-    /* Las cuatro capas de la pila 3D de la portada (estructura en
-       `hero.js`). Van cortas: son etiquetas junto a cada losa. `goTo` es el
-       nombre accesible del enlace de cada capa. */
-    hero: {
+    /* Las cuatro capas de la pila 3D (estructura en `stackLayers.js`). Van
+       cortas: son etiquetas junto a cada losa. `goTo` es el nombre accesible
+       del enlace de cada capa. */
+    stackLayers: {
       layers: { client: "Cliente", api: "API", data: "Datos", infra: "Infra" },
       goTo: (name) => `${name}: ver en el stack`,
     },
@@ -673,7 +673,7 @@ export const copy = {
       contact: "Contact",
     },
 
-    hero: {
+    stackLayers: {
       layers: { client: "Client", api: "API", data: "Data", infra: "Infra" },
       goTo: (name) => `${name}: see it in the stack`,
     },

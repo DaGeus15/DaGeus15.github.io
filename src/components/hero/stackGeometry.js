@@ -72,6 +72,12 @@ export function project(x, y, z) {
   return [VIEW.cx + (x - z) * K * COS30 * PX, VIEW.cy - y * K * PX + (x + z) * K * SIN30 * PX];
 }
 
+/** Unidades de mundo que recorre una losa al caer `cssPx` píxeles en un cuadro
+    de alto `viewH`. El eje Y del mundo sube; en pantalla, eso es hacia arriba. */
+export function worldDrop(cssPx, viewH) {
+  return (cssPx * VIEW.h) / (Math.max(viewH, 1) * K * PX);
+}
+
 /** Envolvente convexa (cadena monótona): la silueta de la losa extruida. */
 function hull(points) {
   const p = [...points].sort((a, b) => a[0] - b[0] || a[1] - b[1]);
@@ -90,11 +96,43 @@ function hull(points) {
 
 const pts = (list) => list.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(" ");
 
+const closedPath = (list) => {
+  const body = list.map(([x, y]) => `${x.toFixed(1)} ${y.toFixed(1)}`).join(" L");
+  return `M${body} Z`;
+};
+
+/** Aleja o acerca cada punto de su centroide, en el viewBox. Sirve para el
+    halo del núcleo y el brillo interior, sin filtros (un filtro se volvería
+    a rasterizar en cada fotograma de la caída). */
+function offsetFromCenter(list, amount) {
+  const cx = list.reduce((sum, p) => sum + p[0], 0) / list.length;
+  const cy = list.reduce((sum, p) => sum + p[1], 0) / list.length;
+  return list.map(([x, y]) => {
+    const dx = x - cx;
+    const dy = y - cy;
+    const len = Math.hypot(dx, dy) || 1;
+    return [x + (dx / len) * amount, y + (dy / len) * amount];
+  });
+}
+
 /** Hacia dónde entra la luz en la escena (−x, un poco −z: la izquierda de la
     pantalla). El filo del contorno que mira hacia ella brilla. */
 const LIGHT = (() => {
   const l = Math.hypot(1, 0.3);
   return [-1 / l, -0.3 / l];
+})();
+
+/** Degradado del filo, en coordenadas del viewBox: de la luz (izquierda) a la
+    sombra del canto opuesto. Lo comparten todas las losas. */
+export const RIM_GRADIENT = (() => {
+  const [x0, y0] = project(0, 0, 0);
+  const [x1, y1] = project(LIGHT[0], 0, LIGHT[1]);
+  return {
+    x1: x0 + (x1 - x0) * 220,
+    y1: y0 + (y1 - y0) * 220,
+    x2: x0 - (x1 - x0) * 220,
+    y2: y0 - (y1 - y0) * 220,
+  };
 })();
 
 /** La losa `i` proyectada en el viewBox: su silueta entera (cuerpo), la cara
@@ -107,14 +145,19 @@ export function slabShape(i, count) {
   const core = roundedOutline((SLAB.size * CORE.inset) / 2, CORE.radius);
   const top = outline.map((p) => project(p.x, y + SLAB.thick / 2, p.z));
   const bottom = outline.map((p) => project(p.x, y - SLAB.thick / 2, p.z));
+  const coreTop = core.map((p) => project(p.x, y + CORE.thick / 2, p.z));
   const [ax, , az] = slabAnchor(i, count);
-  const lit = top.filter((_, k) => outline[k].nx * LIGHT[0] + outline[k].nz * LIGHT[1] > 0.25);
 
   return {
     body: pts(hull([...top, ...bottom])),
     top: pts(top),
-    rim: `M${lit.map(([x, sy]) => `${x.toFixed(1)} ${sy.toFixed(1)}`).join(" L")}`,
-    core: pts(core.map((p) => project(p.x, y + CORE.thick / 2, p.z))),
+    /* Contorno de la cara de arriba: un stroke con degradado, claro hacia la
+       luz y oscuro en el canto opuesto. */
+    outline: closedPath(top),
+    /* Brillo interior, justo por dentro del borde. */
+    inner: closedPath(offsetFromCenter(top, -7)),
+    core: pts(coreTop),
+    halo: pts(offsetFromCenter(coreTop, 11)),
     anchor: (([x, sy]) => ({ x, y: sy }))(project(ax, y, az)),
   };
 }

@@ -1,11 +1,10 @@
 import { Renderer, Camera, Transform, Geometry, Program, Mesh, RenderTarget, Vec3, Raycast } from "ogl";
-import { VIEW, PX, SLAB, CORE, slabY, slabAnchor, roundedOutline } from "./stackGeometry";
+import { VIEW, PX, SLAB, CORE, slabY, slabAnchor, roundedOutline, worldDrop } from "./stackGeometry";
 import { HOVER_QUERY } from "@/lib/breakpoints";
 
 /**
- * Escena OGL de la pila de la portada. Se importa dinámicamente desde
- * `SystemStack.jsx`, así que OGL va en su propio fragmento y no pesa en la
- * carga inicial.
+ * Escena OGL de la pila. Se importa dinámicamente desde `SystemStack.jsx`,
+ * así que OGL va en su propio fragmento y no pesa en la carga inicial.
  *
  * Liquid Glass en dos pasadas (aproximación web; sin HDR ni materiales
  * físicos). La referencia es el material de Apple, no el vidrio de verdad:
@@ -30,9 +29,10 @@ import { HOVER_QUERY } from "@/lib/breakpoints";
  *   · DPR limitado: 2 con ratón, 1.5 en táctil.
  *   · Sin WebGL 2 (o si falla algo), devuelve null y se queda el SVG.
  *
- * Devuelve `{ pick, setHover, dispose }`: `pick` dice qué losa hay bajo un
- * punto de la pantalla (un rayo contra sus límites), `setHover` levanta una
- * losa, enciende su núcleo y su filo. Quien decide el hover es
+ * Devuelve `{ pick, setHover, playDrop, dispose }`. `pick` dice qué losa hay
+ * bajo un punto de la pantalla (un rayo contra sus límites), `setHover`
+ * levanta una losa. `playDrop` arranca la caída cuando la sección entra, si
+ * la escena se montó antes. Quien decide el hover y el momento es
  * `SystemStack.jsx`.
  */
 
@@ -74,6 +74,7 @@ precision highp float;
 uniform vec3 uCore;
 uniform vec3 uCoreEdge;
 uniform float uGlow;
+uniform float uFade;
 ${sdf}
 in vec3 vLocal;
 in vec3 vLocalN;
@@ -85,7 +86,7 @@ void main() {
   vec3 c = uCore * (0.55 + 0.45 * center) * uGlow;
   float frame = 1.0 - smoothstep(0.0, 0.03, abs(d - 0.12));
   c = mix(c, uCoreEdge * min(uGlow, 1.4), frame * 0.7 * cap);
-  fragColor = vec4(c * mix(0.55, 1.0, cap), 1.0);
+  fragColor = vec4(c * mix(0.55, 1.0, cap), uFade);
 }`;
 
 const glassFragment = /* glsl */ `#version 300 es
@@ -109,6 +110,7 @@ uniform vec3 uRimLight;
 uniform float uEdgeGlow;
 uniform float uBack;
 uniform float uSheen;
+uniform float uFade;
 ${sdf}
 in vec3 vLocal;
 in vec3 vLocalN;
@@ -188,7 +190,7 @@ void main() {
   col = mix(col, uEdge, clamp(rimDark * uEdgeGlow, 0.0, 1.0));
 
   float alpha = uBody + glow + F * 0.5 + refrA * (1.0 - F) * 0.92 + glare + spec + rimLit + rimDark * uEdgeGlow;
-  fragColor = vec4(col, clamp(alpha, 0.0, 1.0) * uBack);
+  fragColor = vec4(col, clamp(alpha, 0.0, 1.0) * uBack * uFade);
 }`;
 
 /** `#rrggbb` → [r, g, b] en 0..1. */
@@ -260,7 +262,7 @@ function roundedSlab(gl, half, radius, thick) {
   });
 }
 
-export function mountStack({ wrap, canvas, labels, accentIndex, count }) {
+export function mountStack({ wrap, canvas, labels, accentIndex, count, reveal = "fade", drop = { mode: "done", elapsed: 0 } }) {
   let renderer;
   try {
     const fine = window.matchMedia(HOVER_QUERY).matches;
@@ -318,6 +320,7 @@ export function mountStack({ wrap, canvas, labels, accentIndex, count }) {
         uCore: { value: palette.core },
         uCoreEdge: { value: palette.coreEdge },
         uGlow: { value: 1 },
+        uFade: { value: 1 },
         uB: { value: [coreHalf - CORE.radius, coreHalf - CORE.radius] },
         uR: { value: CORE.radius },
       },
@@ -354,6 +357,7 @@ export function mountStack({ wrap, canvas, labels, accentIndex, count }) {
           uEdgeGlow: { value: 0.6 },
           uBack: { value: back ? 0.3 : 1 },
           uSheen: { value: back ? 0 : palette.sheen },
+          uFade: { value: 1 },
         },
       });
       const mesh = new Mesh(gl, { geometry: slabGeometry, program, renderOrder: -2 * i + (back ? 0 : 1) });
@@ -388,9 +392,53 @@ export function mountStack({ wrap, canvas, labels, accentIndex, count }) {
   let last = 0;
   let lost = false;
 
+  /* La caída: mismos tiempos que `slab-drop` (0.9s, 110ms de desfase de abajo
+     arriba, --ease-out). `pending` espera a que la sección entre; `running`
+     continúa desde el progreso de la animación CSS; `done` y `skip` ya están
+     en reposo (la escena llegó tarde, o la pila ya se veía al hidratar). */
+  const DROP_MS = 900;
+  const STAGGER_MS = 110;
+  const DROP_PX = reduced ? 10 : 44;
+  let dropMode = drop.mode;
+  let dropT0 = drop.mode === "running" ? performance.now() - drop.elapsed : null;
+  let dropWorld = 0;
+
+  const easeOut = (x) => {
+    if (x <= 0) return 0;
+    if (x >= 1) return 1;
+    const x1 = 0.23;
+    const y1 = 1;
+    const x2 = 0.32;
+    const y2 = 1;
+    const cx = 3 * x1;
+    const bx = 3 * (x2 - x1) - cx;
+    const ax = 1 - cx - bx;
+    const cy = 3 * y1;
+    const by = 3 * (y2 - y1) - cy;
+    const ay = 1 - cy - by;
+    let t = x;
+    for (let n = 0; n < 6; n++) {
+      const xEst = ((ax * t + bx) * t + cx) * t;
+      const dx = (3 * ax * t + 2 * bx) * t + cx;
+      if (Math.abs(dx) < 1e-6) break;
+      t = Math.min(1, Math.max(0, t - (xEst - x) / dx));
+    }
+    return ((ay * t + by) * t + cy) * t;
+  };
+
+  const dropLinear = (i, time) => {
+    if (dropMode === "skip" || dropMode === "done") return 1;
+    if (dropT0 == null) return 0;
+    const local = time - dropT0 - (count - 1 - i) * STAGGER_MS;
+    if (local <= 0) return 0;
+    return Math.min(local / DROP_MS, 1);
+  };
+
   /* El pulso de llegada: una luz baja una vez por las capas, de Cliente a
      Infra, como una petición que atraviesa el sistema. Sólo es luz (nada se
-     desplaza), así que con movimiento reducido ocurre igual, más corto. */
+     desplaza), así que con movimiento reducido ocurre igual, más corto.
+     Arranca al terminar la caída; si la caída ya había terminado, tras el
+     fundido, como antes. */
   const PULSE_MS = reduced ? 900 : 1600;
   let pulseStart = -1;
 
@@ -406,8 +454,14 @@ export function mountStack({ wrap, canvas, labels, accentIndex, count }) {
     const pulseY = top + (bottom - top) * p;
 
     slabs.forEach((s, i) => {
-      const y = slabY(i, count, now.gap) + lift[i];
+      const eased = easeOut(dropLinear(i, time));
+      const rise = (1 - eased) * dropWorld;
+      const y = slabY(i, count, now.gap) + lift[i] + rise;
       s.core.position.y = s.back.position.y = s.front.position.y = y;
+      const fade = eased;
+      s.core.program.uniforms.uFade.value = fade;
+      s.back.program.uniforms.uFade.value = fade;
+      s.front.program.uniforms.uFade.value = fade;
       const wave = p >= 0 && p < 1 ? Math.exp(-(((y - pulseY) / 0.55) ** 2)) : 0;
       s.core.program.uniforms.uGlow.value = glow[i] + wave * 0.9;
     });
@@ -421,7 +475,9 @@ export function mountStack({ wrap, canvas, labels, accentIndex, count }) {
       if (!el) return;
       const [x, y0, z] = slabAnchor(i, count, now.gap);
       const [rx0, ry0, rz0] = slabAnchor(i, count, SLAB.gap);
-      camera.project(anchor.set(x, y0 + lift[i], z).applyMatrix4(stack.worldMatrix));
+      const eased = easeOut(dropLinear(i, time));
+      const rise = (1 - eased) * dropWorld;
+      camera.project(anchor.set(x, y0 + lift[i] + rise, z).applyMatrix4(stack.worldMatrix));
       const sx = ((anchor.x + 1) / 2) * VIEW.w;
       const sy = ((1 - anchor.y) / 2) * VIEW.h;
       camera.project(anchor.set(rx0, ry0, rz0));
@@ -468,6 +524,11 @@ export function mountStack({ wrap, canvas, labels, accentIndex, count }) {
       }
     }
     if (pulseStart >= 0 && t - pulseStart < PULSE_MS) moving = true;
+    if (dropT0 != null && dropLinear(0, t) < 1) moving = true;
+    if (dropT0 != null && dropMode !== "skip" && pulseStart < 0 && dropLinear(0, t) >= 1) {
+      pulseStart = t;
+      moving = true;
+    }
     place(t);
     if (moving && visible) raf = requestAnimationFrame(frame);
   }
@@ -509,6 +570,7 @@ export function mountStack({ wrap, canvas, labels, accentIndex, count }) {
   const resize = () => {
     const rect = wrap.getBoundingClientRect();
     size = { w: Math.max(rect.width, 1), h: Math.max(rect.height, 1) };
+    dropWorld = worldDrop(DROP_PX, size.h);
     renderer.setSize(size.w, size.h);
     // La textura de los núcleos, al tamaño real del lienzo: el cristal la
     // muestrea por píxel de pantalla.
@@ -582,12 +644,29 @@ export function mountStack({ wrap, canvas, labels, accentIndex, count }) {
 
   resize();
   onScroll();
+  if (reveal === "gl") wrap.dataset.gl = "";
+  else if (reveal === "handoff") wrap.dataset.handoff = "";
+  // Con el relevo a medias, el fundido dura 150ms: hay que registrar la
+  // duración antes de subir la opacidad del lienzo, o salta.
+  if (reveal === "handoff") canvas.getBoundingClientRect();
   wrap.dataset.ready = "true";
-  // El pulso arranca cuando el lienzo ya terminó de aparecer sobre el SVG.
-  const pulseTimer = setTimeout(() => {
-    pulseStart = performance.now();
+  // Caída ya terminada: fundido largo y el pulso cuando el lienzo aparece,
+  // como antes. Si la escena hace la caída, el pulso espera a que termine.
+  const pulseTimer =
+    drop.mode === "done"
+      ? setTimeout(() => {
+          pulseStart = performance.now();
+          kick();
+        }, 450)
+      : 0;
+  if (drop.mode === "running") kick();
+
+  const playDrop = () => {
+    if (dropMode !== "pending") return;
+    dropMode = "running";
+    dropT0 = performance.now();
     kick();
-  }, 450);
+  };
 
   // Si el navegador retira el contexto en marcha (demasiados lienzos, GPU
   // reiniciada), se para todo y vuelve el SVG, que sigue en el DOM.
@@ -597,6 +676,9 @@ export function mountStack({ wrap, canvas, labels, accentIndex, count }) {
     cancelAnimationFrame(raf);
     raf = 0;
     delete wrap.dataset.ready;
+    delete wrap.dataset.gl;
+    delete wrap.dataset.handoff;
+    if (wrap.dataset.play != null) wrap.dataset.settled = "";
     labels.forEach((el) => el && (el.style.transform = ""));
   };
   canvas.addEventListener("webglcontextlost", onLost);
@@ -613,8 +695,10 @@ export function mountStack({ wrap, canvas, labels, accentIndex, count }) {
     window.removeEventListener("scroll", onScroll);
     labels.forEach((el) => el && (el.style.transform = ""));
     delete wrap.dataset.ready;
+    delete wrap.dataset.gl;
+    delete wrap.dataset.handoff;
     gl.getExtension("WEBGL_lose_context")?.loseContext();
   };
 
-  return { pick, setHover, dispose };
+  return { pick, setHover, playDrop, dispose };
 }

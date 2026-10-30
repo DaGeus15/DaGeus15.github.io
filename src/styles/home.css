@@ -331,9 +331,25 @@
 .stack3d {
   position: relative;
   width: 100%;
-  max-width: 34rem;
+  max-width: 20rem;
   margin-inline: auto;
   aspect-ratio: 400 / 460;
+}
+
+@media (min-width: 1024px) {
+  .stack3d {
+    /* El ancla de la etiqueta cae al 66.15% del viewBox y el texto sigue a
+       la derecha: la más larga ("Spring Boot · NestJS") mide unos 10.2rem.
+       Por debajo de ~31rem de columna ese resto no le alcanza, así que la
+       pila cede el sitio y se alinea al inicio; el sobrante queda donde
+       asoma la etiqueta. Sin esto el texto se sale del margen de la página. */
+    width: min(100%, 34rem, calc((100% - 10.5rem) / 0.6615));
+    max-width: none;
+    /* El margen automático del reposo la centraría y se comería la mitad
+       del sitio reservado a la derecha. */
+    margin-inline: 0 auto;
+    justify-self: start;
+  }
 }
 
 .stack3d__svg,
@@ -343,6 +359,23 @@
   width: 100%;
   height: 100%;
   transition: opacity var(--dur-slow) var(--ease-out);
+}
+
+/* Relevó a medias de la caída: el fundido baja a 150ms. */
+.stack3d[data-handoff] .stack3d__svg,
+.stack3d[data-handoff] .stack3d__canvas {
+  transition-duration: 150ms;
+}
+
+/* La escena llegó antes de verse: el SVG no aparece y no hay fundido. */
+.stack3d[data-gl] .stack3d__svg {
+  opacity: 0;
+  transition: none;
+}
+
+.stack3d[data-gl] .stack3d__canvas {
+  opacity: 1;
+  transition: none;
 }
 
 .stack3d__svg {
@@ -362,6 +395,22 @@
 
 .stack3d[data-ready] .stack3d__svg {
   opacity: 0;
+}
+
+/* Comparar las dos capas en la misma pose, sólo en desarrollo (`?stack=`). */
+.stack3d[data-force="svg"] .stack3d__canvas {
+  opacity: 0;
+  transition: none;
+}
+
+.stack3d[data-force="svg"] .stack3d__svg {
+  opacity: 1;
+  transition: none;
+}
+
+.stack3d[data-force="gl"] .stack3d__svg {
+  opacity: 0;
+  transition: none;
 }
 
 .stack3d__face {
@@ -421,15 +470,68 @@
   stop-color: var(--stack-core-accent);
 }
 
-/* El filo de luz: el tramo del contorno que mira hacia la luz. */
+.stack3d__stop.is-rim {
+  stop-color: var(--stack-svg-rim);
+}
+
+.stack3d__stop.is-rim-shade {
+  stop-color: var(--stack-svg-rim-shade);
+}
+
+.stack3d__stop.is-halo,
+.stack3d__stop.is-halo-in,
+.stack3d__stop.is-halo-out {
+  stop-color: var(--stack-svg-halo);
+}
+
+.stack3d__stop.is-halo {
+  stop-opacity: 0.85;
+}
+
+.stack3d__stop.is-halo-in,
+.stack3d__stop.is-halo-out {
+  stop-opacity: 0;
+}
+
+.stack3d__stop.is-halo-accent,
+.stack3d__stop.is-halo-accent-in {
+  stop-color: var(--stack-svg-halo-accent);
+}
+
+.stack3d__stop.is-halo-accent {
+  stop-opacity: 0.9;
+}
+
+.stack3d__stop.is-halo-accent-in {
+  stop-opacity: 0;
+}
+
+/* El filo: degradado de la luz a la sombra del canto opuesto. El brillo
+   interior va justo por dentro; el halo del núcleo, detrás de la placa. */
 .stack3d__rim {
   fill: none;
-  stroke: var(--stack-rim-light);
-  stroke-width: 1.6;
+  stroke: url(#stack3d-rim);
+  stroke-width: 1.75;
   stroke-linecap: round;
   stroke-linejoin: round;
-  opacity: 0.85;
   vector-effect: non-scaling-stroke;
+}
+
+.stack3d__inner {
+  fill: none;
+  stroke: var(--stack-svg-inner);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+  opacity: 0.55;
+  vector-effect: non-scaling-stroke;
+}
+
+.stack3d__halo {
+  fill: url(#stack3d-halo);
+}
+
+.stack3d__slab[data-accent] .stack3d__halo {
+  fill: url(#stack3d-halo-accent);
 }
 
 /* El núcleo se ve a través de la cara superior, que es translúcida. */
@@ -477,13 +579,26 @@
   }
 }
 
-/* El momento de la portada: las losas caen y se apilan de abajo arriba. En
-   CSS, así ocurre antes de hidratar y sin WebGL. Con movimiento reducido, el
-   mismo gesto en corto. */
+/* La caída se arma sólo si JS vio la pila fuera de pantalla (`data-armed`)
+   y la dispara al entrar (`data-play`). Sin JS se ve entera y quieta. Si la
+   escena WebGL ya es la dueña (`data-gl`) o el contexto se perdió ya asentada
+   (`data-settled`), el SVG no anima. De abajo arriba: 0.9s, 110ms por losa. */
 .stack3d__slab {
   --drop: -44px;
+}
+
+.stack3d[data-armed]:not([data-play]):not([data-gl]) .stack3d__slab,
+.stack3d[data-armed]:not([data-play]) .stack3d__label {
+  opacity: 0;
+}
+
+.stack3d[data-armed]:not([data-play]):not([data-gl]) .stack3d__slab {
+  transform: translateY(var(--drop));
+}
+
+.stack3d[data-play]:not([data-gl]):not([data-settled]) .stack3d__slab {
   animation: slab-drop 0.9s var(--ease-out) both;
-  animation-delay: calc(var(--i) * 110ms + 250ms);
+  animation-delay: calc(var(--i) * 110ms);
 }
 
 @keyframes slab-drop {
@@ -522,8 +637,11 @@
   grid-template-columns: 1.4rem auto;
   column-gap: 0.55rem;
   align-items: center;
+}
+
+.stack3d[data-play] .stack3d__label-text {
   animation: enter 0.7s var(--ease-out) both;
-  animation-delay: calc(1.05s + var(--i) * 70ms);
+  animation-delay: calc(0.72s + var(--i) * 70ms);
 }
 
 .stack3d__label-text::before {
@@ -551,8 +669,9 @@
   display: block;
 }
 
-/* Con sitio, en una línea con su separador: puede asomar al margen de la
-   columna. En móvil, una tecnología por línea. */
+/* Con sitio, en una línea con su separador. En móvil, una tecnología por
+   línea. El ancho de la pila en escritorio deja este renglón dentro de la
+   columna. */
 @media (min-width: 480px) {
   .stack3d__tech {
     white-space: nowrap;
@@ -1146,22 +1265,81 @@
   }
 }
 
-/* ── Stack ──────────────────────────────────────────────────────────── */
+/* ── Stack ────────────────────────────────────────────────────────────
+   Escritorio: filas a la izquierda, pila fija a la derecha (debajo de la
+   píldora, centrada en el alto que queda). Móvil: la pila arriba, más
+   pequeña, y se va con la página. */
+.stack-layout {
+  display: grid;
+  gap: var(--sp-8);
+  align-items: start;
+}
+
+.stack-layout__stage {
+  width: 100%;
+  min-width: 0;
+  max-width: 20rem;
+  margin-inline: auto;
+}
+
 .stack-list {
+  min-width: 0;
   border-top: 1px solid var(--border);
+}
+
+@media (min-width: 1024px) {
+  .stack-layout {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+    column-gap: var(--sp-8);
+  }
+
+  .stack-list {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .stack-layout__stage {
+    grid-column: 2;
+    grid-row: 1;
+    position: sticky;
+    top: var(--nav-clear);
+    height: calc(100dvh - var(--nav-clear));
+    max-width: none;
+    margin-inline: 0;
+    display: grid;
+    align-content: center;
+    justify-items: center;
+  }
 }
 
 .stack-row {
   display: grid;
-  gap: var(--sp-3) var(--sp-8);
+  gap: var(--sp-3) var(--sp-6);
   padding-block: var(--sp-6);
   border-bottom: 1px solid var(--border);
 }
 
+/* Con la pila al lado la fila es más estrecha: el título y las tecnologías
+   arriba, la prueba debajo, para que ninguna columna se apriete. */
 @media (min-width: 1024px) {
   .stack-row {
-    grid-template-columns: 12rem minmax(0, 1.15fr) minmax(0, 1fr);
-    align-items: baseline;
+    grid-template-columns: minmax(0, 11.5rem) minmax(0, 1fr);
+    grid-template-areas:
+      "title tech"
+      "proof proof";
+    align-items: start;
+  }
+
+  .stack-row__title {
+    grid-area: title;
+  }
+
+  .stack-row__tech {
+    grid-area: tech;
+  }
+
+  .stack-row__proof {
+    grid-area: proof;
   }
 }
 
@@ -1186,11 +1364,11 @@
   font-weight: 600;
 }
 
-/* Pastilla de cristal del logotipo: el mismo lenguaje que las losas de la
-   portada (degradado cenital, filo de luz arriba, reflejo diagonal y sombra
-   corta), pero sin backdrop-filter: la fila se desplaza con la página y un
-   desenfoque ahí repintaría en cada fotograma (ver "Cristal" en AGENTS.md).
-   Estática: no se puede pulsar, así que no responde al hover. */
+/* Pastilla de cristal del logotipo: el mismo lenguaje que las losas (degradado
+   cenital, filo de luz arriba, reflejo diagonal y sombra corta), pero sin
+   backdrop-filter: la fila se desplaza con la página y un desenfoque ahí
+   repintaría en cada fotograma (ver "Cristal" en AGENTS.md). Estática: no se
+   puede pulsar, así que no responde al hover. */
 .stack-row__tile {
   position: relative;
   display: grid;
@@ -1295,7 +1473,7 @@
 }
 
 .stack-row__proof {
-  max-width: 44ch;
+  max-width: 62ch;
   color: var(--muted);
   font-size: 0.95rem;
   text-wrap: pretty;

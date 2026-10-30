@@ -218,6 +218,11 @@
   --stack-svg-core-glow: #4f5f73;
   --stack-svg-shade: #c8d6e6;
   --stack-svg-core-accent-glow: #e6c48e;
+  --stack-svg-rim: #f4f7fb;
+  --stack-svg-rim-shade: #05080c;
+  --stack-svg-inner: #f4f7fb;
+  --stack-svg-halo: #8ea0b8;
+  --stack-svg-halo-accent: #e6c48e;
   --stack-glass-edge: #05080c;
   --stack-env-base: #0f151d;
   --stack-env-key: #dfe6ef;
@@ -327,6 +332,11 @@
   /* Cantos y sombra de la cara: el gris del cristal de la escena. */
   --stack-svg-shade: #aab4c1;
   --stack-svg-core-accent-glow: #f6e3c2;
+  --stack-svg-rim: #ffffff;
+  --stack-svg-rim-shade: #34465e;
+  --stack-svg-inner: #ffffff;
+  --stack-svg-halo: #ffffff;
+  --stack-svg-halo-accent: #f6e3c2;
   --stack-glass-edge: #34465e;
   --stack-env-base: #c4ccd6;
   --stack-env-key: #f4f6f8;

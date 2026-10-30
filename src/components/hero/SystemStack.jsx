@@ -1,21 +1,23 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { VIEW, slabShape } from "./stackGeometry";
+import { useEffect, useLayoutEffect, useRef } from "react";
+import { VIEW, slabShape, RIM_GRADIENT } from "./stackGeometry";
+import { MOBILE_BREAKPOINT } from "@/lib/breakpoints";
 
 /**
- * La pila de la portada: las cuatro capas de un sistema (cliente, API, datos,
- * infraestructura) como losas de cristal con un núcleo luminoso dentro. Es la
- * pieza propia del sitio: cuenta en una imagen en qué capas trabajo, y la de
- * la API, que es la mía, va en latón.
- * Además es un índice: cada losa lleva a su grupo en la sección Stack.
+ * La pila de la sección Stack: las cuatro capas de un sistema (cliente, API,
+ * datos, infraestructura) como losas de cristal con un núcleo luminoso dentro.
+ * Es la pieza propia del sitio: cuenta en una imagen en qué capas trabajo, y
+ * la de la API, que es la mía, va en latón.
+ * Además es un índice: cada losa lleva a su grupo principal.
  *
  * Dos capas con el mismo dibujo:
  *
  *   1. Un SVG isométrico, en el HTML desde el build. Es el primer pintado, la
  *      entrada (las losas caen y se apilan, en CSS) y el respaldo sin WebGL.
- *   2. Una escena OGL que se carga DESPUÉS de esa entrada, en un fragmento
- *      aparte (~15 KB comprimidos), y sustituye al SVG en la misma pose. Gira
+ *   2. Una escena OGL que se precarga y se monta cuando la sección está a una
+ *      pantalla de distancia. Si llega a tiempo, la caída es suya y el SVG no
+ *      se ve. Si llega tarde, sigue la caída desde el progreso del CSS. Gira
  *      con el puntero, las losas se separan al desplazarse y la que está bajo
  *      el cursor se levanta. Pinta bajo demanda y se para fuera de pantalla.
  *
@@ -26,8 +28,10 @@ import { VIEW, slabShape } from "./stackGeometry";
  *
  * Hover: una sola fuente, `hover()`, que marca la losa y su etiqueta con
  * `data-active` y se lo pasa a la escena. La disparan la etiqueta (puntero y
- * foco) y la propia losa (puntero sobre el SVG, o el rayo de la escena). Un
- * clic o toque en una losa sigue el enlace de su etiqueta.
+ * foco), la propia losa (puntero sobre el SVG, o el rayo de la escena) y, en
+ * escritorio, la fila del stack que cruza la línea del 40%. El puntero tiene
+ * prioridad mientras está encima; al salir vuelve la de la lectura. Un clic
+ * o toque en una losa sigue el enlace de su etiqueta.
  *
  * El árbol es idéntico en servidor y cliente: la escena y el hover sólo tocan
  * atributos `data-*` desde efectos y manejadores.
@@ -39,11 +43,16 @@ export default function SystemStack({ layers }) {
   const slabRefs = useRef([]);
   const sceneRef = useRef(null);
   const activeRef = useRef(-1);
+  const pointerRef = useRef(-1);
+  const readRef = useRef(-1);
 
-  const hover = (index) => {
+  /** Puntero (o foco) si está encima; si no, la losa de la fila que se lee. */
+  const applyHover = () => {
+    const index = pointerRef.current >= 0 ? pointerRef.current : readRef.current;
     if (activeRef.current === index) return;
     activeRef.current = index;
     const wrap = wrapRef.current;
+    if (!wrap) return;
     if (index >= 0) wrap.dataset.hover = "";
     else delete wrap.dataset.hover;
     [labelRefs.current, slabRefs.current].forEach((els) =>
@@ -56,6 +65,21 @@ export default function SystemStack({ layers }) {
     sceneRef.current?.setHover(index);
   };
 
+  const hover = (index) => {
+    pointerRef.current = index;
+    applyHover();
+  };
+
+  /* La lectura entra por la misma `applyHover` que el puntero. El ref se
+     actualiza en un efecto: escribirlo durante el render está prohibido. */
+  const readHover = useRef(() => {});
+  useEffect(() => {
+    readHover.current = (index) => {
+      readRef.current = index;
+      applyHover();
+    };
+  });
+
   /** La losa bajo el puntero: el rayo de la escena si está activa; si no (o
       si perdió el contexto y volvió el SVG), el polígono del SVG. */
   const pick = (e) => {
@@ -65,19 +89,68 @@ export default function SystemStack({ layers }) {
     return g ? Number(g.dataset.index) : -1;
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const wrap = wrapRef.current;
     let disposed = false;
     let canvas = null;
 
-    // El fragmento de la escena se descarga YA, en paralelo con la entrada;
-    // se monta cuando las losas terminan de caer (~1.45s, ver `slab-drop` en
-    // home.css), sin esperar a un momento inactivo: antes el SVG (sin
-    // cristal) se veía hasta 3s y el relevo se notaba como un parpadeo.
-    const scene = import("./stackScene");
+    let force = null;
+    if (process.env.NODE_ENV !== "production") {
+      const value = new URLSearchParams(window.location.search).get("stack");
+      if (value === "svg" || value === "gl") {
+        force = value;
+        wrap.dataset.force = value;
+      }
+    }
+
+    const rect = wrap.getBoundingClientRect();
+    const seen = rect.bottom > 0 && rect.top < window.innerHeight;
+    let played = seen;
+    if (!seen) wrap.dataset.armed = "";
+
+    const play = () => {
+      if (played) return;
+      played = true;
+      wrap.dataset.play = "";
+      sceneRef.current?.playDrop();
+    };
+
+    // El fragmento se precarga ya. La escena se MONTA cuando la sección está
+    // a una pantalla de distancia, para que la caída ocurra en WebGL y el
+    // SVG no llegue a verse.
+    const scenePromise = import("./stackScene");
+
+    const readCssDrop = () => {
+      let elapsed = 0;
+      let any = false;
+      let allDone = true;
+      for (const el of slabRefs.current) {
+        if (!el) continue;
+        const anim = [...el.getAnimations()].find((a) => a.animationName === "slab-drop");
+        if (!anim) continue;
+        any = true;
+        const t = Number(anim.currentTime) || 0;
+        elapsed = Math.max(elapsed, t);
+        const end = anim.effect?.getComputedTiming?.().endTime ?? Infinity;
+        if (anim.playState !== "finished" && t < end - 16) allDone = false;
+      }
+      if (!any) return wrap.dataset.play != null ? { mode: "running", elapsed: 0 } : { mode: "pending", elapsed: 0 };
+      if (allDone) return { mode: "done", elapsed };
+      return { mode: "running", elapsed };
+    };
+
     const start = async () => {
-      const { mountStack } = await scene;
-      if (disposed) return;
+      if (disposed || force === "svg") return;
+      const { mountStack } = await scenePromise;
+      if (disposed || force === "svg") return;
+      // Un fotograma para que, si la caída CSS acaba de arrancar, el navegador
+      // ya tenga la animación y se pueda leer su progreso.
+      await new Promise((resolve) => requestAnimationFrame(resolve));
+      if (disposed || force === "svg") return;
+
+      const drop = seen ? { mode: "skip", elapsed: 0 } : readCssDrop();
+      const reveal = drop.mode === "pending" ? "gl" : drop.mode === "running" ? "handoff" : "fade";
+
       // El lienzo se crea aquí, no en el JSX: cada montaje estrena uno con su
       // propio contexto. Reutilizar el del montaje anterior (lo que hace una
       // recarga en caliente) lo daba ya liberado y se quedaba el SVG.
@@ -85,27 +158,118 @@ export default function SystemStack({ layers }) {
       canvas.className = "stack3d__canvas";
       canvas.setAttribute("aria-hidden", "true");
       wrap.insertBefore(canvas, wrap.querySelector(".stack3d__labels"));
-      // Que el navegador registre su opacidad 0 antes de que la escena ponga
-      // `data-ready`: así el relevo con el SVG es un fundido y no un salto.
       canvas.getBoundingClientRect();
+
       sceneRef.current = mountStack({
         wrap,
         canvas,
         labels: labelRefs.current,
         accentIndex: layers.findIndex((l) => l.id === "api"),
         count: layers.length,
+        reveal,
+        drop,
       });
-      if (activeRef.current >= 0) sceneRef.current?.setHover(activeRef.current);
+
+      if (!sceneRef.current) {
+        canvas.remove();
+        canvas = null;
+        delete wrap.dataset.gl;
+        if (force === "gl") delete wrap.dataset.force;
+        return;
+      }
+      if (activeRef.current >= 0) sceneRef.current.setHover(activeRef.current);
+      if (played && drop.mode === "pending") sceneRef.current.playDrop();
     };
 
-    const timer = setTimeout(start, 1450);
+    const near = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        near.disconnect();
+        start();
+      },
+      { rootMargin: "100% 0px 100% 0px" },
+    );
+    near.observe(wrap);
+
+    let enter = null;
+    if (!seen) {
+      enter = new IntersectionObserver(
+        (entries) => {
+          if (!entries.some((entry) => entry.isIntersecting)) return;
+          enter.disconnect();
+          play();
+        },
+        { threshold: 0.01 },
+      );
+      enter.observe(wrap);
+    }
 
     return () => {
       disposed = true;
-      clearTimeout(timer);
+      near.disconnect();
+      enter?.disconnect();
       sceneRef.current?.dispose();
       sceneRef.current = null;
       canvas?.remove();
+      delete wrap.dataset.armed;
+      delete wrap.dataset.play;
+      delete wrap.dataset.gl;
+      delete wrap.dataset.handoff;
+      delete wrap.dataset.ready;
+      delete wrap.dataset.settled;
+      delete wrap.dataset.force;
+    };
+  }, [layers]);
+
+  /* Resaltado de lectura, el mismo criterio que el scroll-spy: la fila que
+     cruza una línea al 40% de la altura levanta su losa. Sólo en escritorio;
+     en móvil la pila ya no está a la vista cuando se leen las filas. Sin
+     estado de React: el observer escribe en la misma fuente que el puntero. */
+  useEffect(() => {
+    const rows = layers.flatMap((layer, index) =>
+      layer.groups.map((group) => ({ index, el: document.getElementById(`stack-${group}`) })).filter((row) => row.el),
+    );
+    const crossing = new Set();
+    let observer = null;
+    const mq = window.matchMedia(`(min-width: ${MOBILE_BREAKPOINT}px)`);
+
+    const showReading = (index) => readHover.current(index);
+
+    const sync = () => {
+      if (!mq.matches) {
+        crossing.clear();
+        showReading(-1);
+        return;
+      }
+      const current = rows.find((row) => crossing.has(row.el));
+      showReading(current ? current.index : -1);
+    };
+
+    const connect = () => {
+      observer?.disconnect();
+      crossing.clear();
+      if (!mq.matches) {
+        showReading(-1);
+        return;
+      }
+      observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) crossing.add(entry.target);
+            else crossing.delete(entry.target);
+          });
+          sync();
+        },
+        { rootMargin: "-40% 0px -59% 0px", threshold: 0 },
+      );
+      rows.forEach((row) => observer.observe(row.el));
+    };
+
+    connect();
+    mq.addEventListener("change", connect);
+    return () => {
+      observer?.disconnect();
+      mq.removeEventListener("change", connect);
     };
   }, [layers]);
 
@@ -140,6 +304,27 @@ export default function SystemStack({ layers }) {
             <stop offset="0" className="stack3d__stop is-body-hi" />
             <stop offset="1" className="stack3d__stop is-body-lo" />
           </linearGradient>
+          <linearGradient
+            id="stack3d-rim"
+            gradientUnits="userSpaceOnUse"
+            x1={RIM_GRADIENT.x1}
+            y1={RIM_GRADIENT.y1}
+            x2={RIM_GRADIENT.x2}
+            y2={RIM_GRADIENT.y2}
+          >
+            <stop offset="0" className="stack3d__stop is-rim" />
+            <stop offset="1" className="stack3d__stop is-rim-shade" />
+          </linearGradient>
+          <radialGradient id="stack3d-halo">
+            <stop offset="0" className="stack3d__stop is-halo-in" />
+            <stop offset="0.62" className="stack3d__stop is-halo" />
+            <stop offset="1" className="stack3d__stop is-halo-out" />
+          </radialGradient>
+          <radialGradient id="stack3d-halo-accent">
+            <stop offset="0" className="stack3d__stop is-halo-accent-in" />
+            <stop offset="0.62" className="stack3d__stop is-halo-accent" />
+            <stop offset="1" className="stack3d__stop is-halo-out" />
+          </radialGradient>
           <radialGradient id="stack3d-core">
             <stop offset="0" className="stack3d__stop is-core-glow" />
             <stop offset="1" className="stack3d__stop is-core" />
@@ -168,9 +353,11 @@ export default function SystemStack({ layers }) {
                 {/* Cristal: la silueta (los cantos), el núcleo que se ve
                     dentro y la cara superior translúcida encima. */}
                 <polygon points={shape.body} className="stack3d__face is-left" />
+                <polygon points={shape.halo} className="stack3d__halo" />
                 <polygon points={shape.core} className="stack3d__core" />
                 <polygon points={shape.top} className="stack3d__face is-top" />
-                <path d={shape.rim} className="stack3d__rim" />
+                <path d={shape.inner} className="stack3d__inner" />
+                <path d={shape.outline} className="stack3d__rim" />
               </g>
             </g>
           ))}
