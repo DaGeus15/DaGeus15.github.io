@@ -6,12 +6,13 @@ import { projectPath } from "@/lib/locales";
 /**
  * Trabajo seleccionado: primero de la página, porque con un año de
  * experiencia los sistemas construidos son la prueba más fuerte. Rejilla
- * asimétrica: KAPHIY (en producción) a todo el ancho, cuatro en 7 + 5 / 5 + 7
- * y el sexto cierra otra vez a todo el ancho. Con un número impar en medio
- * quedaría una tarjeta de 5 columnas sola. Todos llevan a su caso de estudio.
- * Al final, el resto del código en GitHub, para quien quiera más que seis.
+ * asimétrica: KAPHIY (en producción) a todo el ancho y los otros seis en
+ * filas de 7 + 5 / 5 + 7 / 7 + 5. Si cambia el número, que las filas sigan
+ * cerrando: con uno de más quedaría una tarjeta de 5 columnas sola. Todos
+ * llevan a su caso de estudio. Al final, el resto del código en GitHub, para
+ * quien quiera más que siete.
  */
-const SIZES = ["wide", "large", "small", "small", "large", "wide"];
+const SIZES = ["wide", "large", "small", "small", "large", "large", "small"];
 
 export default function Projects({ t }) {
   const { ui, lang } = t;

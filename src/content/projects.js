@@ -62,6 +62,17 @@ const fiado = {
   verified: shot("fiado", "biometric-verified", 865, 613),
 };
 
+/* Helpdesk: el panel en producción. La conversación de las capturas es de
+   demostración ("María · demo") y su correo va difuminado. */
+const helpdesk = {
+  chat: shot("helpdesk", "operator-chat", 1372, 890),
+  summary: shot("helpdesk", "advisor-summary", 1372, 890),
+  metrics: shot("helpdesk", "metrics", 1372, 890),
+  courses: shot("helpdesk", "courses", 1372, 890),
+  landing: shot("helpdesk", "public-landing", 1372, 890),
+  login: shot("helpdesk", "mobile-login", 647, 1400),
+};
+
 const gasoline = {
   routes: shot("gasoline", "routes", 1126, 664),
   vehicles: shot("gasoline", "vehicles", 1126, 652),
@@ -143,6 +154,60 @@ export const projects = [
         { from: "api", to: "db" },
         { from: "api", to: "kitchen", label: "WebSocket" },
         { from: "api", to: "erp", label: "REST", async: true },
+      ],
+    },
+  },
+  {
+    id: "helpdesk",
+    year: "2026",
+    context: "Hackathon · UTA",
+    /* Sin `value` en la primera: "85 min" se traduce. */
+    metrics: [{ key: "time" }, { key: "eval", value: "19/19" }, { key: "tests", value: "46" }, { key: "fallback", value: "5" }],
+    tech: [
+      "NestJS",
+      "TypeScript",
+      "Supabase",
+      "PostgreSQL",
+      "Gemini API",
+      "grammY",
+      "zod",
+      "React",
+      "Vite",
+      "Tailwind CSS",
+      "GitHub Actions",
+      "Render",
+      "Vercel",
+    ],
+    repo: "https://github.com/DaGeus15/helpdesk_agent_uta",
+    live: "https://helpdesk-agent-uta.vercel.app/contacto",
+    cover: helpdesk.chat,
+    inset: helpdesk.login,
+    gallery: [helpdesk.chat, helpdesk.summary, helpdesk.metrics, helpdesk.courses, helpdesk.landing, helpdesk.login],
+    /* La API es una caja alta: cada conexión entra recta. El panel lee de
+       Supabase en tiempo real y escribe por la API, que es la decisión que
+       el diagrama tiene que enseñar. */
+    diagram: {
+      width: 640,
+      height: 260,
+      nodes: [
+        { id: "telegram", label: "Telegram", x: 82, y: 40, tech: "grammY" },
+        { id: "dashboard", x: 82, y: 135, tech: "React · Vercel" },
+        { id: "db", label: "Supabase", x: 82, y: 230, tech: "Postgres · RLS" },
+        { id: "api", label: "API", x: 300, y: 135, h: 236, accent: true, tech: "NestJS · Render" },
+        { id: "llm", label: "Gemini", x: 530, y: 40, tech: "JSON · zod" },
+        { id: "guardrails", x: 530, y: 103, tech: "pre · post" },
+        { id: "catalog", x: 530, y: 167, tech: "scraping · 6 h" },
+        { id: "enrollment", x: 530, y: 230, tech: "Google Form" },
+      ],
+      edges: [
+        { from: "telegram", to: "api", label: "webhook" },
+        { from: "dashboard", to: "api", label: "REST" },
+        { from: "api", to: "db" },
+        { from: "db", to: "dashboard", label: "Realtime", async: true },
+        { from: "api", to: "llm" },
+        { from: "api", to: "guardrails" },
+        { from: "api", to: "catalog" },
+        { from: "api", to: "enrollment" },
       ],
     },
   },

@@ -1,7 +1,8 @@
 /**
  * Convierte las capturas extraídas de los documentos en WebP para la web.
  *
- *   node scripts/projects/build-shots.mjs
+ *   node scripts/projects/build-shots.mjs            (todas)
+ *   node scripts/projects/build-shots.mjs helpdesk   (sólo un proyecto)
  *
  * Web: ancho máximo 1600px. Móvil: alto máximo 1400px. Calidad 82.
  */
@@ -9,9 +10,14 @@ import sharp from "sharp";
 import { mkdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { SOURCE_ROOT } from "./source-map.mjs";
+import * as sources from "./source-map.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
+const only = process.argv[2];
+
+/** Carpeta de origen de un proyecto: la suya en `ROOTS` (las capturas del
+    helpdesk viven en su propio repositorio) o la de los informes. */
+const sourceRoot = (project) => sources.ROOTS?.[project] ?? sources.SOURCE_ROOT;
 
 // [proyecto, origen (relativo a SOURCE_ROOT), salida, "web" | "mobile", opciones]
 // opciones.cropTop: px de barra del navegador a quitar (en px de origen).
@@ -69,6 +75,15 @@ const SHOTS = [
   ["safetrade", "techstore/word/media/image20.png", "catalog", "web", { cropTop: 40 }],
   ["safetrade", "techstore/word/media/image22.jpeg", "mobile-product", "mobile"],
   ["safetrade", "techstore/word/media/image17.png", "azure-resources", "web"],
+
+  // Helpdesk: capturas del panel en producción. El correo de la conversación de
+  // demostración es inventado pero usa el dominio real de la UTA: difuminado.
+  ["helpdesk", "panel-chat.jpg", "operator-chat", "web", { blur: [[814, 530, 146, 22], [385, 549, 36, 20], [898, 655, 174, 22]] }],
+  ["helpdesk", "panel-resumen.jpg", "advisor-summary", "web", { blur: [[814, 530, 146, 22], [385, 549, 36, 20], [898, 655, 174, 22]] }],
+  ["helpdesk", "panel-metricas.jpg", "metrics", "web"],
+  ["helpdesk", "panel-cursos.jpg", "courses", "web"],
+  ["helpdesk", "landing-contacto.jpg", "public-landing", "web"],
+  ["helpdesk", "login-movil.jpg", "mobile-login", "mobile"],
 ];
 
 /** El recuadro de la cámara, difuminado, con el óvalo guía y su anillo redibujados. */
@@ -95,9 +110,10 @@ async function faceCover(path, { rect: [left, top, width, height], radius, oval:
 }
 
 for (const [project, src, name, kind, opts = {}] of SHOTS) {
+  if (only && project !== only) continue;
   const outDir = join(root, "public", "assets", "projects", project);
   mkdirSync(outDir, { recursive: true });
-  const path = join(SOURCE_ROOT, src);
+  const path = join(sourceRoot(project), src);
   const meta = await sharp(path).metadata();
   const blurs = [];
   for (const [left, top, width, height] of opts.blur ?? []) {

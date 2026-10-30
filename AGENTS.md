@@ -46,7 +46,10 @@ silencio.
   contexto (`scope` en `copy.js`). En Fiado lo mío es el flujo biométrico
   (prueba de vida, comparación con la cédula, traspaso al celular), el
   registro y la sesión, y la portada; los simuladores y el panel son del
-  equipo. Lo mismo para cualquier proyecto de
+  equipo. El asistente de cursos CTT-FISEI (hackathon) lo hizo sola, pero
+  el código lo escribieron agentes de IA que orquestó (Claude Code y Cursor
+  CLI): el rol lo dice tal cual y no sale en las notas, que son código
+  suyo. Lo mismo para cualquier proyecto de
   equipo. En la experiencia, cada web pública del puesto lleva una nota
   que dice qué es (`linkText` en `copy.js`): Migo es el producto de la
   empresa, no lo hice yo; la documentación de su API sí la publiqué yo.

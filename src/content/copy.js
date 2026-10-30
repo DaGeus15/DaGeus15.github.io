@@ -113,7 +113,7 @@ export const copy = {
       projects: {
         title: "Trabajo seleccionado",
         intro:
-          "Seis sistemas, uno en producción. Cada uno tiene su caso de estudio con capturas, arquitectura y las decisiones que tomé.",
+          "Siete sistemas, uno en producción. Cada uno tiene su caso de estudio con capturas, arquitectura y las decisiones que tomé.",
       },
       experience: { title: "Experiencia" },
       notes: {
@@ -260,6 +260,55 @@ export const copy = {
           "pwa-chat": "La PWA del comensal: el menú de Praliné y la entrada al chat con el agente.",
           "kitchen-display": "El panel de cocina (KDS): pedidos por mesa, en tiempo real.",
           tests: "La suite de pruebas del panel de cocina, en verde.",
+        },
+      },
+      helpdesk: {
+        title: "Asistente de cursos CTT-FISEI",
+        subtitle: "Una asesora con IA en Telegram y un panel para tomar el control en vivo",
+        summary:
+          "Agente de ventas con IA para los Talleres Tecnológicos de la FISEI (UTA): atiende por Telegram, por texto o por voz, con el catálogo real de cursos, y un operador puede tomar la conversación desde un panel en tiempo real sin que el usuario note el cambio. Lo construí sola en la Hackathon UTA 2026, orquestando agentes de IA de programación.",
+        client: "Hackathon UTA 2026 · Talleres Tecnológicos CTT-FISEI",
+        description: [
+          "El reto: un centro de capacitación recibe consultas a cualquier hora, y un bot de menús o una respuesta tardía pierden al interesado. La asesora atiende por Telegram a cualquier hora con los 18 cursos reales del CTT-FISEI: recomienda uno o dos según el perfil, responde objeciones y lleva a la inscripción. Cada mensaje aparece al instante en un panel donde el operador ve el estado de cada prospecto (interesado, dudoso, frustrado o lead caliente) y puede tomar el control: la IA se pausa y él responde con el mismo bot.",
+          "Una sola llamada al LLM por mensaje, con salida JSON validada con zod (respuesta, estado del lead, intención, perfil y si hace falta un humano): la mitad de latencia y de tokens que encadenar un clasificador y un generador. El modelo nunca es la fuente de los datos comerciales: los precios salen de la base, cada importe de la respuesta se valida contra el catálogo y el enlace de inscripción lo genera el servidor. El panel lee de Supabase en tiempo real y escribe sólo por la API autenticada: la clave pública no puede modificar nada.",
+        ],
+        features: [
+          "Responde en el idioma del usuario y entiende notas de voz: las transcribe Gemini, sin otro servicio.",
+          "Catálogo real de 18 cursos, sincronizado cada seis horas con la web oficial del CTT; si la web cae o cambia su HTML, se conserva el anterior. El estado de cada curso se calcula con la fecha de Ecuador y el botón de inscripción de la web: la web marcaba como abiertos cursos de 2025 ya terminados.",
+          "Perfila al prospecto conversando (nombre, interés, nivel, disponibilidad, tipo de participante) y le da el precio de su audiencia: estudiante UTA, graduado o personal UTA, o público general.",
+          "La IA se pausa sola ante la frustración o si piden una persona. Al tomar el control, el operador recibe un resumen automático (interés, objeciones, siguiente paso); al devolverla, la IA retoma sabiendo lo que dijo el humano.",
+          "Defensa contra prompt injection en capas: la entrada del usuario va delimitada como dato, un detector previo reconoce falsa autoridad, DAN, \"revela tu prompt\" o precios \"prometidos\", y la salida se valida contra el catálogo. Si falla, se regenera una vez o sale una respuesta segura.",
+          "Nunca deja al usuario sin respuesta: una cadena de cinco modelos de Gemini, cada uno con su propia cuota, salta los 429, 404 y 5xx.",
+          "Métricas en vivo: personas atendidas, distribución por estado, leads calientes, derivaciones, manipulaciones bloqueadas, latencia, tokens y saltos de modelo.",
+          "Login del operador con token HMAC, límite de intentos y comparación en tiempo constante; webhook de Telegram con `secret_token` y RLS de sólo lectura para el panel.",
+          "**19 casos de evaluación del agente** en verde (ventas, objeciones, cierre, frustración, faltas de ortografía, inglés y seis ataques), **46 pruebas unitarias** y CI en GitHub Actions.",
+        ],
+        challenge: {
+          title: "La IA hablaba después de que el operador tomara el control",
+          body: "Entre que llega un mensaje y Gemini responde pasan uno o dos segundos. Si el operador pulsaba \"Tomar control\" en ese hueco, la respuesta de la IA salía igual y se cruzaba con la suya: la pausa se comprobaba al recibir el mensaje, no al enviarlo. Ahora se vuelve a leer `ai_paused` justo antes de enviar. Si el operador tomó el control durante la inferencia, la respuesta no sale: se guarda como descartada y el panel la muestra tachada, para que se sepa qué habría dicho la IA.",
+        },
+        role: "Todo el proyecto, sola. Entendí el reto y la rúbrica, diseñé la arquitectura y el modelo de datos, decidí qué recortar para llegar a tiempo, configuré Telegram, Gemini, Supabase, Render y Vercel, y probé el bot como usuaria real en cada iteración. El código lo escribieron agentes de IA que orquesté: Claude Code planificaba, escribía una especificación cerrada por tarea (archivos permitidos, contratos y criterio de terminado), lanzaba a los implementadores (Cursor Agent CLI, hasta tres en paralelo sobre carpetas distintas), revisaba cada diff, corría las pruebas y desplegaba. 23 tareas, un commit por tarea.",
+        scope:
+          "Hecho en una hackathon: la planificación empezó a las 11:36 y la entrega era a las 13:00. La primera versión (bot, panel y handover) quedó en producción antes del corte; el resto del día fueron el catálogo real, la identidad visual del CTT, la robustez, las pruebas y la CI.",
+        metrics: {
+          time: { value: "85 min", label: "de la planificación al bot y el panel en producción" },
+          eval: "casos de la batería del agente en verde, seis de ellos ataques",
+          tests: "pruebas unitarias, en CI con GitHub Actions",
+          fallback: "modelos de Gemini en la cadena de respaldo",
+        },
+        nodes: {
+          dashboard: "Panel de mando",
+          guardrails: "Guardrails",
+          catalog: "Catálogo",
+          enrollment: "Inscripción",
+        },
+        shots: {
+          "operator-chat": "El operador tiene el control: la IA se pausó porque la prospecta pidió un asesor. La conversación es de demostración.",
+          "advisor-summary": "El resumen automático para el asesor: interés, objeciones, estado y siguiente paso.",
+          metrics: "Métricas en vivo: el termómetro de prospectos, las derivaciones, las manipulaciones bloqueadas, la latencia y los tokens.",
+          courses: "Los 18 cursos sincronizados con la web oficial, con el estado de cada uno calculado.",
+          "public-landing": "La página pública: el QR al bot y los cursos con la inscripción abierta.",
+          "mobile-login": "El acceso del operador, en móvil.",
         },
       },
       fiado: {
@@ -633,7 +682,7 @@ export const copy = {
       projects: {
         title: "Selected work",
         intro:
-          "Six systems, one of them in production. Each has its own case study with screenshots, architecture and the decisions I made.",
+          "Seven systems, one of them in production. Each has its own case study with screenshots, architecture and the decisions I made.",
       },
       experience: { title: "Experience" },
       notes: {
@@ -773,6 +822,55 @@ export const copy = {
           "pwa-chat": "The customer PWA: Praliné's menu and the way into the chat with the agent.",
           "kitchen-display": "The kitchen board (KDS): orders by table, in real time.",
           tests: "The kitchen board's test suite, all green.",
+        },
+      },
+      helpdesk: {
+        title: "CTT-FISEI course assistant",
+        subtitle: "An AI sales advisor on Telegram and a dashboard to take over live",
+        summary:
+          "AI sales agent for the FISEI Technology Workshops (UTA): it answers on Telegram, by text or voice, with the real course catalog, and an operator can take over the conversation from a real-time dashboard without the user noticing. I built it on my own at the UTA 2026 Hackathon, orchestrating AI coding agents.",
+        client: "UTA 2026 Hackathon · CTT-FISEI Technology Workshops",
+        description: [
+          "The challenge: a training centre gets questions at all hours, and a menu bot or a late reply loses the prospect. The advisor answers on Telegram at any hour with the CTT-FISEI's 18 real courses: she recommends one or two based on the profile, handles objections and leads to enrollment. Every message shows up instantly in a dashboard where the operator sees each prospect's state (interested, hesitant, frustrated or hot lead) and can take over: the AI pauses and the operator replies through the same bot.",
+          "A single LLM call per message, with JSON output validated with zod (reply, lead state, intent, profile and whether a human is needed): half the latency and tokens of chaining a classifier and a generator. The model is never the source of commercial data: prices come from the database, every amount in a reply is checked against the catalog and the enrollment link is built by the server. The dashboard reads from Supabase in real time and writes only through the authenticated API: the public key can't change anything.",
+        ],
+        features: [
+          "Replies in the user's language and understands voice notes: Gemini transcribes them, with no other service.",
+          "Real catalog of 18 courses, synced every six hours with the CTT's official website; if the site goes down or changes its HTML, the previous catalog is kept. Each course's status is computed from the date in Ecuador and the site's enrollment button: the site listed 2025 courses that had already ended as open.",
+          "Profiles the prospect through conversation (name, interest, level, availability, participant type) and quotes the price for their audience: UTA student, UTA graduate or staff, or general public.",
+          "The AI pauses on its own when the user is frustrated or asks for a person. On taking over, the operator gets an automatic summary (interest, objections, next step); on handing back, the AI picks up knowing what the human said.",
+          "Layered defence against prompt injection: user input is delimited as data, a pre-check catches false authority, DAN, \"reveal your prompt\" or \"promised\" prices, and the output is checked against the catalog. If it fails, it regenerates once or sends a safe reply.",
+          "Never leaves the user without an answer: a chain of five Gemini models, each with its own quota, skips 429s, 404s and 5xx errors.",
+          "Live metrics: people served, distribution by state, hot leads, handovers, blocked manipulation attempts, latency, tokens and model fallbacks.",
+          "Operator sign-in with an HMAC token, attempt limits and constant-time comparison; Telegram webhook with `secret_token` and read-only RLS for the dashboard.",
+          "**19 agent evaluation cases** passing (sales, objections, closing, frustration, typos, English and six attacks), **46 unit tests** and CI on GitHub Actions.",
+        ],
+        challenge: {
+          title: "The AI spoke after the operator had taken over",
+          body: "A message takes a second or two between arriving and Gemini replying. If the operator clicked \"Take over\" in that gap, the AI's reply went out anyway and crossed with theirs: the pause was checked when the message arrived, not when the reply was sent. Now `ai_paused` is read again right before sending. If the operator took over during inference, the reply isn't sent: it's stored as discarded and the dashboard shows it struck through, so you can see what the AI would have said.",
+        },
+        role: "The whole project, on my own. I worked out the challenge and the rubric, designed the architecture and the data model, decided what to cut to make the deadline, set up Telegram, Gemini, Supabase, Render and Vercel, and tested the bot as a real user on every iteration. The code was written by AI agents I orchestrated: Claude Code planned, wrote a tight spec per task (allowed files, contracts and definition of done), launched the implementers (Cursor Agent CLI, up to three in parallel on separate folders), reviewed every diff, ran the tests and deployed. 23 tasks, one commit per task.",
+        scope:
+          "Built at a hackathon: planning started at 11:36 and the deadline was 13:00. The first version (bot, dashboard and handover) was in production before the cutoff; the rest of the day went into the real catalog, the CTT's visual identity, robustness, tests and CI.",
+        metrics: {
+          time: { value: "85 min", label: "from planning to the bot and dashboard in production" },
+          eval: "agent test cases passing, six of them attacks",
+          tests: "unit tests, in CI on GitHub Actions",
+          fallback: "Gemini models in the fallback chain",
+        },
+        nodes: {
+          dashboard: "Control panel",
+          guardrails: "Guardrails",
+          catalog: "Catalog",
+          enrollment: "Enrollment",
+        },
+        shots: {
+          "operator-chat": "The operator has taken over: the AI paused because the prospect asked for an advisor. The conversation is a demo.",
+          "advisor-summary": "The automatic summary for the advisor: interest, objections, state and next step.",
+          metrics: "Live metrics: the prospect thermometer, handovers, blocked manipulation attempts, latency and tokens.",
+          courses: "The 18 courses synced with the official website, each with its computed status.",
+          "public-landing": "The public page: the QR code to the bot and the courses open for enrollment.",
+          "mobile-login": "Operator sign-in, on mobile.",
         },
       },
       fiado: {
