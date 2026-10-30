@@ -12,6 +12,7 @@
     "deploy": "gh-pages -d out --dotfiles",
     "og": "node scripts/og/build-og.mjs",
     "icons": "node scripts/brand/build-icons.mjs",
+    "portrait": "node scripts/brand/build-portrait.mjs",
     "shots": "node scripts/projects/build-shots.mjs"
   },
   "dependencies": {

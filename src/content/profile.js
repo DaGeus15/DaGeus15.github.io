@@ -11,9 +11,11 @@ export const profile = {
      se generan al construir y también se piden fuera de React. */
   role: "Software Engineer",
   email: "garciadayle2004@gmail.com",
-  /* Retrato completo: Sobre mí, datos estructurados. El recorte cuadrado de
-     cara y hombros (`public/dayle-avatar.jpg`) lo usa la imagen de vista
-     previa (`npm run og`); si cambia la foto, regenerá los dos. */
+  /* Retrato completo. Los datos estructurados usan esta ruta. La portada
+     usa las variantes WebP de `npm run portrait` (`content/portrait.js`).
+     El recorte de cara y hombros (`public/dayle-avatar.jpg`) es la imagen
+     de vista previa (`npm run og`) y el avatar de la portada en móvil; si
+     cambia la foto, regenerá los dos. */
   avatar: "/dayle.jpeg",
   /* Las dos versiones del CV: quien lee en español puede querer el inglés para
      mandarlo fuera, así que el botón ofrece ambas. */

@@ -53,3 +53,6 @@ scripts/projects/source-map.mjs
 
 # Registro local de skills instaladas (npx skills); las skills viven en .claude/skills/
 skills-lock.json
+
+# Cursor: skills (copia local de las de Claude) y encargos; herramienta de desarrollo.
+.cursor/

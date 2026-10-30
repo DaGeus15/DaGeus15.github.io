@@ -10,7 +10,7 @@
 }
 
 /* ── Portada ────────────────────────────────────────────────────────────
-   Dividida: texto a la izquierda, pila 3D a la derecha. Un solo punto de
+   Dividida: texto a la izquierda, retrato a la derecha. Un solo punto de
    corte de ventana, 1024px. */
 .hero {
   display: grid;
@@ -23,7 +23,7 @@
 
 @media (min-width: 1024px) {
   .hero {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
   }
 }
 
@@ -31,6 +31,10 @@
   .hero {
     min-height: 0;
     padding-top: var(--sp-10);
+    /* Sin la pila, el --sp-8 de abajo se sumaba al --sp-10 de la sección
+       siguiente y dejaba un hueco. El ritmo entre secciones ya es ese
+       --sp-10: aquí no se añade más. */
+    padding-bottom: 0;
   }
 }
 
@@ -46,12 +50,31 @@
    un punto verde que se ENCIENDE una vez al cargar, como una luz piloto, y
    se queda encendido. Sin latido: un pulso perpetuo distrae de todo lo
    demás y se lee como notificación. */
+/* En móvil el recorte va a la izquierda de la pastilla. La pastilla no se
+   parte: si no cabe en la fila, baja entera debajo del recorte. Si no hay
+   disponibilidad, el recorte se queda solo. En escritorio la fila vacía
+   (sin pastilla) no ocupa sitio. */
+.hero__lead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-5);
+}
+
+@media (min-width: 1024px) {
+  .hero__lead:not(:has(.availability)) {
+    display: none;
+  }
+}
+
 .availability {
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
+  flex-shrink: 0;
   min-height: 2.1rem;
-  margin-bottom: var(--sp-5);
+  white-space: nowrap;
   padding: 0 0.85rem 0 0.75rem;
   border-radius: var(--r-pill);
   border: 1px solid var(--tile-border);
@@ -178,8 +201,128 @@
   flex-shrink: 0;
 }
 
-.hero__visual {
+/* Retrato de escritorio: ficha mate, ancho acotado, centrada en su columna.
+   El pie (ubicación, ciudadanía) va debajo, en mono. No se pulsa: ni cursor
+   de mano ni hover. */
+.hero__portrait {
+  position: relative;
+  width: min(100%, 25rem);
+  justify-self: center;
+}
+
+.hero__shot {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--border);
+}
+
+/* La foto es más alta que 4:5. Se encuadra desde arriba: se pierde el borde
+   inferior, no la cabeza. width/height del archivo siguen en el <Image>. */
+.hero__shot img {
+  position: absolute;
+  inset: 0;
   width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.hero__portrait .hero__facts {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-2);
+  margin-top: var(--sp-4);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+}
+
+.hero__portrait .hero__facts li {
+  align-items: flex-start;
+}
+
+.hero__portrait .hero__facts svg {
+  margin-top: 0.2em;
+}
+
+/* El pie cuelga de la foto y no entra en el centrado de la rejilla: si
+   contara, la foto subiría y empezaría por encima de la pastilla. */
+@media (min-width: 1024px) {
+  .hero__portrait figcaption {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: 0;
+    padding-top: var(--sp-4);
+  }
+
+  .hero__portrait .hero__facts {
+    margin-top: 0;
+  }
+}
+
+/* Recorte de móvil: cara y hombros, en la fila de la disponibilidad. */
+.hero__avatar {
+  flex: none;
+  width: 4.5rem;
+  height: 4.5rem;
+  overflow: hidden;
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  background-image: var(--portrait-blur);
+  background-size: cover;
+  background-position: center;
+}
+
+.hero__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Entra con el nombre: opacidad, 8px y un scale mínimo. Sólo transform y
+   opacity. Con movimiento reducido, el mismo gesto en corto. */
+.hero__portrait.enter,
+.hero__avatar.enter {
+  animation: portrait-enter 600ms var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * var(--stagger) + 60ms);
+}
+
+@keyframes portrait-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(1.02);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__portrait.enter,
+  .hero__avatar.enter {
+    animation-name: portrait-enter-short;
+    animation-duration: 280ms;
+  }
+}
+
+@keyframes portrait-enter-short {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(1.01);
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero__avatar,
+  .hero__text > .hero__facts {
+    display: none;
+  }
+}
+
+@media (max-width: 1023px) {
+  .hero__portrait {
+    display: none;
+  }
 }
 
 /* ── Pila 3D (SystemStack.jsx) ──────────────────────────────────────────
@@ -1158,50 +1301,10 @@
   text-wrap: pretty;
 }
 
-/* ── Sobre mí ───────────────────────────────────────────────────────── */
-.about {
-  display: grid;
-  gap: var(--sp-8);
-}
-
-@media (min-width: 1024px) {
-  .about {
-    grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr);
-    align-items: start;
-  }
-
-  .about__portrait {
-    position: sticky;
-    top: var(--nav-clear);
-  }
-}
-
-/* El retrato, mate: una foto con su borde de 1px. Llegó a llevar una placa
-   de cristal, pero el cristal en todas partes deja de marcar jerarquía (ver
-   "Cristal" en AGENTS.md): se queda para lo que flota o se pulsa. */
-.about__portrait {
-  max-width: 26rem;
-}
-
-.about__portrait img {
-  width: 100%;
-  border-radius: var(--r-lg);
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-card);
-}
-
-/* En móvil, entero ocupaba la pantalla: recorte de cara y hombros, más
-   pequeño. Después de la regla base. */
-@media (max-width: 1023px) {
-  .about__portrait {
-    max-width: 17rem;
-  }
-
-  .about__portrait img {
-    aspect-ratio: 4 / 5;
-    object-fit: cover;
-    object-position: 50% 12%;
-  }
+/* ── Sobre mí ─────────────────────────────────────────────────────────
+   La bio a ancho de lectura. Las fichas, debajo, usan todo el ancho. */
+.about__text {
+  max-width: 68ch;
 }
 
 .about__lead:first-child {
