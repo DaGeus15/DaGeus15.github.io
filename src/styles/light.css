@@ -27,23 +27,10 @@ body {
   box-shadow: var(--shadow-card);
 }
 
-/* La ficha del retrato: el mismo degradado y la misma sombra larga. El
-   marcador borroso va encima del degradado (lo tapa en cuanto llega) para
-   que el hueco no se vea vacío. El `background` de arriba no sirve aquí:
-   pisaría la variable. */
-.hero__shot {
-  background-image: var(--portrait-blur), var(--surface-grad);
-  background-size: cover, auto;
-  background-repeat: no-repeat;
-  background-position: center top, center;
-  box-shadow: var(--shadow-card);
-}
-
 .work-card::before,
 .case-cover::before,
 .contact__form::before,
-.next-project::before,
-.hero__shot::before {
+.next-project::before {
   content: "";
   position: absolute;
   top: 0;

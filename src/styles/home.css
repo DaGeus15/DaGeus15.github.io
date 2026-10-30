@@ -10,19 +10,29 @@
 }
 
 /* ── Portada ────────────────────────────────────────────────────────────
-   Dividida: texto a la izquierda, retrato a la derecha. Un solo punto de
-   corte de ventana, 1024px. */
+   Dividida: texto a la izquierda, retrato a la derecha, sin ficha. El
+   lienzo sale del ancho de la página (el gutter) para que el halo pueda
+   apagarse antes del borde; `clip` lo recorta sin crear scroll. Un solo
+   punto de corte de ventana, 1024px. */
 .hero {
+  container-type: inline-size;
   display: grid;
-  align-items: center;
+  align-items: start;
   gap: var(--sp-8);
   min-height: min(100dvh, 60rem);
+  margin-inline: calc(var(--page-gutter) * -1);
   padding-top: calc(var(--nav-clear) + var(--sp-5));
   padding-bottom: var(--sp-8);
+  padding-inline: var(--page-gutter);
+  overflow-x: clip;
+  view-timeline-name: --hero-view;
 }
 
 @media (min-width: 1024px) {
   .hero {
+    /* La persona cede: el texto conserva la columna de antes. 26vw da
+       17rem a 1024 y ~23rem a 1440; el tope de 27rem queda más allá. */
+    --person: clamp(17rem, 26vw, 27rem);
     grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
   }
 }
@@ -30,10 +40,14 @@
 @media (max-width: 1023px) {
   .hero {
     min-height: 0;
-    padding-top: var(--sp-10);
-    /* Sin la pila, el --sp-8 de abajo se sumaba al --sp-10 de la sección
-       siguiente y dejaba un hueco. El ritmo entre secciones ya es ese
-       --sp-10: aquí no se añade más. */
+    /* Pista explícita: sin ella crece hasta el ancho del lienzo del retrato
+       y el centrado deja de centrar. */
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    /* La cabeza está a ~3% del lienzo. --sp-4 la deja entre 1.5 y 2.5rem
+       del borde en 320, 375 y 768, sin agrandar el retrato. Sin la pila,
+       el relleno de abajo se sumaba al de la sección siguiente. */
+    padding-top: var(--sp-4);
     padding-bottom: 0;
   }
 }
@@ -43,29 +57,18 @@
    su columna (`cqi`): en monitores grandes la raíz crece y "Daylé García"
    se partía en dos, dejando el nombre en tres líneas. */
 .hero__text {
+  position: relative;
+  z-index: 1;
   container-type: inline-size;
+  min-width: 0;
 }
 
 /* Disponibilidad: una pastilla de cristal (se pulsa: lleva al contacto) con
    un punto verde que se ENCIENDE una vez al cargar, como una luz piloto, y
    se queda encendido. Sin latido: un pulso perpetuo distrae de todo lo
    demás y se lee como notificación. */
-/* En móvil el recorte va a la izquierda de la pastilla. La pastilla no se
-   parte: si no cabe en la fila, baja entera debajo del recorte. Si no hay
-   disponibilidad, el recorte se queda solo. En escritorio la fila vacía
-   (sin pastilla) no ocupa sitio. */
-.hero__lead {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--sp-3);
+.hero__text > .availability {
   margin-bottom: var(--sp-5);
-}
-
-@media (min-width: 1024px) {
-  .hero__lead:not(:has(.availability)) {
-    display: none;
-  }
 }
 
 .availability {
@@ -201,91 +204,139 @@
   flex-shrink: 0;
 }
 
-/* Retrato de escritorio: ficha mate, ancho acotado, centrada en su columna.
-   El pie (ubicación, ciudadanía) va debajo, en mono. No se pulsa: ni cursor
-   de mano ni hover. */
+/* Retrato sin ficha. La persona ocupa ~47% del lienzo: el resto es la pared,
+   que ya viene transparente en el archivo. No se pulsa (ni cursor de mano
+   ni elevación): el filo es un resaltado de lectura. */
 .hero__portrait {
+  container-type: inline-size;
   position: relative;
-  width: min(100%, 25rem);
-  justify-self: center;
+  z-index: 0;
+  min-width: 0;
+  /* La blusa se disuelve. En claro se mantiene más: el marino sobre el
+     papel se leía como neblina. */
+  --portrait-fade: linear-gradient(to bottom, #000 50%, transparent 100%);
 }
 
-.hero__shot {
-  position: relative;
-  overflow: hidden;
-  aspect-ratio: 4 / 5;
-  border-radius: var(--r-lg);
-  border: 1px solid var(--border);
+[data-theme="light"] .hero__portrait {
+  --portrait-fade: linear-gradient(to bottom, #000 74%, transparent 100%);
 }
 
-/* La foto es más alta que 4:5. Se encuadra desde arriba: se pierde el borde
-   inferior, no la cabeza. width/height del archivo siguen en el <Image>. */
-.hero__shot img {
+.hero__photo,
+.hero__rim {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center top;
+  background: center / 100% 100% no-repeat;
+  mask-image: var(--portrait-fade);
 }
 
-.hero__portrait .hero__facts {
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--sp-2);
-  margin-top: var(--sp-4);
-  color: var(--muted);
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
+.hero__photo {
+  background-image: var(--portrait-photo);
 }
 
-.hero__portrait .hero__facts li {
-  align-items: flex-start;
+.hero__rim {
+  background-image: var(--portrait-rim);
 }
 
-.hero__portrait .hero__facts svg {
-  margin-top: 0.2em;
+.hero__rim--rest {
+  opacity: 0.16;
 }
 
-/* El pie cuelga de la foto y no entra en el centrado de la rejilla: si
-   contara, la foto subiría y empezaría por encima de la pastilla. */
-@media (min-width: 1024px) {
-  .hero__portrait figcaption {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    left: 0;
-    padding-top: var(--sp-4);
-  }
-
-  .hero__portrait .hero__facts {
-    margin-top: 0;
-  }
-}
-
-/* Recorte de móvil: cara y hombros, en la fila de la disponibilidad. */
-.hero__avatar {
-  flex: none;
-  width: 4.5rem;
-  height: 4.5rem;
+/* El foco: un círculo de bordes suaves deja ver el filo. Se mueve el
+   círculo; el filo de dentro va al revés y se queda quieto. En reposo el
+   círculo no se ve (opacidad 0): queda el filo tenue. */
+.hero__light {
+  position: absolute;
+  inset: 0;
   overflow: hidden;
-  border-radius: var(--r-md);
-  border: 1px solid var(--border);
-  background-image: var(--portrait-blur);
-  background-size: cover;
-  background-position: center;
+  pointer-events: none;
 }
 
-.hero__avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.hero__spot {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 16rem;
+  height: 16rem;
+  border-radius: 50%;
+  overflow: hidden;
+  opacity: 0;
+  mask-image: radial-gradient(closest-side, #000 25%, transparent 100%);
 }
 
-/* Entra con el nombre: opacidad, 8px y un scale mínimo. Sólo transform y
+.hero__spot-inner {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100cqi;
+  height: calc(100cqi * var(--portrait-ratio, 0.7708));
+}
+
+/* Táctil: el foco baja por el contorno mientras la portada sale. Sin
+   soporte de scroll-timeline no hay animación y queda el filo en reposo.
+   Nada al cargar: antes de salir, el círculo sigue en opacidad 0. */
+@supports (animation-timeline: view()) {
+  @media (pointer: coarse) {
+    .hero__spot {
+      animation: portrait-scan linear both;
+      animation-timeline: --hero-view;
+      animation-range: exit 0% exit 100%;
+      animation-duration: auto;
+    }
+
+    .hero__spot-inner {
+      animation: portrait-scan-back linear both;
+      animation-timeline: --hero-view;
+      animation-range: exit 0% exit 100%;
+      animation-duration: auto;
+    }
+  }
+}
+
+@keyframes portrait-scan {
+  from {
+    opacity: 0;
+    transform: translate(calc(50cqi - 8rem), calc(100cqi * var(--portrait-ratio, 0.7708) * 0.06 - 8rem));
+  }
+  18% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    transform: translate(calc(50cqi - 8rem), calc(100cqi * var(--portrait-ratio, 0.7708) * 0.72 - 8rem));
+  }
+}
+
+@keyframes portrait-scan-back {
+  from {
+    transform: translate(calc(8rem - 50cqi), calc(8rem - 100cqi * var(--portrait-ratio, 0.7708) * 0.06));
+  }
+  to {
+    transform: translate(calc(8rem - 50cqi), calc(8rem - 100cqi * var(--portrait-ratio, 0.7708) * 0.72));
+  }
+}
+
+/* Ratón: el círculo aparece al entrar y se apaga al salir, más rápido de
+   lo que entró. El recorrido lo lleva el spring, no esta transición. */
+@media (hover: hover) and (pointer: fine) {
+  .hero__spot,
+  .hero__spot-inner {
+    animation: none;
+  }
+
+  .hero__spot {
+    opacity: 0;
+    transition: opacity var(--dur-fast) var(--ease-out);
+  }
+
+  .hero__portrait[data-on] .hero__spot {
+    opacity: 1;
+    transition-duration: var(--dur-base);
+  }
+}
+
+/* Entra con el nombre: opacidad y un scale mínimo. Sólo transform y
    opacity. Con movimiento reducido, el mismo gesto en corto. */
-.hero__portrait.enter,
-.hero__avatar.enter {
+.hero__portrait.enter {
   animation: portrait-enter 600ms var(--ease-out) both;
   animation-delay: calc(var(--i, 0) * var(--stagger) + 60ms);
 }
@@ -293,35 +344,53 @@
 @keyframes portrait-enter {
   from {
     opacity: 0;
-    transform: translateY(8px) scale(1.02);
+    transform: scale(1.02);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero__portrait.enter,
-  .hero__avatar.enter {
-    animation-name: portrait-enter-short;
+  .hero__portrait.enter {
     animation-duration: 280ms;
   }
 }
 
-@keyframes portrait-enter-short {
-  from {
-    opacity: 0;
-    transform: translateY(4px) scale(1.01);
-  }
-}
-
 @media (min-width: 1024px) {
-  .hero__avatar,
-  .hero__text > .hero__facts {
-    display: none;
+  .hero__portrait {
+    /* El lienzo se apoya en el borde de la página, un rem antes del
+       recorte, para que el halo llegue a transparente. */
+    width: calc(var(--person) / 0.47);
+    justify-self: end;
+    margin-right: calc(1rem - var(--page-gutter));
   }
 }
 
 @media (max-width: 1023px) {
   .hero__portrait {
-    display: none;
+    order: -1;
+    /* La persona es el 65% del ancho. 74dvh la contiene en tablet,
+       donde a ese ancho el retrato se comería la frase. */
+    width: min(calc(65vw / 0.47), calc(74dvh / var(--portrait-ratio, 0.7708)));
+    max-height: 74dvh;
+    /* Desborda su pista: sin `unsafe`, el centrado se vuelve "seguro" y el
+       lienzo se alinea al inicio (la cara se salía por la derecha). */
+    justify-self: unsafe center;
+    /* El nombre puede pisar la blusa ya disuelta. */
+    margin-bottom: -36%;
+  }
+
+  /* En claro la tinta marina sobre la blusa no se lee: el texto empieza
+     debajo. Va después de la regla de arriba. */
+  [data-theme="light"] .hero__portrait {
+    margin-bottom: -8%;
+  }
+}
+
+/* 320×568: a 65vw la frase en claro se sale. El tope baja sólo aquí;
+   en 375 y más altas no hace falta y la persona se quedaría chica. */
+@media (max-width: 1023px) and (max-height: 600px) {
+  .hero__portrait {
+    width: min(calc(65vw / 0.47), calc(52dvh / var(--portrait-ratio, 0.7708)));
+    max-height: 52dvh;
   }
 }
 

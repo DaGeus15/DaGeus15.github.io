@@ -1,20 +1,37 @@
-import Image from "next/image";
 import { FiArrowDown, FiArrowRight, FiGlobe, FiMapPin } from "react-icons/fi";
 import CvDownload from "@/components/ui/CvDownload";
+import PortraitFocus from "@/components/hero/PortraitFocus";
 import portrait from "@/content/portrait";
 
 /**
- * Portada: quién soy a la izquierda y el retrato a la derecha. Cuatro piezas
- * de texto (nombre, rol, frase) y dos acciones. La ubicación y la ciudadanía
- * son el pie de la foto.
+ * Portada: el texto a la izquierda y el retrato a la derecha, sin ficha.
+ * El lienzo es más ancho que su columna (la pared se apaga hacia la página)
+ * y el texto va por encima. En móvil el retrato va arriba, a sangre, y se
+ * disuelve hacia el texto.
  *
- * En móvil no entra el retrato entero: el recorte de cara y hombros va en la
- * misma fila que la disponibilidad, y los datos quedan bajo las acciones.
- * Las dos piezas están siempre en el árbol; cuál se ve lo decide el CSS.
+ * La ubicación y la ciudadanía van debajo de las acciones, en todos los
+ * anchos: una sola lista.
  *
  * El nombre se parte a mano en dos líneas (nombre + apellidos) para que el
  * corte no dependa del ancho.
  */
+function imageSet(variants) {
+  const [lo, hi] = [...variants].sort((a, b) => a.w - b.w);
+  return `image-set(url("${lo.src}") 1x, url("${hi.src}") 2x)`;
+}
+
+/** Variables del tema. Sin `data-theme` (sin JS) queda el oscuro, el de serie. */
+function portraitVars() {
+  const block = (theme) => {
+    const photo = imageSet(portrait.photo[theme]);
+    const rim = imageSet(portrait.rim[theme]);
+    return `--portrait-photo:${photo};--portrait-rim:${rim};`;
+  };
+  return `.hero__portrait{${block("dark")}}
+[data-theme="dark"] .hero__portrait{${block("dark")}}
+[data-theme="light"] .hero__portrait{${block("light")}}`;
+}
+
 function HeroFacts({ profile, className = "hero__facts", style }) {
   return (
     <ul className={className} style={style}>
@@ -35,33 +52,18 @@ export default function Hero({ t }) {
   const words = profile.name.split(" ");
   const first = words.slice(0, 2).join(" ");
   const last = words.slice(2).join(" ");
-  const avatar = portrait.avatar[portrait.avatar.length - 1];
 
   return (
     <section id="top" className="hero" aria-labelledby="hero-title">
+      <style href="portrait-theme" precedence="default">{portraitVars()}</style>
       <div className="hero__text">
-        <div className="hero__lead">
-          <div
-            className="hero__avatar enter"
-            style={{ "--i": 0, "--portrait-blur": `url("${portrait.avatarBlur.src}")` }}
-          >
-            <Image
-              src={avatar.src}
-              alt={profile.name}
-              width={avatar.w}
-              height={avatar.h}
-              sizes="4.5rem"
-              loading="eager"
-            />
-          </div>
-          {profile.availability && (
-            <a href="#contact" className="availability enter" style={{ "--i": 0 }}>
-              <span className="availability__dot" aria-hidden="true" />
-              {profile.availability}
-              <FiArrowRight className="availability__arrow" aria-hidden="true" />
-            </a>
-          )}
-        </div>
+        {profile.availability && (
+          <a href="#contact" className="availability enter" style={{ "--i": 0 }}>
+            <span className="availability__dot" aria-hidden="true" />
+            {profile.availability}
+            <FiArrowRight className="availability__arrow" aria-hidden="true" />
+          </a>
+        )}
         <h1 id="hero-title" className="hero__name enter" style={{ "--i": 1 }}>
           <span>{first}</span> <span>{last}</span>
         </h1>
@@ -83,22 +85,20 @@ export default function Hero({ t }) {
         <HeroFacts profile={profile} className="hero__facts enter" style={{ "--i": 5 }} />
       </div>
 
-      <figure className="hero__portrait enter" style={{ "--i": 1 }}>
-        <div className="hero__shot" style={{ "--portrait-blur": `url("${portrait.blur.src}")` }}>
-          <Image
-            src={portrait.full.src}
-            alt={profile.name}
-            width={portrait.full.w}
-            height={portrait.full.h}
-            sizes="(min-width: 1024px) min(25rem, 36vw), 25rem"
-            loading="eager"
-            fetchPriority="high"
-          />
-        </div>
-        <figcaption>
-          <HeroFacts profile={profile} />
-        </figcaption>
-      </figure>
+      <div
+        className="hero__portrait enter"
+        role="img"
+        aria-label={profile.name}
+        style={{
+          "--i": 1,
+          "--portrait-ratio": (portrait.h / portrait.w).toFixed(4),
+          aspectRatio: `${portrait.w} / ${portrait.h}`,
+        }}
+      >
+        <div className="hero__photo" />
+        <div className="hero__rim hero__rim--rest" />
+        <PortraitFocus />
+      </div>
     </section>
   );
 }

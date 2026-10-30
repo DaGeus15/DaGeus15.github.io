@@ -1,91 +1,102 @@
 /**
- * Variantes WebP del retrato, para la portada.
+ * Variantes WebP del retrato de la portada.
  *
  *   npm run portrait
  *
- * `public/dayle.jpeg` (480×660) sale a 480 px de ancho, o a su ancho real si
- * es menor: no se amplía. `public/dayle-avatar.jpg` sale a 160 y 320 px, para
- * el recorte de móvil. Calidad 82.
+ * Lee las cuatro capas de `scripts/brand/.portrait/` (persona + pared que se
+ * apaga, y el filo, cada una en claro y en oscuro) y las deja con alfa en
+ * `public/assets/images/portrait/`, a 1008 y 2016 px de ancho. Fotos a
+ * calidad 82, filos a 90. Escribe las rutas y los píxeles reales en
+ * `src/content/portrait.js`. La foto ya trae el halo transparente: no hace
+ * falta un marcador borroso debajo.
  *
- * El marcador borroso es una versión de ~16 px en WebP, como data URI. Hay
- * dos, uno por recorte (cuerpo entero y cara): el de la cara no sirve de
- * fondo para el otro. Los escribe en `src/content/portrait.js`.
+ * Si faltan las capas, hay que generarlas antes (ver la cabecera de
+ * `portrait_layers.py`); este script no las calcula.
  */
 import sharp from "sharp";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, unlinkSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
+const layerDir = join(root, "scripts", "brand", ".portrait");
 const outDir = join(root, "public", "assets", "images", "portrait");
-const QUALITY = 82;
+const WIDTHS = [1008, 2016];
+const THEMES = ["dark", "light"];
+const PHOTO_QUALITY = 82;
+const RIM_QUALITY = 90;
+
+const missing = [];
+for (const theme of THEMES) {
+  for (const kind of ["photo", "rim"]) {
+    const name = `${kind}-${theme}.png`;
+    if (!existsSync(join(layerDir, name))) missing.push(name);
+  }
+}
+if (missing.length) {
+  console.error(
+    `Faltan capas en scripts/brand/.portrait/: ${missing.join(", ")}.\n` +
+      `Generálas desde la foto original (no se sube):\n` +
+      `  python scripts/brand/portrait_layers.py "D:/Documentos/Fotos mias/29.Daile.jpg"`,
+  );
+  process.exit(1);
+}
 
 mkdirSync(outDir, { recursive: true });
 
-/** WebP al ancho pedido, sin pasar del original. Devuelve píxeles reales. */
-async function variant(input, width) {
-  const meta = await sharp(input).metadata();
-  const target = Math.min(width, meta.width);
+/** WebP con alfa, al ancho pedido. Devuelve píxeles reales y el buffer. */
+async function variant(input, width, quality) {
   const { data, info } = await sharp(input)
-    .resize({ width: target, withoutEnlargement: true })
-    .webp({ quality: QUALITY })
+    .resize({ width, withoutEnlargement: true })
+    .webp({ quality })
     .toBuffer({ resolveWithObject: true });
   return { data, w: info.width, h: info.height };
 }
 
-/** Data URI de ~16 px: el hueco de la ficha tiene color antes de que llegue la foto. */
-async function blurDataUri(input) {
-  const { data, info } = await sharp(input)
-    .resize({ width: 16, withoutEnlargement: true })
-    .webp({ quality: QUALITY })
-    .toBuffer({ resolveWithObject: true });
-  return {
-    src: `data:image/webp;base64,${data.toString("base64")}`,
-    w: info.width,
-    h: info.height,
-  };
+const portrait = { w: 0, h: 0, photo: {}, rim: {} };
+const written = new Set();
+const kb = (bytes) => `${(bytes / 1024).toFixed(1)} KB`;
+
+for (const theme of THEMES) {
+  const photoSrc = join(layerDir, `photo-${theme}.png`);
+  const rimSrc = join(layerDir, `rim-${theme}.png`);
+  const photos = [];
+  const rims = [];
+
+  for (const width of WIDTHS) {
+    const photo = await variant(photoSrc, width, PHOTO_QUALITY);
+    const photoName = `photo-${theme}-${photo.w}.webp`;
+    writeFileSync(join(outDir, photoName), photo.data);
+    written.add(photoName);
+    photos.push({ src: `/assets/images/portrait/${photoName}`, w: photo.w, h: photo.h });
+    console.log(`${photoName}  ${photo.w}×${photo.h}  ${kb(photo.data.length)}`);
+
+    const rim = await variant(rimSrc, width, RIM_QUALITY);
+    const rimName = `rim-${theme}-${rim.w}.webp`;
+    writeFileSync(join(outDir, rimName), rim.data);
+    written.add(rimName);
+    rims.push({ src: `/assets/images/portrait/${rimName}`, w: rim.w, h: rim.h });
+    console.log(`${rimName}  ${rim.w}×${rim.h}  ${kb(rim.data.length)}`);
+
+    if (width === WIDTHS[WIDTHS.length - 1]) {
+      portrait.w = photo.w;
+      portrait.h = photo.h;
+    }
+  }
+
+  portrait.photo[theme] = photos;
+  portrait.rim[theme] = rims;
 }
 
-const jpeg = join(root, "public", "dayle.jpeg");
-const avatar = join(root, "public", "dayle-avatar.jpg");
-
-const fullFile = await variant(jpeg, 480);
-const fullName = `dayle-${fullFile.w}.webp`;
-writeFileSync(join(outDir, fullName), fullFile.data);
-
-const avatarFiles = [];
-for (const width of [160, 320]) {
-  const file = await variant(avatar, width);
-  const name = `avatar-${file.w}.webp`;
-  writeFileSync(join(outDir, name), file.data);
-  avatarFiles.push({
-    src: `/assets/images/portrait/${name}`,
-    w: file.w,
-    h: file.h,
-  });
+for (const file of readdirSync(outDir)) {
+  if (!file.endsWith(".webp") || written.has(file)) continue;
+  unlinkSync(join(outDir, file));
+  console.log(`borra ${file}`);
 }
-
-const portrait = {
-  full: {
-    src: `/assets/images/portrait/${fullName}`,
-    w: fullFile.w,
-    h: fullFile.h,
-  },
-  avatar: avatarFiles,
-  blur: await blurDataUri(jpeg),
-  avatarBlur: await blurDataUri(avatar),
-};
 
 const modulePath = join(root, "src", "content", "portrait.js");
 writeFileSync(
   modulePath,
   `/* generado por npm run portrait, no editar */\nexport const portrait = ${JSON.stringify(portrait, null, 2)};\n\nexport default portrait;\n`,
 );
-
-const kb = (bytes) => `${(bytes / 1024).toFixed(1)} KB`;
-console.log(`${fullName}  ${fullFile.w}×${fullFile.h}  ${kb(fullFile.data.length)}`);
-for (const file of avatarFiles) {
-  console.log(`${file.src}  ${file.w}×${file.h}`);
-}
-console.log(`blur ${portrait.blur.w}×${portrait.blur.h}, avatarBlur ${portrait.avatarBlur.w}×${portrait.avatarBlur.h}`);
 console.log("src/content/portrait.js");
