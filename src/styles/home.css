@@ -15,13 +15,14 @@
    apagarse antes del borde; `clip` lo recorta sin crear scroll. Un solo
    punto de corte de ventana, 1024px. */
 .hero {
+  --hero-pad: calc(var(--nav-clear) + var(--sp-5));
   container-type: inline-size;
   display: grid;
   align-items: start;
   gap: var(--sp-8);
   min-height: min(100dvh, 60rem);
   margin-inline: calc(var(--page-gutter) * -1);
-  padding-top: calc(var(--nav-clear) + var(--sp-5));
+  padding-top: var(--hero-pad);
   padding-bottom: var(--sp-8);
   padding-inline: var(--page-gutter);
   overflow-x: clip;
@@ -29,11 +30,33 @@
 }
 
 @media (min-width: 1024px) {
+  /* El lienzo del retrato sale de la ventana. `hidden` en el body no
+     impide el arrastre horizontal; `clip` sí, y no toca el eje vertical. */
+  html {
+    overflow-x: clip;
+  }
+
   .hero {
-    /* La persona cede: el texto conserva la columna de antes. 26vw da
-       17rem a 1024 y ~23rem a 1440; el tope de 27rem queda más allá. */
-    --person: clamp(17rem, 26vw, 27rem);
+    position: relative;
+    /* La portada mide lo que mide el texto. El hueco hasta el título de
+       Trabajo queda en el padding de la sección siguiente (--sp-11), el
+       mismo que hay entre dos secciones. Sin alto de pantalla ni relleno
+       extra debajo de los datos. */
+    min-height: 0;
+    padding-bottom: 0;
+    /* El lienzo sale de la página hacia el margen. Recortarlo aquí lo
+       cortaría en el borde de la página; el fundido llega al de la ventana
+       y `html` evita el arrastre. */
+    overflow-x: visible;
+    /* El texto conserva la columna de antes (1.15 de 2). El retrato no
+       ocupa pista: si la ocupara, el alto de la portada lo marcaría él. */
     grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    /* Centro del lienzo, que es el centro de la persona: al 78% de la
+       ventana, pero su borde derecho (23.5% del lienzo desde el centro) no
+       pasa del de la página. En monitores anchos se iba al borde de la
+       pantalla, lejos del texto y fuera de la columna del contenido. El %
+       se resuelve contra el lienzo en `translate` y en la máscara. */
+    --person-at: min(78vw, calc(50vw + var(--page-max) / 2 - var(--page-gutter) - 23.5%));
   }
 }
 
@@ -356,11 +379,38 @@
 
 @media (min-width: 1024px) {
   .hero__portrait {
-    /* El lienzo se apoya en el borde de la página, un rem antes del
-       recorte, para que el halo llegue a transparente. */
-    width: calc(var(--person) / 0.47);
-    justify-self: end;
-    margin-right: calc(1rem - var(--page-gutter));
+    /* Fuera de la rejilla: el alto es el tramo de la pastilla a los datos
+       (el bottom del hero, sin relleno). La coronilla está al 7.8% del
+       lienzo; este top la deja en la pastilla. El ancho sale del
+       aspect-ratio, así que la persona encoge con el texto. */
+    position: absolute;
+    top: calc((var(--hero-pad) - 7.8%) / 0.922);
+    bottom: 0;
+    left: min(0px, calc((var(--page-max) - 100vw) / 2));
+    width: auto;
+    height: auto;
+    margin: 0;
+    /* `translate` y no `transform`: la entrada anima `transform` y, si
+       compartieran propiedad, el lienzo saltaría al acabar. */
+    translate: calc(var(--person-at) - 50%) 0;
+  }
+
+  /* Fundido hasta el borde de la ventana, cruzado con el de abajo.
+     Si el lienzo no llega a la ventana, el tramo cae fuera del cuadro y
+     el halo se apaga con su propio alfa. */
+  .hero__photo,
+  .hero__rim {
+    --portrait-clip: calc(100vw - var(--person-at) + 50%);
+    mask-image:
+      linear-gradient(
+        to right,
+        #000 calc(var(--portrait-clip) - var(--sp-8)),
+        transparent var(--portrait-clip)
+      ),
+      var(--portrait-fade);
+    mask-composite: intersect;
+    mask-repeat: no-repeat;
+    mask-size: 100% 100%;
   }
 }
 

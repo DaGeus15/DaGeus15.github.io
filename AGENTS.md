@@ -139,6 +139,13 @@ silencio.
   nombre no pisa la blusa (tinta marina sobre marino).
 - **Junto a la silueta, la pared conserva su color original.** Cambiarla
   pegada al recorte deja ver el borde del recorte ("dientes").
+- **En escritorio el retrato encaja en el bloque de texto y no lo estira.**
+  Va fuera de la rejilla (`position: absolute`): la cabeza a la altura de la
+  pastilla (la coronilla está al 7.8% del lienzo) y la blusa disuelta en la
+  línea de datos; la portada mide lo que su texto. Con el retrato en la
+  rejilla y un alto de pantalla completa quedaban 363px vacíos antes de
+  Trabajo. Su centro va al 78% de la ventana, pero su borde derecho no pasa
+  del de la página: en 1920 se iba al borde de la pantalla, lejos de todo.
 
 ## Diseño y tokens
 
