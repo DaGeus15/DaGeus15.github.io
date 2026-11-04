@@ -19,6 +19,11 @@ silencio.
   nunca disfraz (terminal falsa, texto verde sobre negro). El visitante
   principal es un reclutador con 30 segundos: quién, qué hace y la prueba,
   arriba y sin navegación que aprender.
+- **Su cara va en la portada, arriba al cargar.** En escritorio, a la
+  derecha; en móvil, arriba de todo, con el nombre y el rol en la primera
+  pantalla. El sitio es suyo y un reclutador quiere ver a quién está
+  leyendo; antes la foto estaba al final (Sobre mí) y la portada la ocupaba
+  la pila 3D. Sobre mí ya no repite la foto.
 - **La portada resume; el caso de estudio lo cuenta todo.** Cada proyecto sale
   en la portada con título, una línea, dos cifras y sus capturas; el stack, la
   arquitectura, las funcionalidades, el reto, la galería y el rol viven en
@@ -112,6 +117,29 @@ silencio.
   el hueco antes de que cargue (sin saltos de maquetación). Si regenerás una
   captura, actualizalos.
 
+## Retrato
+
+- **Sale de la foto original** (local, fuera de git). `public/dayle.jpeg`
+  es un recorte pequeño que corta la coronilla y queda sólo para los datos
+  estructurados. `portrait_layers.py` (Python local con rembg/scipy, paso
+  único) recorta con BiRefNet y genera el halo y el filo; `npm run portrait`
+  saca las WebP por tema y ancho y escribe `content/portrait.js`.
+- **Sin ficha.** La pared se queda junto a la silueta y se vuelve
+  transparente con la distancia (alfa, no el color del fondo horneado: la
+  página tiene grano y resplandor y se veía el rectángulo). La pared se
+  prolonga a los lados para que el degradado tenga sitio (la foto sólo
+  tenía ~60–100 px).
+- **En claro el halo es más corto y la blusa se funde sólo al final:** la
+  pared gris y el marino sobre papel se leían como neblina. El filo en
+  claro es blanco cálido: el bronce sobre la pared se veía café.
+- **Sin marcador borroso.** Un marcador de 16 px de una imagen con halo
+  transparente tiene alfa en sus bordes y, ampliado, dibuja un borde recto.
+- **El texto no cede ante el retrato:** es el retrato el que escala
+  (`--person`); la frase nunca por debajo de ~30ch. En móvil y en claro el
+  nombre no pisa la blusa (tinta marina sobre marino).
+- **Junto a la silueta, la pared conserva su color original.** Cambiarla
+  pegada al recorte deja ver el borde del recorte ("dientes").
+
 ## Diseño y tokens
 
 - **Colores, espaciado, radios y duraciones salen de `styles/tokens.css`.**
@@ -185,9 +213,9 @@ silencio.
   flota o se pulsa (píldora, lente, menú, visor, botones secundarios,
   enlaces de contacto) y para la pila, que es la firma del sitio. Las
   pastillas de los logotipos del stack lo IMITAN sin `backdrop-filter`
-  (`--tile-*`). El retrato y las fichas de la experiencia llegaron a llevarlo
-  y volvieron a ser mate: cristal en todas partes es el patrón de "sitio
-  hecho por IA" y deja de distinguir nada.
+  (`--tile-*`). Las fichas de la experiencia llegaron a llevarlo y volvieron
+  a ser mate; el retrato también, y ahora ni ficha tiene. Cristal en todas
+  partes es el patrón de "sitio hecho por IA" y deja de distinguir nada.
 - **Todo lo que se pulsa es píldora** (botones, enlaces de contacto, la
   píldora y su lente); los campos llevan `--r-sm` y las tarjetas `--r-lg`.
 - **El filo de lo enlazable atrapa la luz** (`data-rim` + `SpecularRim.jsx`):
@@ -200,13 +228,19 @@ silencio.
 ## Movimiento
 
 - **Framer Motion para la interfaz** (springs de `lib/motion.js`, con
-  `bounce` + `visualDuration`) **y OGL sólo para la pila 3D de la portada.**
+  `bounce` + `visualDuration`) **y OGL sólo para la pila 3D.**
   Sin GSAP, Three.js ni react-spring: Three.js pesaba ~130 KB comprimidos
   para cuatro cajas; OGL, ~15 KB. Nada rebota: no hay gestos con inercia.
-- **Un solo momento de autor**: las losas de la portada caen y se apilan al
-  cargar y, cuando entra la escena de cristal, una luz baja UNA vez por las
+- **Un solo momento de autor**: las losas caen y se apilan cuando la pila
+  entra en pantalla (en Stack), no al cargar; si al hidratar ya se veía, no
+  caen. Cuando entra la escena de cristal, una luz baja UNA vez por las
   capas (de Cliente a Infra, como una petición). El resto del movimiento es
-  respuesta (hover, puntero, scroll), no decoración.
+  respuesta (hover, puntero, scroll, el foco del retrato), no decoración.
+- **El foco del retrato es respuesta, no un momento de autor.** Con ratón,
+  sólo el tramo del contorno cercano al puntero (motion values + spring; un
+  círculo que viaja con `transform` y un filo contra-desplazado); en táctil,
+  lo recorre el scroll (CSS scroll-driven). Nada al cargar. Es un resaltado
+  de lectura: sin cursor de mano ni elevación (lo que no se puede pulsar).
 - **Sólo `transform` y `opacity` en lo que se anima por fotograma.** El
   subrayado del correo es `scaleX`. Excepción documentada: la lente de la
   píldora (`LiquidLens.jsx`) cambia de `width` (además de `translateX`): va
@@ -283,14 +317,17 @@ silencio.
   portada (`#top`) también se observa, para que al volver arriba no quede
   nada marcado. Los ids deben ser estables (constante de módulo).
 
-## 3D (pila de la portada)
+## 3D (pila)
 
-- **El SVG es el primer pintado y el respaldo; OGL sólo añade interacción.**
-  `SystemStack.jsx` pinta la pila en SVG isométrico desde el build (con la
-  entrada en CSS); `stackScene.js` se descarga en paralelo desde el montaje
-  y se monta cuando las losas terminan de caer (~1.45s), en la MISMA pose.
-  Antes esperaba además a un momento inactivo y el SVG plano se veía hasta
-  3s: al cargar parecía que el cristal "parpadeaba".
+- **Vive en Stack: es el índice de la sección.** Sticky a la derecha en
+  escritorio, arriba y más pequeña en móvil. El componente sigue en
+  `hero/` (`SystemStack.jsx`): lo usa Stack.
+- **El SVG es el primer pintado y el respaldo; si hay WebGL 2, la caída es
+  de la escena.** `SystemStack.jsx` pinta la pila en SVG isométrico desde el
+  build. El fragmento se precarga y la escena se MONTA a una pantalla de
+  distancia (`rootMargin`): la caída la hace WebGL entera y el SVG no se ve.
+  Si llega tarde, sigue la caída CSS desde su progreso (`getAnimations()`)
+  con un fundido de 150ms.
 - **El SVG imita el cristal** (degradado lechoso arriba, cantos con
   degradado, filo de luz en el tramo que mira a la luz, núcleo con brillo;
   tokens `--stack-svg-*`), para que el relevo se lea como "se enciende la
@@ -326,13 +363,17 @@ silencio.
   real. El CSS las deja en la esquina de su losa en reposo (`--x`/`--y`); la
   escena las mueve con `transform` y el centrado va en `translate`, para no
   pisarse.
-- **La pila es un índice del stack.** Cada etiqueta es un enlace a su grupo
-  (`#stack-<grupo>`, mapeo en `content/hero.js`) y la fila de destino se marca
-  con `:target`. El hover tiene UNA fuente (`hover()` en `SystemStack.jsx`):
-  la disparan la etiqueta (puntero y foco) y la losa (el rayo de la escena, o
-  el polígono del SVG si no hay escena); pone `data-active` y avisa a la
-  escena, que levanta la losa. Un clic en la losa sigue el enlace de su
-  etiqueta. El lienzo no recibe eventos: los atiende el contenedor.
+- **Cada etiqueta es un enlace a su grupo** (`#stack-<grupo>`, mapeo en
+  `content/stackLayers.js`; antes `hero.js`) y la fila de destino se marca
+  con `:target`. El hover tiene dos fuentes en la misma `hover()`
+  (`SystemStack.jsx`): el puntero (etiqueta o losa) y, en escritorio, la fila
+  que cruza la línea del 40% (la lectura). El puntero manda mientras está
+  encima. La losa la da el rayo de la escena, o el polígono del SVG si no hay
+  escena; pone `data-active` y la escena la levanta. Un clic en la losa sigue
+  el enlace de su etiqueta. El lienzo no recibe eventos: los atiende el
+  contenedor.
+- **`?stack=svg|gl` fuerza una capa, sólo en desarrollo**, para comparar las
+  dos en la misma pose.
 - **Contexto perdido = SVG.** Si el contexto WebGL llega perdido o se pierde
   en marcha, la escena no monta o se retira y vuelve el SVG. Sin esto, cada
   recarga en caliente llenaba la consola de errores de `Program.use`.
@@ -344,9 +385,10 @@ silencio.
 ## Layout y CSS
 
 - **Un solo punto de corte de VENTANA: 1024px** (`lib/breakpoints.js`). Por
-  encima, portada dividida y píldora arriba; por debajo, una columna y la
-  píldora abajo (donde está el pulgar), con tres secciones. Lo que depende
-  del ancho de una TARJETA usa `@container` (la tarjeta ancha de KAPHIY).
+  encima, portada dividida (texto y retrato) y píldora arriba; por debajo,
+  una columna y la píldora abajo (donde está el pulgar), con tres secciones.
+  Lo que depende del ancho de una TARJETA usa `@container` (la tarjeta ancha
+  de KAPHIY).
 - **Toques de 44px en táctil** (`pointer: coarse`): enlaces de la píldora
   (`--nav-link-h`, que también da la altura de la lente), idioma, tema y
   botones de icono. Para que quepan tres secciones en un teléfono de 360px,
@@ -366,8 +408,12 @@ silencio.
 - **Pistas de rejilla con `minmax(0, 1fr)`, nunca `1fr` a secas, si dentro
   hay algo con `min-width`.** `1fr` no baja del ancho mínimo de su contenido:
   el diagrama (34rem) ensanchaba la página entera de los casos en móvil y el
-  visor salía descentrado. Lo mismo para una imagen como hijo flex:
-  `min-width: 0`.
+  visor salía descentrado. En la portada móvil, sin pista explícita la
+  rejilla crecía al ancho del lienzo del retrato y el centrado dejaba de
+  centrar. Lo mismo para una imagen como hijo flex: `min-width: 0`. Un
+  elemento que desborda su pista se centra con `justify-self: unsafe center`
+  (el centrado "seguro" lo alineaba al inicio y la cara se salía por la
+  derecha).
 - **Los diagramas no se encogen hasta ser ilegibles**: en pantalla estrecha se
   desplazan de lado dentro de su marco (`min-width` del SVG).
 - **Enlace estirado para tarjetas enlazables**: el `<a>` es el título y su

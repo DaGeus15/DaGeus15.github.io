@@ -1,9 +1,9 @@
 # Portafolio · Daylé García Fernández
 
 Portafolio personal construido con **Next.js 16** (App Router) y exportado como
-sitio estático a GitHub Pages. Una sola página: portada dividida con una pila
-3D (OGL), trabajo seleccionado en tarjetas con capturas reales, experiencia,
-stack, sobre mí y contacto. Cada proyecto tiene su caso de estudio con
+sitio estático a GitHub Pages. Una sola página: la portada con su retrato
+(la cara arriba al cargar), trabajo, experiencia, stack con la pila 3D (OGL),
+notas, sobre mí y contacto. Cada proyecto tiene su caso de estudio con
 arquitectura, funcionalidades, un reto concreto y galería. En español y en
 inglés, con tema oscuro y claro.
 
@@ -20,6 +20,7 @@ npm run preview:out  # sirve out/ para revisar el build real
 npm run lint         # ESLint
 npm run deploy       # build + publica en la rama gh-pages
 npm run shots        # regenera las capturas de los proyectos (ver abajo)
+npm run portrait     # regenera las WebP del retrato (ver abajo)
 npm run og           # regenera la imagen de vista previa (og.png)
 npm run icons        # regenera el favicon y el icono de Apple
 ```
@@ -48,14 +49,15 @@ actualizá estos archivos con él.
 | Quiero cambiar…                                   | Editar                   |
 | ------------------------------------------------- | ------------------------ |
 | Cualquier texto, en español e inglés              | `content/copy.js`        |
-| Nombre, correo, foto, CV                          | `content/profile.js`     |
+| Nombre, correo, avatar, CV                        | `content/profile.js`     |
 | Empresa y stack de cada puesto                    | `content/experience.js`  |
 | Proyectos: año, cifras, repo, stack, capturas y diagrama | `content/projects.js` |
 | Notas: fecha, proyecto y fragmentos de código     | `content/notes.js`       |
 | Grupos del stack, iconos y herramientas           | `content/skills.js`      |
 | GitHub, LinkedIn y clave del formulario           | `content/social.js`      |
 | Orden de las secciones                            | `content/navigation.js`  |
-| Capas de la pila 3D y a qué grupo del stack llevan | `content/hero.js`       |
+| Capas de la pila 3D y a qué grupo del stack llevan | `content/stackLayers.js` |
+| Retrato de la portada (generado; no editar)       | `content/portrait.js`    |
 
 En los textos podés usar `**negrita**` y `` `código` ``; lo renderiza
 `lib/RichText.jsx`.
@@ -91,6 +93,20 @@ convierte a WebP. La carpeta de origen se define en
 
 ```js
 export const SOURCE_ROOT = "C:/ruta/a/las/imagenes/extraidas";
+```
+
+### Cambiar la foto
+
+La original es local y no se sube. `public/dayle.jpeg` es un recorte pequeño
+(corta la coronilla) y queda sólo para los datos estructurados.
+
+Hace falta un entorno de Python con `rembg[cpu]`, `scipy` y `pillow` (no son
+dependencias del sitio). Un paso recorta con BiRefNet y genera el halo y el
+filo; el otro saca las WebP por tema y ancho y escribe `content/portrait.js`:
+
+```bash
+python scripts/brand/portrait_layers.py "<ruta de la foto original>"
+npm run portrait
 ```
 
 ### Editar un diagrama de arquitectura
@@ -133,7 +149,7 @@ src/
 │   ├── jsonLd.js          Datos estructurados (schema.org Person)
 │   └── RichText.jsx       **negrita** en los textos
 ├── components/
-│   ├── hero/              Hero, SystemStack (pila 3D: SVG + escena OGL)
+│   ├── hero/              Hero, PortraitFocus, SystemStack (pila 3D: SVG + escena OGL; se usa en Stack)
 │   ├── layout/            SiteNav (píldora), LangSwitch, Footer
 │   ├── sections/          Projects, Experience, Notes, Stack, About, Contact
 │   ├── project/           WorkCard, Frame, ShotStage, Gallery, ArchitectureDiagram, Metrics
@@ -142,7 +158,7 @@ src/
     ├── tokens.css         ← DISEÑO
     ├── base.css           Reset, tipografía, botones, entradas, superficies del navegador
     ├── nav.css            Píldora de navegación, menú del CV y pie
-    ├── home.css           Portada, pila 3D, secciones, tarjetas de trabajo, marcos
+    ├── home.css           Portada (retrato), pila 3D, secciones, tarjetas de trabajo, marcos
     ├── case.css           Caso de estudio, galería y visor
     ├── notes.css          Índice de notas y página de cada nota
     └── diagram.css        Diagramas de arquitectura

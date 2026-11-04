@@ -59,5 +59,3 @@ skills-lock.json
 
 # Capas intermedias del retrato (portrait_layers.py): se generan desde la foto original, local.
 scripts/brand/.portrait/
-# Prototipo del retrato: provisional, se borra al terminar.
-public/_proto/
