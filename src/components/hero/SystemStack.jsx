@@ -16,7 +16,8 @@ import { MOBILE_BREAKPOINT } from "@/lib/breakpoints";
  *   1. Un SVG isométrico, en el HTML desde el build. Es el primer pintado, la
  *      entrada (las losas caen y se apilan, en CSS) y el respaldo sin WebGL.
  *   2. Una escena OGL que se descarga a dos pantallas de distancia y se monta
- *      a una. Si llega a tiempo, la caída es suya y el SVG no se ve. Si llega tarde, sigue la caída desde el progreso del CSS. Gira
+ *      en cuanto el scroll descansa, o a una pantalla si no descansa. Si llega
+ *      a tiempo, la caída es suya y el SVG no se ve. Si llega tarde, sigue la caída desde el progreso del CSS. Gira
  *      con el puntero, las losas se separan al desplazarse y la que está bajo
  *      el cursor se levanta. Pinta bajo demanda y se para fuera de pantalla.
  *
@@ -35,6 +36,9 @@ import { MOBILE_BREAKPOINT } from "@/lib/breakpoints";
  * El árbol es idéntico en servidor y cliente: la escena y el hover sólo tocan
  * atributos `data-*` desde efectos y manejadores.
  */
+/** Sin eventos de scroll durante este tiempo, el scroll descansa. */
+const SCROLL_REST_MS = 160;
+
 export default function SystemStack({ layers }) {
   const wrapRef = useRef(null);
   const labelRefs = useRef([]);
@@ -140,8 +144,10 @@ export default function SystemStack({ layers }) {
       return { mode: "running", elapsed };
     };
 
+    let started = false;
     const start = async () => {
-      if (disposed || force === "svg") return;
+      if (started || disposed || force === "svg") return;
+      started = true;
       const { mountStack } = await loadScene();
       if (disposed || force === "svg") return;
       // Un fotograma para que, si la caída CSS acaba de arrancar, el navegador
@@ -186,17 +192,39 @@ export default function SystemStack({ layers }) {
       (entries) => {
         if (!entries.some((entry) => entry.isIntersecting)) return;
         near.disconnect();
+        stopWaiting();
         start();
       },
       { rootMargin: "100% 0px 100% 0px" },
     );
     near.observe(wrap);
 
+    // Montar la escena compila sus shaders, y eso para el hilo principal
+    // ~140ms: en pleno scroll, un tirón. Con el fragmento ya aquí, se monta
+    // cuando el scroll descansa; quien no para llega a `near`, que la monta
+    // igual, antes de que se vea.
+    let quiet = 0;
+    const onScrollDuringWait = () => {
+      clearTimeout(quiet);
+      quiet = setTimeout(() => {
+        stopWaiting();
+        start();
+      }, SCROLL_REST_MS);
+    };
+    function stopWaiting() {
+      clearTimeout(quiet);
+      window.removeEventListener("scroll", onScrollDuringWait);
+    }
+
     const far = new IntersectionObserver(
       (entries) => {
         if (!entries.some((entry) => entry.isIntersecting)) return;
         far.disconnect();
-        loadScene();
+        loadScene().then(() => {
+          if (disposed || started) return;
+          window.addEventListener("scroll", onScrollDuringWait, { passive: true });
+          onScrollDuringWait();
+        });
       },
       { rootMargin: "200% 0px 200% 0px" },
     );
@@ -220,6 +248,7 @@ export default function SystemStack({ layers }) {
       near.disconnect();
       far.disconnect();
       enter?.disconnect();
+      stopWaiting();
       sceneRef.current?.dispose();
       sceneRef.current = null;
       canvas?.remove();

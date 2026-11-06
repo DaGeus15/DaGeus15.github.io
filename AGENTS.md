@@ -341,9 +341,10 @@ silencio.
 - **El SVG es el primer pintado y el respaldo; si hay WebGL 2, la caída es
   de la escena.** `SystemStack.jsx` pinta la pila en SVG isométrico desde el
   build. El fragmento se pide a dos pantallas de distancia, no al cargar
-  (OGL y la escena eran 23 KB que casi nadie usaba en ese momento), y la
-  escena se MONTA a una (`rootMargin`): la caída la hace WebGL entera y el
-  SVG no se ve.
+  (OGL y la escena eran 23 KB que casi nadie usaba en ese momento). La escena
+  se MONTA cuando el scroll descansa, o a una pantalla si no descansa
+  (`rootMargin`): compilar sus shaders para el hilo principal ~140ms, un
+  tirón en pleno scroll. La caída la hace WebGL entera y el SVG no se ve.
   Si llega tarde, sigue la caída CSS desde su progreso (`getAnimations()`)
   con un fundido de 150ms.
 - **El SVG imita el cristal** (degradado lechoso arriba, cantos con

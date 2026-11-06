@@ -1882,8 +1882,13 @@
 }
 
 .form-textarea {
+  /* Crece con lo que se escribe, en vez de un asa: la esquina de
+     `resize` era lo más caro de pintar de toda la página (~80ms la primera
+     vez, un tirón al llegar aquí con el scroll). Sin soporte, se desplaza. */
   min-height: 8rem;
-  resize: vertical;
+  max-height: 50dvh;
+  resize: none;
+  field-sizing: content;
 }
 
 .form-error {
