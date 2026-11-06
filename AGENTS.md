@@ -129,11 +129,14 @@ silencio.
   estructurados. `portrait_layers.py` (Python local con rembg/scipy, paso
   único) recorta con BiRefNet y genera el halo y el filo; `npm run portrait`
   saca las WebP por tema y ancho y escribe `content/portrait.js`.
-- **Sin ficha.** La pared se queda junto a la silueta y se vuelve
-  transparente con la distancia (alfa, no el color del fondo horneado: la
-  página tiene grano y resplandor y se veía el rectángulo). La pared se
-  prolonga a los lados para que el degradado tenga sitio (la foto sólo
-  tenía ~60–100 px).
+- **Sin ficha.** La pared arranca junto a la silueta y se disuelve con la
+  distancia (alfa, no el color del fondo horneado: la página tiene grano y
+  resplandor y se veía el rectángulo). Una sola curva de cola larga, y además
+  el color va hacia el del fondo (`HALO` en `portrait_layers.py`): sólo con
+  alfa, la pared clara sobre el marino se leía como una mancha con forma.
+  Cualquier banda especial junto al contorno se lee como un aura de recorte.
+  La pared se prolonga a los lados y hacia arriba para que el degradado tenga
+  sitio (la foto sólo tenía ~60–100 px).
 - **En claro el halo es más corto y la blusa se funde sólo al final:** la
   pared gris y el marino sobre papel se leían como neblina. El filo en
   claro es blanco cálido: el bronce sobre la pared se veía café.
@@ -146,11 +149,11 @@ silencio.
 - **El texto no cede ante el retrato:** es el retrato el que escala
   (`--person`); la frase nunca por debajo de ~30ch. En móvil y en claro el
   nombre no pisa la blusa (tinta marina sobre marino).
-- **Junto a la silueta, la pared conserva su color original.** Cambiarla
-  pegada al recorte deja ver el borde del recorte ("dientes").
+- **El tinte de la pared empieza de cero en la silueta.** Cambiar su color de
+  golpe pegado al recorte deja ver el borde ("dientes").
 - **En escritorio el retrato encaja en el bloque de texto y no lo estira.**
   Va fuera de la rejilla (`position: absolute`): la cabeza a la altura de la
-  pastilla (la coronilla está al 7.8% del lienzo) y la blusa disuelta en la
+  pastilla (la coronilla está al 19.1% del lienzo) y la blusa disuelta en la
   línea de datos; la portada mide lo que su texto. Con el retrato en la
   rejilla y un alto de pantalla completa quedaban 363px vacíos antes de
   Trabajo. Su centro va al 78% de la ventana, pero su borde derecho no pasa

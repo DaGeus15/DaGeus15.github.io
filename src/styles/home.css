@@ -237,11 +237,11 @@
   min-width: 0;
   /* La blusa se disuelve. En claro se mantiene más: el marino sobre el
      papel se leía como neblina. */
-  --portrait-fade: linear-gradient(to bottom, #000 50%, transparent 100%);
+  --portrait-fade: linear-gradient(to bottom, #000 56%, transparent 100%);
 }
 
 [data-theme="light"] .hero__portrait {
-  --portrait-fade: linear-gradient(to bottom, #000 74%, transparent 100%);
+  --portrait-fade: linear-gradient(to bottom, #000 73%, transparent 95%);
 }
 
 .hero__photo,
@@ -291,7 +291,7 @@
   left: 0;
   top: 0;
   width: 100cqi;
-  height: calc(100cqi * var(--portrait-ratio, 0.7708));
+  height: calc(100cqi * var(--portrait-ratio, 0.8785));
 }
 
 /* Táctil: el foco baja por el contorno mientras la portada sale. Sin
@@ -318,23 +318,23 @@
 @keyframes portrait-scan {
   from {
     opacity: 0;
-    transform: translate(calc(50cqi - 8rem), calc(100cqi * var(--portrait-ratio, 0.7708) * 0.06 - 8rem));
+    transform: translate(calc(50cqi - 8rem), calc(100cqi * var(--portrait-ratio, 0.8785) * 0.175 - 8rem));
   }
   18% {
     opacity: 1;
   }
   to {
     opacity: 1;
-    transform: translate(calc(50cqi - 8rem), calc(100cqi * var(--portrait-ratio, 0.7708) * 0.72 - 8rem));
+    transform: translate(calc(50cqi - 8rem), calc(100cqi * var(--portrait-ratio, 0.8785) * 0.754 - 8rem));
   }
 }
 
 @keyframes portrait-scan-back {
   from {
-    transform: translate(calc(8rem - 50cqi), calc(8rem - 100cqi * var(--portrait-ratio, 0.7708) * 0.06));
+    transform: translate(calc(8rem - 50cqi), calc(8rem - 100cqi * var(--portrait-ratio, 0.8785) * 0.175));
   }
   to {
-    transform: translate(calc(8rem - 50cqi), calc(8rem - 100cqi * var(--portrait-ratio, 0.7708) * 0.72));
+    transform: translate(calc(8rem - 50cqi), calc(8rem - 100cqi * var(--portrait-ratio, 0.8785) * 0.754));
   }
 }
 
@@ -380,11 +380,12 @@
 @media (min-width: 1024px) {
   .hero__portrait {
     /* Fuera de la rejilla: el alto es el tramo de la pastilla a los datos
-       (el bottom del hero, sin relleno). La coronilla está al 7.8% del
-       lienzo; este top la deja en la pastilla. El ancho sale del
+       (el bottom del hero, sin relleno). La coronilla está al 19.1% del
+       lienzo (encima va el aire del degradado); este top la deja en la
+       pastilla. El ancho sale del
        aspect-ratio, así que la persona encoge con el texto. */
     position: absolute;
-    top: calc((var(--hero-pad) - 7.8%) / 0.922);
+    top: calc((var(--hero-pad) - 19.1%) / 0.809);
     bottom: 0;
     left: min(0px, calc((var(--page-max) - 100vw) / 2));
     width: auto;
@@ -417,10 +418,13 @@
 @media (max-width: 1023px) {
   .hero__portrait {
     order: -1;
-    /* La persona es el 65% del ancho. 74dvh la contiene en tablet,
+    /* La persona es el 65% del ancho. 84dvh la contiene en tablet,
        donde a ese ancho el retrato se comería la frase. */
-    width: min(calc(65vw / 0.47), calc(74dvh / var(--portrait-ratio, 0.7708)));
-    max-height: 74dvh;
+    --portrait-w: min(calc(65vw / 0.47), calc(84dvh / var(--portrait-ratio, 0.8785)));
+    width: var(--portrait-w);
+    /* La coronilla está al 19.1% del lienzo: lo de encima es el aire del
+       degradado y sube por detrás del borde de la pantalla. */
+    margin-top: calc(var(--portrait-w) * var(--portrait-ratio, 0.8785) * -0.191 + var(--sp-5));
     /* Desborda su pista: sin `unsafe`, el centrado se vuelve "seguro" y el
        lienzo se alinea al inicio (la cara se salía por la derecha). */
     justify-self: unsafe center;
@@ -439,8 +443,7 @@
    en 375 y más altas no hace falta y la persona se quedaría chica. */
 @media (max-width: 1023px) and (max-height: 600px) {
   .hero__portrait {
-    width: min(calc(65vw / 0.47), calc(52dvh / var(--portrait-ratio, 0.7708)));
-    max-height: 52dvh;
+    --portrait-w: min(calc(65vw / 0.47), calc(59dvh / var(--portrait-ratio, 0.8785)));
   }
 }
 

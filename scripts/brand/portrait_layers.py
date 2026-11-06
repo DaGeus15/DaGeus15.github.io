@@ -27,13 +27,18 @@ from pathlib import Path
 
 import numpy as np
 from PIL import Image
-from rembg import new_session, remove
 from scipy.ndimage import distance_transform_edt, gaussian_filter, grey_erosion
 
 OUT = Path(__file__).parent / ".portrait"
 CROP_BOTTOM = 0.74      # de la cabeza a la cintura (fracción del alto original)
 WORK = 1400             # ancho de trabajo de la foto
 THEMES = ("dark", "light")
+BG = {"dark": (15, 21, 29), "light": (244, 241, 236)}   # --background de cada tema
+HALO = {
+    # reach: hasta dónde llega (ancho de foto); curve: cola; strength: máximo.
+    "dark": {"reach": 0.5, "curve": 2.6, "strength": 0.8, "tint": 0.72, "tint_at": 0.2},
+    "light": {"reach": 0.3, "curve": 2.2, "strength": 0.7, "tint": 0.6, "tint_at": 0.2},
+}
 RIM = {"dark": (240, 206, 150), "light": (255, 248, 236)}
 
 
@@ -46,47 +51,68 @@ def blur3(a, s):
     return np.stack([gaussian_filter(a[..., c], s) for c in range(3)], -1)
 
 
+def write_layers(scene_wall, photo, A, dist, edge, W):
+    """Pared de cada tema: se apaga, se oscurece y se tiñe con la distancia.
+
+    Sólo con alfa, una pared clara sobre el marino se leía como una mancha con
+    forma: la distancia se reparte con una curva de cola larga y, además, el
+    color va hacia el del fondo, así el borde no tiene de qué destacar. Una
+    sola curva desde la silueta: cualquier banda especial junto al contorno
+    se lee como un aura de recorte.
+    """
+    for theme in THEMES:
+        c = HALO[theme]
+        fall = np.clip(1 - dist / (W * c["reach"]), 0, 1) ** c["curve"]
+        # Desenfocada: la distancia marca aristas en los huecos de la silueta.
+        fall = gaussian_filter(fall, 45)
+        keep = fall * c["strength"] * edge
+        tint = (ss(dist / (W * c["tint_at"])) * c["tint"])[..., None]
+        wall = scene_wall * (1 - tint) + np.array(BG[theme], np.float32) * tint
+        wall_a = (1 - A) * keep
+        total = A + wall_a
+        rgb = (photo * A[..., None] + wall * wall_a[..., None]) / np.maximum(total, 1e-4)[..., None]
+        out = np.dstack([rgb, total * 255]).clip(0, 255).astype(np.uint8)
+        Image.fromarray(out, "RGBA").save(OUT / f"photo-{theme}.png")
+
+
 def main(src_path):
     OUT.mkdir(exist_ok=True)
     src = Image.open(src_path).convert("RGB")
     crop = src.crop((0, 0, src.width, int(src.height * CROP_BOTTOM)))
     crop = crop.resize((WORK, round(crop.height * WORK / crop.width)), Image.LANCZOS)
-    cut = remove(crop, session=new_session("birefnet-portrait"), post_process_mask=True)
+    # El recorte es lo lento y no cambia: se guarda para afinar el resto.
+    matte = OUT / "matte.png"
+    if not matte.exists():
+        from rembg import new_session, remove
+
+        cut = remove(crop, session=new_session("birefnet-portrait"), post_process_mask=True)
+        cut.getchannel("A").save(matte)
 
     orig = np.asarray(crop).astype(np.float32)
-    alpha = np.asarray(cut.getchannel("A")).astype(np.float32) / 255
+    alpha = np.asarray(Image.open(matte)).astype(np.float32) / 255
     H, W = alpha.shape
     M = int(W * 0.22)                       # pared prolongada a cada lado
+    TOP = int(H * 0.14)                     # y hacia arriba: aire sobre la cabeza
 
     # Pared sola: la persona se rellena con la pared de alrededor.
     wm = (alpha < 0.05).astype(np.float32)
     wall_only = blur3(orig * wm[..., None], 40) / np.maximum(gaussian_filter(wm, 40), 1e-4)[..., None]
     wall_only = orig * wm[..., None] + wall_only * (1 - wm[..., None])
-    big = blur3(np.pad(wall_only, ((0, 0), (M, M), (0, 0)), mode="edge"), 90)
+    big = blur3(np.pad(wall_only, ((TOP, 0), (M, M), (0, 0)), mode="edge"), 90)
 
-    WW = W + 2 * M
-    yy, xx = np.mgrid[0:H, 0:WW]
-    dx = np.minimum(xx - M, M + W - 1 - xx)
+    HH, WW = H + TOP, W + 2 * M
+    yy, xx = np.mgrid[0:HH, 0:WW]
+    dx = np.minimum(np.minimum(xx - M, M + W - 1 - xx), yy - TOP)
     inner = ss(dx / 80) * (dx >= 0)         # de la foto real a la pared prolongada
-    photo = np.zeros((H, WW, 3), np.float32)
-    photo[:, M:M + W] = orig
-    A = np.zeros((H, WW), np.float32)
-    A[:, M:M + W] = alpha
+    photo = np.zeros((HH, WW, 3), np.float32)
+    photo[TOP:, M:M + W] = orig
+    A = np.zeros((HH, WW), np.float32)
+    A[TOP:, M:M + W] = alpha
     scene_wall = photo * inner[..., None] + big * (1 - inner[..., None])
 
     dist = distance_transform_edt(A < 0.5)
-    keep = {
-        "dark": (1 - ss(dist / (W * 0.42))) * ss(np.minimum(xx, WW - 1 - xx) / (W * 0.12)) * ss(yy / (H * 0.16)),
-        "light": (1 - ss(dist / (W * 0.22))) * inner * ss(yy / (H * 0.12)) * 0.85,
-    }
-    # Con alfa, no con el color del fondo horneado: la página tiene grano y
-    # un resplandor arriba, y un fondo plano dejaría ver el rectángulo.
-    for theme in THEMES:
-        wall_a = (1 - A) * keep[theme]
-        total = A + wall_a
-        rgb = (photo * A[..., None] + scene_wall * wall_a[..., None]) / np.maximum(total, 1e-4)[..., None]
-        out = np.dstack([rgb, total * 255]).clip(0, 255).astype(np.uint8)
-        Image.fromarray(out, "RGBA").save(OUT / f"photo-{theme}.png")
+    edge = ss(np.minimum(np.minimum(xx, WW - 1 - xx), yy) / (W * 0.1))
+    write_layers(scene_wall, photo, A, dist, edge, W)
 
     # Filo: desde el alfa suavizado, para que no salga escalonado.
     a = gaussian_filter(A, 1.2)
@@ -96,7 +122,7 @@ def main(src_path):
     rim = np.clip(np.maximum(band * 1.8, glow), 0, 1)
     for theme, rgb in RIM.items():
         boost = 1.15 if theme == "light" else 1.0
-        out = np.zeros((H, WW, 4), np.uint8)
+        out = np.zeros((*A.shape, 4), np.uint8)
         out[..., :3] = rgb
         out[..., 3] = (np.clip(rim * boost, 0, 1) * 255).astype(np.uint8)
         Image.fromarray(out, "RGBA").save(OUT / f"rim-{theme}.png")
