@@ -8,8 +8,6 @@
     "preview:out": "node serve-out.mjs",
     "start": "next start",
     "lint": "eslint",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d out --dotfiles",
     "og": "node scripts/og/build-og.mjs",
     "icons": "node scripts/brand/build-icons.mjs",
     "portrait": "node scripts/brand/build-portrait.mjs",
@@ -25,7 +23,6 @@
   },
   "devDependencies": {
     "eslint": "^9",
-    "eslint-config-next": "16.2.6",
-    "gh-pages": "^6.3.0"
+    "eslint-config-next": "16.2.6"
   }
 }

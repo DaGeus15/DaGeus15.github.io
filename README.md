@@ -18,7 +18,6 @@ npm run dev          # servidor de desarrollo
 npm run build        # genera el sitio estático en out/
 npm run preview:out  # sirve out/ para revisar el build real
 npm run lint         # ESLint
-npm run deploy       # build + publica en la rama gh-pages
 npm run shots        # regenera las capturas de los proyectos (ver abajo)
 npm run portrait     # regenera las WebP del retrato (ver abajo)
 npm run og           # regenera la imagen de vista previa (og.png)
@@ -181,8 +180,10 @@ src/
 
 ## Despliegue
 
-`.github/workflows/deploy.yml` compila y publica en la rama `gh-pages` en cada
-push a `main`. También se puede publicar a mano con `npm run deploy`.
+`.github/workflows/deploy.yml` compila y sube el sitio a GitHub Pages en cada
+push a `main` (la fuente de Pages del repo es "GitHub Actions"). Para publicar
+sin cambios, se relanza el workflow desde la pestaña Actions.
 
-El flag `--dotfiles` es obligatorio: sin él, `gh-pages` no sube `.nojekyll` y
-GitHub ignoraría la carpeta `_next/`.
+Antes se servía desde la rama `gh-pages` con el constructor "legacy" de Pages,
+que dejó de terminar. Con Actions no pasa por Jekyll: ya no hace falta
+`.nojekyll` ni esa rama.

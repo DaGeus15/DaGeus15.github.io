@@ -1,15 +1,17 @@
 name: Deploy to GitHub Pages
 
-# Publica el sitio estático en la rama `gh-pages`, que es de donde GitHub
-# Pages sirve este repositorio. No hace falta cambiar ningún ajuste del repo.
+# Compila el sitio estático y lo sube directamente a GitHub Pages. La fuente
+# de Pages del repo es "GitHub Actions" (Settings → Pages): antes se servía
+# desde la rama `gh-pages` con el constructor "legacy", que se colgaba.
 on:
   push:
     branches: [main]
   workflow_dispatch:
 
-# Permite que el job empuje a la rama gh-pages.
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
 
 # Si se empuja dos veces seguidas, cancela el despliegue anterior.
 concurrency:
@@ -17,7 +19,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -42,18 +44,19 @@ jobs:
       - name: Verificar que el export es válido
         run: |
           test -f out/index.html || { echo "Falta out/index.html"; exit 1; }
-          test -f out/.nojekyll || { echo "Falta out/.nojekyll"; exit 1; }
           echo "Export correcto:"
           ls -la out
 
-      - name: Publicar en gh-pages
-        run: |
-          git config --global user.name  "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          # Sin `-u`: el parser de gh-pages rechaza los corchetes de
-          # "github-actions[bot]". Toma la identidad de la config de git,
-          # que sí los admite.
-          npx gh-pages -d out --dotfiles \
-            -r "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5
