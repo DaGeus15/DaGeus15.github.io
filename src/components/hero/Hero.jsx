@@ -32,6 +32,19 @@ function portraitVars() {
 [data-theme="light"] .hero__portrait{${block("light")}}`;
 }
 
+/** La foto es un fondo CSS y el navegador la descubría tarde, aunque es lo
+    primero que tiene que verse. El tema sólo se sabe en el navegador: el
+    script del layout ya lo fijó, y aquí se pide la del tema aplicado, con las
+    mismas densidades que `image-set()`. */
+function portraitPreload() {
+  const set = (theme) => {
+    const [lo, hi] = [...portrait.photo[theme]].sort((a, b) => a.w - b.w);
+    return `${lo.src} 1x, ${hi.src} 2x`;
+  };
+  const sets = JSON.stringify({ dark: set("dark"), light: set("light") });
+  return `(function(){var s=${sets};var t=document.documentElement.getAttribute("data-theme");var l=document.createElement("link");l.rel="preload";l.as="image";l.fetchPriority="high";l.imageSrcset=s[t]||s.dark;document.head.appendChild(l);})();`;
+}
+
 function HeroFacts({ profile, className = "hero__facts", style }) {
   return (
     <ul className={className} style={style}>
@@ -56,6 +69,7 @@ export default function Hero({ t }) {
   return (
     <section id="top" className="hero" aria-labelledby="hero-title">
       <style href="portrait-theme" precedence="default">{portraitVars()}</style>
+      <script dangerouslySetInnerHTML={{ __html: portraitPreload() }} />
       <div className="hero__text">
         {profile.availability && (
           <a href="#contact" className="availability enter" style={{ "--i": 0 }}>

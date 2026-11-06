@@ -116,6 +116,11 @@ silencio.
 - **`w`/`h` en `projects.js` son los píxeles reales del archivo**: reservan
   el hueco antes de que cargue (sin saltos de maquetación). Si regenerás una
   captura, actualizalos.
+- **Las tarjetas usan variantes pequeñas** (`npm run cards`, después de
+  `npm run shots`): una captura de teléfono se pinta a ~150px y su archivo
+  mide 650. `Frame` las ofrece en un `<source>` con `sizes` porque, con
+  `images.unoptimized`, `next/image` no genera `srcset`. La galería, el visor
+  y la cabecera del caso siguen con el original.
 
 ## Retrato
 
@@ -134,6 +139,10 @@ silencio.
   claro es blanco cálido: el bronce sobre la pared se veía café.
 - **Sin marcador borroso.** Un marcador de 16 px de una imagen con halo
   transparente tiene alfa en sus bordes y, ampliado, dibuja un borde recto.
+- **La foto se precarga desde un script en `Hero.jsx`.** Es un fondo CSS y el
+  navegador la descubría tarde; el tema sólo se sabe en el navegador, así que
+  se pide la del tema aplicado, con las densidades de `image-set()` (si
+  difieren, se descarga dos veces).
 - **El texto no cede ante el retrato:** es el retrato el que escala
   (`--person`); la frase nunca por debajo de ~30ch. En móvil y en claro el
   nombre no pisa la blusa (tinta marina sobre marino).
@@ -331,8 +340,10 @@ silencio.
   `hero/` (`SystemStack.jsx`): lo usa Stack.
 - **El SVG es el primer pintado y el respaldo; si hay WebGL 2, la caída es
   de la escena.** `SystemStack.jsx` pinta la pila en SVG isométrico desde el
-  build. El fragmento se precarga y la escena se MONTA a una pantalla de
-  distancia (`rootMargin`): la caída la hace WebGL entera y el SVG no se ve.
+  build. El fragmento se pide a dos pantallas de distancia, no al cargar
+  (OGL y la escena eran 23 KB que casi nadie usaba en ese momento), y la
+  escena se MONTA a una (`rootMargin`): la caída la hace WebGL entera y el
+  SVG no se ve.
   Si llega tarde, sigue la caída CSS desde su progreso (`getAnimations()`)
   con un fundido de 150ms.
 - **El SVG imita el cristal** (degradado lechoso arriba, cantos con

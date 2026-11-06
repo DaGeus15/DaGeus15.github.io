@@ -1172,6 +1172,11 @@
   box-shadow: var(--shadow-window);
 }
 
+/* El `<picture>` sólo elige el archivo: no ocupa caja en el marco. */
+.frame__picture {
+  display: contents;
+}
+
 .frame__img {
   width: 100%;
   border-radius: calc(var(--r-md) - 5px);

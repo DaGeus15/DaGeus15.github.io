@@ -16,6 +16,14 @@ import Frame from "./Frame";
  * tarjeta se leían como demo, no como respuesta. Sin estado ni efectos, es
  * un componente de servidor.
  */
+/** Lo que mide cada captura en la tarjeta: con esto el navegador elige
+    archivo antes de maquetar. Medido a 390 y a 1440. */
+const SIZES = {
+  window: "(min-width: 1024px) 42rem, 92vw",
+  phone: "15rem",
+  inset: "9.5rem",
+};
+
 export default function WorkCard({ project, href, size, labels }) {
   const { cover, inset, metrics = [] } = project;
   const layout = cover.mobile ? "phones" : "window";
@@ -57,11 +65,11 @@ export default function WorkCard({ project, href, size, labels }) {
           {/* Mismo nombre que la portada del caso: al abrirlo, la captura
               crece desde aquí (ShotStage.jsx). */}
           <ViewTransition name={`cover-${project.id}`} share="morph">
-            <Frame shot={cover} className="work-card__cover" />
+            <Frame shot={cover} className="work-card__cover" sizes={cover.mobile ? SIZES.phone : SIZES.window} />
           </ViewTransition>
           {inset && (
             <span className="work-card__inset">
-              <Frame shot={inset} />
+              <Frame shot={inset} sizes={SIZES.inset} />
             </span>
           )}
         </div>

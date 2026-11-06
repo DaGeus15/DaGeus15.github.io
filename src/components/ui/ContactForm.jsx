@@ -18,6 +18,10 @@ const checkVariants = {
   },
 };
 
+/** El servicio es externo: si no responde, sale el error en vez de quedarse
+    enviando para siempre. */
+const SUBMIT_TIMEOUT_MS = 15000;
+
 export default function ContactForm() {
   const { ui } = useContent();
   const [status, setStatus] = useState(null);
@@ -30,7 +34,11 @@ export default function ContactForm() {
     formData.append("access_key", WEB3FORMS_ACCESS_KEY);
 
     try {
-      const res = await fetch("https://api.web3forms.com/submit", { method: "POST", body: formData });
+      const res = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formData,
+        signal: AbortSignal.timeout(SUBMIT_TIMEOUT_MS),
+      });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       setStatus("success");
       e.target.reset();

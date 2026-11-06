@@ -15,9 +15,8 @@ import { MOBILE_BREAKPOINT } from "@/lib/breakpoints";
  *
  *   1. Un SVG isométrico, en el HTML desde el build. Es el primer pintado, la
  *      entrada (las losas caen y se apilan, en CSS) y el respaldo sin WebGL.
- *   2. Una escena OGL que se precarga y se monta cuando la sección está a una
- *      pantalla de distancia. Si llega a tiempo, la caída es suya y el SVG no
- *      se ve. Si llega tarde, sigue la caída desde el progreso del CSS. Gira
+ *   2. Una escena OGL que se descarga a dos pantallas de distancia y se monta
+ *      a una. Si llega a tiempo, la caída es suya y el SVG no se ve. Si llega tarde, sigue la caída desde el progreso del CSS. Gira
  *      con el puntero, las losas se separan al desplazarse y la que está bajo
  *      el cursor se levanta. Pinta bajo demanda y se para fuera de pantalla.
  *
@@ -115,10 +114,12 @@ export default function SystemStack({ layers }) {
       sceneRef.current?.playDrop();
     };
 
-    // El fragmento se precarga ya. La escena se MONTA cuando la sección está
-    // a una pantalla de distancia, para que la caída ocurra en WebGL y el
-    // SVG no llegue a verse.
-    const scenePromise = import("./stackScene");
+    // El fragmento se pide a dos pantallas de distancia, no al cargar: OGL y
+    // la escena eran una tarea larga en plena carga, aunque el visitante no
+    // llegara nunca aquí. La escena se MONTA a una pantalla, para que la
+    // caída ocurra en WebGL y el SVG no llegue a verse.
+    let scenePromise = null;
+    const loadScene = () => (scenePromise ??= import("./stackScene"));
 
     const readCssDrop = () => {
       let elapsed = 0;
@@ -141,7 +142,7 @@ export default function SystemStack({ layers }) {
 
     const start = async () => {
       if (disposed || force === "svg") return;
-      const { mountStack } = await scenePromise;
+      const { mountStack } = await loadScene();
       if (disposed || force === "svg") return;
       // Un fotograma para que, si la caída CSS acaba de arrancar, el navegador
       // ya tenga la animación y se pueda leer su progreso.
@@ -191,6 +192,16 @@ export default function SystemStack({ layers }) {
     );
     near.observe(wrap);
 
+    const far = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        far.disconnect();
+        loadScene();
+      },
+      { rootMargin: "200% 0px 200% 0px" },
+    );
+    far.observe(wrap);
+
     let enter = null;
     if (!seen) {
       enter = new IntersectionObserver(
@@ -207,6 +218,7 @@ export default function SystemStack({ layers }) {
     return () => {
       disposed = true;
       near.disconnect();
+      far.disconnect();
       enter?.disconnect();
       sceneRef.current?.dispose();
       sceneRef.current = null;

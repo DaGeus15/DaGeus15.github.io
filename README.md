@@ -19,6 +19,7 @@ npm run build        # genera el sitio estático en out/
 npm run preview:out  # sirve out/ para revisar el build real
 npm run lint         # ESLint
 npm run shots        # regenera las capturas de los proyectos (ver abajo)
+npm run cards        # variantes pequeñas de las capturas de las tarjetas
 npm run portrait     # regenera las WebP del retrato (ver abajo)
 npm run og           # regenera la imagen de vista previa (og.png)
 npm run icons        # regenera el favicon y el icono de Apple
