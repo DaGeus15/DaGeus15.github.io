@@ -36,8 +36,8 @@ THEMES = ("dark", "light")
 BG = {"dark": (15, 21, 29), "light": (244, 241, 236)}   # --background de cada tema
 HALO = {
     # reach: hasta dónde llega (ancho de foto); curve: cola; strength: máximo.
-    "dark": {"reach": 0.5, "curve": 2.6, "strength": 0.8, "tint": 0.72, "tint_at": 0.2},
-    "light": {"reach": 0.3, "curve": 2.2, "strength": 0.7, "tint": 0.6, "tint_at": 0.2},
+    "dark": {"reach": 0.22, "curve": 2.2, "strength": 0.34, "tint": 0.55, "tint_at": 0.12},
+    "light": {"reach": 0.16, "curve": 2.0, "strength": 0.42, "tint": 0.6, "tint_at": 0.1},
 }
 RIM = {"dark": (240, 206, 150), "light": (255, 248, 236)}
 
@@ -64,7 +64,7 @@ def write_layers(scene_wall, photo, A, dist, edge, W):
         c = HALO[theme]
         fall = np.clip(1 - dist / (W * c["reach"]), 0, 1) ** c["curve"]
         # Desenfocada: la distancia marca aristas en los huecos de la silueta.
-        fall = gaussian_filter(fall, 45)
+        fall = gaussian_filter(fall, 20)
         keep = fall * c["strength"] * edge
         tint = (ss(dist / (W * c["tint_at"])) * c["tint"])[..., None]
         wall = scene_wall * (1 - tint) + np.array(BG[theme], np.float32) * tint

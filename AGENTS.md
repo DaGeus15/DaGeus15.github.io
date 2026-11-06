@@ -135,6 +135,8 @@ silencio.
   el color va hacia el del fondo (`HALO` en `portrait_layers.py`): sólo con
   alfa, la pared clara sobre el marino se leía como una mancha con forma.
   Cualquier banda especial junto al contorno se lee como un aura de recorte.
+  Y corto y tenue, sólo por los bordes: con un halo amplio y claro alrededor
+  de la cabeza parecía una estampita de la Virgen.
   La pared se prolonga a los lados y hacia arriba para que el degradado tenga
   sitio (la foto sólo tenía ~60–100 px).
 - **En claro el halo es más corto y la blusa se funde sólo al final:** la
