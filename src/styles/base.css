@@ -235,6 +235,20 @@ code {
   text-decoration-color: currentColor;
 }
 
+/* En táctil, un área de toque de ~44px alrededor sin mover nada: el enlace
+   de texto mide lo que su línea (un "GitHub" suelto, unos 20px). */
+@media (pointer: coarse) {
+  .text-link {
+    position: relative;
+  }
+
+  .text-link::after {
+    content: "";
+    position: absolute;
+    inset: -0.75rem -0.35rem;
+  }
+}
+
 .inline-icon {
   display: inline;
   margin-left: 0.2em;

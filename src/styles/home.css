@@ -264,8 +264,10 @@
   background-image: var(--portrait-rim);
 }
 
+/* En reposo, sin filo: un contorno dorado permanente se sumaba al halo y
+   se leía como una aureola. Sólo se enciende el tramo cercano al puntero. */
 .hero__rim--rest {
-  opacity: 0.16;
+  opacity: 0;
 }
 
 /* El foco: un círculo de bordes suaves deja ver el filo. Se mueve el

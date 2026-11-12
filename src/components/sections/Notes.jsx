@@ -13,6 +13,8 @@ import { formatDate, notePath } from "@/lib/locales";
  * completo vive en `/[lang]/notes/[id]`.
  */
 export default function Notes({ t, pageTitle = false }) {
+  /* Con el <h1> de la página, lo de dentro es <h2>; si no, <h3>. */
+  const Item = pageTitle ? "h2" : "h3";
   const { ui, lang } = t;
 
   return (
@@ -27,12 +29,12 @@ export default function Notes({ t, pageTitle = false }) {
               <span>{note.projectTitle}</span>
               <span>{ui.readMinutes(note.minutes)}</span>
             </p>
-            <h3 className="note-row__title">
+            <Item className="note-row__title">
               <Link href={notePath(lang, note.id)} className="note-row__link">
                 {note.title}
                 <FiArrowRight className="note-row__arrow" aria-hidden="true" />
               </Link>
-            </h3>
+            </Item>
             <p className="note-row__summary">{note.summary}</p>
           </li>
         ))}

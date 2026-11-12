@@ -34,10 +34,12 @@ CROP_BOTTOM = 0.74      # de la cabeza a la cintura (fracción del alto original
 WORK = 1400             # ancho de trabajo de la foto
 THEMES = ("dark", "light")
 BG = {"dark": (15, 21, 29), "light": (244, 241, 236)}   # --background de cada tema
+# strength 0: sin halo. Hasta un resplandor corto y tenue alrededor de la
+# cabeza se leía como la aureola de una estampita. La persona sola.
 HALO = {
     # reach: hasta dónde llega (ancho de foto); curve: cola; strength: máximo.
-    "dark": {"reach": 0.22, "curve": 2.2, "strength": 0.34, "tint": 0.55, "tint_at": 0.12},
-    "light": {"reach": 0.16, "curve": 2.0, "strength": 0.42, "tint": 0.6, "tint_at": 0.1},
+    "dark": {"reach": 0.2, "curve": 2.0, "strength": 0.0, "tint": 0.0, "tint_at": 0.1},
+    "light": {"reach": 0.2, "curve": 2.0, "strength": 0.0, "tint": 0.0, "tint_at": 0.1},
 }
 RIM = {"dark": (240, 206, 150), "light": (255, 248, 236)}
 

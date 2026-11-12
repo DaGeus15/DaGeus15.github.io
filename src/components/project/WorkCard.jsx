@@ -24,7 +24,8 @@ const SIZES = {
   inset: "9.5rem",
 };
 
-export default function WorkCard({ project, href, size, labels }) {
+export default function WorkCard({ project, href, size, labels, headingLevel = 3 }) {
+  const Title = `h${headingLevel}`;
   const { cover, inset, metrics = [] } = project;
   const layout = cover.mobile ? "phones" : "window";
 
@@ -36,11 +37,11 @@ export default function WorkCard({ project, href, size, labels }) {
           {project.status === "production" && <span className="work-card__live">{labels.inProduction}</span>}
           {project.context && <span>{project.context}</span>}
         </p>
-        <h3 className="work-card__title">
+        <Title className="work-card__title">
           <Link href={href} className="stretched-link">
             {project.title}
           </Link>
-        </h3>
+        </Title>
         <p className="work-card__line">{project.subtitle}</p>
 
         {metrics.length > 0 && (

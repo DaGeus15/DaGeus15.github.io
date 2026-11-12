@@ -38,6 +38,7 @@ export default function Projects({ t, featured = false, pageTitle = false }) {
           <li className="work-grid__item reveal" data-size={sizes[i] ?? "small"} key={p.id}>
             <WorkCard
               size={sizes[i] ?? "small"}
+              headingLevel={pageTitle ? 2 : 3}
               href={projectPath(lang, p.id)}
               labels={labels}
               project={{

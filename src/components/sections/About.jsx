@@ -10,6 +10,8 @@ import LogoTile from "@/components/ui/LogoTile";
  * sección debajo, en esta misma página (Journey, Hobbies).
  */
 export default function About({ t, pageTitle = false }) {
+  /* Con el <h1> de la página, lo de dentro es <h2>; si no, <h3>. */
+  const Item = pageTitle ? "h2" : "h3";
   const { ui, education, profile } = t;
 
   return (
@@ -33,10 +35,10 @@ export default function About({ t, pageTitle = false }) {
 
         <div className="facts reveal">
           <div className="fact">
-            <h3 className="fact__head">
+            <Item className="fact__head">
               <FiBookOpen aria-hidden="true" />
               {ui.education}
-            </h3>
+            </Item>
             <div className="fact__row">
               <LogoTile src={education.logo} icon={FiBookOpen} />
               <div>
@@ -50,10 +52,10 @@ export default function About({ t, pageTitle = false }) {
           </div>
 
           <div className="fact">
-            <h3 className="fact__head">
+            <Item className="fact__head">
               <FiGlobe aria-hidden="true" />
               {ui.languages}
-            </h3>
+            </Item>
             <dl className="fact-list">
               {t.languages.map((l) => (
                 <div key={l.name}>
@@ -65,10 +67,10 @@ export default function About({ t, pageTitle = false }) {
           </div>
 
           <div className="fact fact--wide">
-            <h3 className="fact__head">
+            <Item className="fact__head">
               <FiAward aria-hidden="true" />
               {ui.certifications}
-            </h3>
+            </Item>
             <ul className="fact-list fact-list--grid">
               {t.certifications.map((cert) => (
                 <li key={cert.id} className="fact__row">

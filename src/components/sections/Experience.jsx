@@ -18,6 +18,8 @@ import RichText from "@/lib/RichText";
  * está escrito al lado.
  */
 export default function Experience({ t, pageTitle = false }) {
+  /* Con el <h1> de la página, lo de dentro es <h2>; si no, <h3>. */
+  const Item = pageTitle ? "h2" : "h3";
   const { ui } = t;
 
   return (
@@ -33,7 +35,7 @@ export default function Experience({ t, pageTitle = false }) {
                   <LogoTile src={role.logo} size="lg" />
                 </div>
               )}
-              <h3 className="role__company">{role.company}</h3>
+              <Item className="role__company">{role.company}</Item>
               <p className="role__title">{role.role}</p>
               <p className="role__when mono">
                 {role.date}

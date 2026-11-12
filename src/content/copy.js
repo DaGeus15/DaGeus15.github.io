@@ -132,7 +132,7 @@ export const copy = {
       projects: {
         title: "Proyectos",
         intro:
-          "Siete sistemas, uno en producción. Cada uno tiene su caso de estudio con capturas, arquitectura y las decisiones que tomé.",
+          "Siete sistemas, cada uno con su caso de estudio.",
       },
       experience: { title: "Experiencia" },
       notes: {
@@ -146,7 +146,7 @@ export const copy = {
       about: { title: "Sobre mí" },
       featured: {
         title: "Proyectos destacados",
-        intro: "Tres de los siete sistemas que he construido. Cada uno tiene su caso de estudio.",
+        intro: "Tres de los siete, con su caso de estudio.",
         more: "Ver los siete proyectos",
       },
       journey: {
@@ -159,7 +159,7 @@ export const copy = {
       contact: {
         title: "¿Hablamos?",
         intro:
-          "Si buscas a alguien para tu equipo o quieres hablar de un proyecto, escríbeme. Respondo en español o en inglés.",
+          "¿Buscas a alguien para tu equipo? Escríbeme, en español o en inglés.",
       },
     },
 
@@ -174,8 +174,8 @@ export const copy = {
       /* Señal de la portada. Si dejo de buscar, se borra y desaparece. */
       availability: "Disponible para nuevas oportunidades",
       summary: [
-        "Desarrollo software con foco en Java y Spring Boot. En **Alquimiasoft** construyo microservicios (APIs REST, lógica de negocio y persistencia en PostgreSQL), los documento con Swagger/OpenAPI y los cubro con pruebas en Mockito, dentro de un equipo Scrum.",
-        "Fuera del trabajo construyo sistemas completos con NestJS y Next.js; uno de ellos, **KAPHIY**, está en producción en una cafetería real. Lo que más me interesa es lo que pasa entre el código y producción: pruebas, contenedores, CI/CD y código que otros puedan mantener.",
+        "Soy desarrolladora backend. En **Alquimiasoft** construyo microservicios en Java y Spring Boot: APIs REST, PostgreSQL, Swagger y pruebas en Mockito.",
+        "Fuera del trabajo hago sistemas completos con NestJS y Next.js. Me interesa lo que pasa entre el código y producción: pruebas, contenedores y CI/CD.",
       ],
     },
 
@@ -190,11 +190,11 @@ export const copy = {
           apiDocs: { label: "API de Migo", note: "Publiqué su documentación" },
         },
         bullets: [
-          "Desarrollo y mantenimiento de **microservicios en Java/Spring Boot**: APIs REST, lógica de negocio y persistencia en PostgreSQL.",
-          "Entrega de **más de 10 módulos CRUD** en el API principal, incluido el de facturación y endpoints de utilidad para otros equipos.",
-          "Extensión y soporte de aplicaciones **legacy en Spring MVC**, añadiendo funcionalidades y corrigiendo defectos en código heredado.",
-          "Documentación de las APIs con Swagger/OpenAPI y pruebas unitarias en Mockito, manteniendo **más del 95% de cobertura**.",
-          "Contenerización con Docker, Git/GitHub con ramas, PRs y code review, e interfaces en Flutter que consumen el backend, en un equipo Scrum sobre Jira.",
+          "**Microservicios en Java/Spring Boot**: APIs REST, lógica de negocio y PostgreSQL.",
+          "**Más de 10 módulos CRUD** en el API principal, incluida la facturación.",
+          "Funcionalidades y correcciones en aplicaciones **legacy en Spring MVC**.",
+          "APIs documentadas con Swagger/OpenAPI y **más del 95% de cobertura** con Mockito.",
+          "Docker, PRs con code review e interfaces en Flutter, en un equipo Scrum.",
         ],
       },
     ],
@@ -568,7 +568,7 @@ export const copy = {
       },
       data: {
         title: "Bases de datos",
-        proof: "Modelado relacional y reglas en los datos: asientos contables que sólo se guardan si el debe y el haber cuadran.",
+        proof: "Asientos contables que sólo se guardan si el debe y el haber cuadran.",
       },
       devops: {
         title: "Pruebas y DevOps",
@@ -757,7 +757,7 @@ export const copy = {
       projects: {
         title: "Projects",
         intro:
-          "Seven systems, one of them in production. Each has its own case study with screenshots, architecture and the decisions I made.",
+          "Seven systems, each with its case study.",
       },
       experience: { title: "Experience" },
       notes: {
@@ -771,7 +771,7 @@ export const copy = {
       about: { title: "About" },
       featured: {
         title: "Featured projects",
-        intro: "Three of the seven systems I've built. Each one has its case study.",
+        intro: "Three of the seven, with their case studies.",
         more: "See all seven projects",
       },
       journey: {
@@ -784,7 +784,7 @@ export const copy = {
       contact: {
         title: "Let's talk",
         intro:
-          "If you're looking for someone for your team or want to talk about a project, get in touch. I reply in English or Spanish.",
+          "Looking for someone for your team? Write to me, in English or Spanish.",
       },
     },
 
@@ -796,8 +796,8 @@ export const copy = {
       citizenship: "Spanish (EU) citizen, no visa sponsorship required",
       availability: "Open to new opportunities",
       summary: [
-        "Software engineer focused on Java and Spring Boot. At **Alquimiasoft** I build microservices (REST APIs, business logic and PostgreSQL persistence), document them with Swagger/OpenAPI and cover them with Mockito tests, as part of a Scrum team.",
-        "Outside work I build complete systems with NestJS and Next.js; one of them, **KAPHIY**, runs in production at a real coffee shop. What interests me most is what happens between the code and production: tests, containers, CI/CD and code other people can maintain.",
+        "I'm a backend developer. At **Alquimiasoft** I build Java and Spring Boot microservices: REST APIs, PostgreSQL, Swagger and Mockito tests.",
+        "Outside work I build complete systems with NestJS and Next.js. I care about what happens between the code and production: tests, containers and CI/CD.",
       ],
     },
 
@@ -812,11 +812,11 @@ export const copy = {
           apiDocs: { label: "Migo API", note: "I published its documentation" },
         },
         bullets: [
-          "Build and maintain **Java/Spring Boot microservices**: REST APIs, business logic and PostgreSQL persistence.",
-          "Delivered **10+ CRUD modules** in the main API service, including the invoicing module and shared utility endpoints for other teams.",
-          "Extend and support **legacy Spring MVC** applications, adding features and fixing defects in inherited code.",
-          "Document APIs with Swagger/OpenAPI and cover features with Mockito unit tests, consistently keeping **95%+ code coverage**.",
-          "Containerize services with Docker, work in Git/GitHub with branches, PRs and code review, and build Flutter UIs consuming the backend, in a Scrum team on Jira.",
+          "**Java/Spring Boot microservices**: REST APIs, business logic and PostgreSQL.",
+          "**10+ CRUD modules** in the main API, including invoicing.",
+          "Features and fixes in **legacy Spring MVC** applications.",
+          "APIs documented with Swagger/OpenAPI and **95%+ coverage** with Mockito.",
+          "Docker, PRs with code review and Flutter UIs, in a Scrum team.",
         ],
       },
     ],
@@ -1186,7 +1186,7 @@ export const copy = {
       },
       data: {
         title: "Databases",
-        proof: "Relational modelling and rules in the data: journal entries that are only saved if debits equal credits.",
+        proof: "Journal entries that are only saved if debits equal credits.",
       },
       devops: {
         title: "Testing & DevOps",
