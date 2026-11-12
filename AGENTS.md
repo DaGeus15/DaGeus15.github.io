@@ -176,6 +176,18 @@ silencio.
   Trabajo. Su centro va al 78% de la ventana, pero su borde derecho no pasa
   del de la página: en 1920 se iba al borde de la pantalla, lejos de todo.
 
+## Logos
+
+- **Cada certificación, evento y empresa lleva el logo de quien lo emite u
+  organiza** (`content/logos.js`, por `id`; `LogoTile.jsx`). Salen de sus
+  propios certificados (HatunSoft, FISEI, UTA, CSEI, Cisco, EF SET) o de las
+  webs oficiales (Cambridge, Grok, TCS, Migo). Cuadrados de 176 px, fondo
+  blanco y el símbolo centrado con margen, para que todos pesen lo mismo a
+  la vista; la pastilla es blanca en los dos temas porque los logos son de
+  color. Sin un logo nítido (el favicon de 16 px de Credly), el icono
+  genérico del tipo: mejor un icono limpio que un logo borroso. Se elevan
+  cuando se lee su fila, no prometen un clic.
+
 ## Diseño y tokens
 
 - **Colores, espaciado, radios y duraciones salen de `styles/tokens.css`.**

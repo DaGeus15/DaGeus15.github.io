@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { FiArrowRight, FiArrowUpRight, FiAward, FiMic, FiUsers } from "react-icons/fi";
 import SectionHeading from "./SectionHeading";
+import LogoTile from "@/components/ui/LogoTile";
 import { projectPath } from "@/lib/locales";
 
 const KIND_ICON = { competition: FiAward, congress: FiMic, community: FiUsers };
@@ -10,6 +11,8 @@ const KIND_ICON = { competition: FiAward, congress: FiMic, community: FiUsers };
  * clases. Una fila por evento, como el índice de notas: el año y el tipo a la
  * izquierda (mono, con su icono), el nombre, quién lo organizó y una línea a
  * la derecha.
+ *
+ * Cada evento con el logo de quien lo organizó (`content/logos.js`).
  *
  * La fila no es un enlace: si de un evento salió un proyecto, el enlace a su
  * caso va aparte, en texto. Al pasar el puntero, el velo de lectura (marca
@@ -35,7 +38,10 @@ export default function Journey({ t }) {
                 </span>
               </p>
               <div className="journey__body">
-                <h3 className="journey__title">{a.title}</h3>
+                <div className="journey__head">
+                  <LogoTile src={a.logo} icon={Icon} />
+                  <h3 className="journey__title">{a.title}</h3>
+                </div>
                 <p className="journey__org">{a.org}</p>
                 <p className="journey__note">{a.note}</p>
                 {a.project && (

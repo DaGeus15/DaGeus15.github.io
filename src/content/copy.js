@@ -592,23 +592,23 @@ export const copy = {
     },
 
     certifications: [
-      {
+      { id: "efset",
         title: "EF SET English Certificate: 82/100, C2",
         issuer: "EF Standard English Test · 2026",
         url: "https://cert.efset.org/wjrW19",
       },
-      {
+      { id: "cambridge",
         title: "Cambridge B2 First (FCE), calificación B",
         issuer: "Cambridge Assessment English · 2021",
       },
-      { title: "Data Science Essentials with Python", issuer: "Cisco Networking Academy · 2026" },
-      {
+      { id: "dataScience", title: "Data Science Essentials with Python", issuer: "Cisco Networking Academy · 2026" },
+      { id: "esp32",
         title: "Diseño y Monitoreo de IoT para Sistemas de Energía con ESP32 (32 h)",
         issuer: "FISEI, UTA · 2025",
       },
-      { title: "Soporte y Seguridad de Redes", issuer: "Cisco Networking Academy · 2024" },
-      { title: "Introducción al Internet de las Cosas", issuer: "Cisco Networking Academy · 2024" },
-      {
+      { id: "networks", title: "Soporte y Seguridad de Redes", issuer: "Cisco Networking Academy · 2024" },
+      { id: "iot", title: "Introducción al Internet de las Cosas", issuer: "Cisco Networking Academy · 2024" },
+      { id: "powerbi",
         title: "Business Intelligence: Power BI, análisis de datos y ETL",
         issuer: "Credly",
         url: "https://www.credly.com/users/dayle-garcia",
@@ -1210,23 +1210,23 @@ export const copy = {
     },
 
     certifications: [
-      {
+      { id: "efset",
         title: "EF SET English Certificate: 82/100, C2",
         issuer: "EF Standard English Test · 2026",
         url: "https://cert.efset.org/wjrW19",
       },
-      {
+      { id: "cambridge",
         title: "Cambridge B2 First (FCE), Grade B",
         issuer: "Cambridge Assessment English · 2021",
       },
-      { title: "Data Science Essentials with Python", issuer: "Cisco Networking Academy · 2026" },
-      {
+      { id: "dataScience", title: "Data Science Essentials with Python", issuer: "Cisco Networking Academy · 2026" },
+      { id: "esp32",
         title: "IoT Design & Monitoring for Energy Systems with ESP32 (32 h)",
         issuer: "FISEI, UTA · 2025",
       },
-      { title: "Network Support and Security", issuer: "Cisco Networking Academy · 2024" },
-      { title: "Introduction to the Internet of Things", issuer: "Cisco Networking Academy · 2024" },
-      {
+      { id: "networks", title: "Network Support and Security", issuer: "Cisco Networking Academy · 2024" },
+      { id: "iot", title: "Introduction to the Internet of Things", issuer: "Cisco Networking Academy · 2024" },
+      { id: "powerbi",
         title: "Business Intelligence: Power BI, data analysis and ETL",
         issuer: "Credly",
         url: "https://www.credly.com/users/dayle-garcia",

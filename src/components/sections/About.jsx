@@ -1,6 +1,7 @@
 import { FiArrowUpRight, FiAward, FiBookOpen, FiGlobe } from "react-icons/fi";
 import SectionHeading from "./SectionHeading";
 import RichText from "@/lib/RichText";
+import LogoTile from "@/components/ui/LogoTile";
 
 /**
  * Sobre mí: la bio breve y la ficha de formación, certificaciones e idiomas,
@@ -13,7 +14,11 @@ export default function About({ t, pageTitle = false }) {
 
   return (
     <section id="about" className="section" aria-labelledby="about-title">
-      <SectionHeading id="about" title={t.sections.about.title} pageTitle={pageTitle} />
+      <SectionHeading
+        id="about"
+        title={t.sections.about.title}
+        pageTitle={pageTitle}
+      />
 
       <div className="about">
         <div className="about__text">
@@ -32,8 +37,13 @@ export default function About({ t, pageTitle = false }) {
               <FiBookOpen aria-hidden="true" />
               {ui.education}
             </h3>
-            <p className="fact__title">{education.degree}</p>
-            <p className="fact__meta">{education.school}</p>
+            <div className="fact__row">
+              <LogoTile src={education.logo} icon={FiBookOpen} />
+              <div>
+                <p className="fact__title">{education.degree}</p>
+                <p className="fact__meta">{education.school}</p>
+              </div>
+            </div>
             <p className="fact__note">
               {ui.coursework}: {education.coursework}
             </p>
@@ -61,18 +71,29 @@ export default function About({ t, pageTitle = false }) {
             </h3>
             <ul className="fact-list fact-list--grid">
               {t.certifications.map((cert) => (
-                <li key={cert.title}>
-                  <p className="fact__title">
-                    {cert.url ? (
-                      <a href={cert.url} target="_blank" rel="noopener noreferrer" className="text-link">
-                        {cert.title}
-                        <FiArrowUpRight className="inline-icon" aria-hidden="true" />
-                      </a>
-                    ) : (
-                      cert.title
-                    )}
-                  </p>
-                  <p className="fact__meta mono">{cert.issuer}</p>
+                <li key={cert.id} className="fact__row">
+                  <LogoTile src={cert.logo} icon={FiAward} size="sm" />
+                  <div>
+                    <p className="fact__title">
+                      {cert.url ? (
+                        <a
+                          href={cert.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-link"
+                        >
+                          {cert.title}
+                          <FiArrowUpRight
+                            className="inline-icon"
+                            aria-hidden="true"
+                          />
+                        </a>
+                      ) : (
+                        cert.title
+                      )}
+                    </p>
+                    <p className="fact__meta mono">{cert.issuer}</p>
+                  </div>
                 </li>
               ))}
             </ul>

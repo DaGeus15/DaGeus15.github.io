@@ -1,5 +1,6 @@
 import Image from "next/image";
 import SectionHeading from "./SectionHeading";
+import LogoTile from "@/components/ui/LogoTile";
 import { FiArrowUpRight } from "react-icons/fi";
 import RichText from "@/lib/RichText";
 
@@ -27,7 +28,11 @@ export default function Experience({ t, pageTitle = false }) {
         {t.experience.map((role) => (
           <li className="role reveal" key={role.id}>
             <div className="role__who">
-              {role.logo && <Image className="role__logo" src={role.logo} alt="" width={88} height={88} />}
+              {role.logo && (
+                <div className="role__logo">
+                  <LogoTile src={role.logo} size="lg" />
+                </div>
+              )}
               <h3 className="role__company">{role.company}</h3>
               <p className="role__title">{role.role}</p>
               <p className="role__when mono">

@@ -1213,20 +1213,57 @@
   }
 }
 
-/* Logo de la empresa en una pastilla clara (igual en los dos temas). */
-.role__logo {
-  display: block;
-  width: 2.75rem;
-  height: 2.75rem;
-  margin-bottom: var(--sp-4);
-  border-radius: 0.8rem;
+/* ── Pastilla de logo (LogoTile.jsx) ────────────────────────────────────
+   Fondo blanco en los dos temas (los logos son de color), filo de 1px y la
+   luz cenital de las pastillas del stack. Sin logo, el icono en el cristal
+   imitado (`--tile-*`). Tres tamaños; se eleva un poco cuando se lee su
+   fila (lo dispara el contenedor, no la pastilla: no se pulsa). */
+.logo-tile {
+  position: relative;
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: var(--logo-size, 2.5rem);
+  height: var(--logo-size, 2.5rem);
+  overflow: hidden;
+  border-radius: calc(var(--logo-size, 2.5rem) * 0.28);
   border: 1px solid var(--tile-border);
   background: var(--logo-bg);
   box-shadow: var(--tile-shadow);
+  transition:
+    translate var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out);
+}
+
+.logo-tile[data-size="sm"] {
+  --logo-size: 2.15rem;
+}
+
+.logo-tile[data-size="lg"] {
+  --logo-size: 3rem;
+}
+
+.logo-tile__img {
+  width: 100%;
+  height: 100%;
   object-fit: contain;
 }
 
+.logo-tile--icon {
+  background: var(--tile-grad);
+}
+
+.logo-tile--icon svg {
+  width: 45%;
+  height: 45%;
+}
+
+.role__logo {
+  margin-bottom: var(--sp-4);
+}
+
 .role-link__logo {
+  flex-shrink: 0;
   width: 1.25rem;
   height: 1.25rem;
   border-radius: 0.35rem;
@@ -1702,6 +1739,24 @@
   gap: var(--sp-4) var(--sp-6);
 }
 
+/* Una ficha con logo: la pastilla a la izquierda y el texto al lado. */
+.fact__row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-3);
+}
+
+.fact__row > div {
+  min-width: 0;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .fact__row:hover .logo-tile {
+    translate: 0 -2px;
+    box-shadow: var(--tile-shadow), var(--btn-lift);
+  }
+}
+
 /* El icono de cada ficha, apagado: acompaña al rótulo, no compite. */
 .fact__head {
   display: flex;
@@ -1763,6 +1818,12 @@
     color var(--dur-fast) var(--ease-out);
 }
 
+.journey__head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+}
+
 .journey__title {
   max-width: 46ch;
   font-size: clamp(1.1rem, 1rem + 0.4vw, 1.3rem);
@@ -1808,6 +1869,11 @@
   .journey__row:hover .journey__kind svg {
     translate: 0 -1px;
     color: var(--foreground);
+  }
+
+  .journey__row:hover .logo-tile {
+    translate: 0 -2px;
+    box-shadow: var(--tile-shadow), var(--btn-lift);
   }
 }
 

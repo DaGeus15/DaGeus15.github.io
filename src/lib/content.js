@@ -9,6 +9,7 @@ import social from "@/content/social";
 import notesBase from "@/content/notes";
 import activitiesBase from "@/content/activities";
 import hobbiesBase from "@/content/hobbies";
+import logos from "@/content/logos";
 import { DEFAULT_LANG } from "./locales";
 
 /**
@@ -91,13 +92,14 @@ export function getContent(lang) {
       }))
       .sort((a, b) => b.date.localeCompare(a.date)),
     skills: skillGroups.map((g) => ({ ...g, ...c.skills[g.id] })),
-    education: c.education,
-    certifications: c.certifications,
+    education: { ...c.education, logo: logos.education },
+    certifications: c.certifications.map((cert) => ({ ...cert, logo: logos[cert.id] ?? null })),
     languages: c.languages,
     activities: activitiesBase.map((a) => ({
       ...a,
       ...c.activities[a.id],
       kindLabel: c.activityKinds[a.kind],
+      logo: logos[a.id] ?? null,
     })),
     hobbies: hobbiesBase.map((h) => ({ ...h, ...c.hobbies[h.id] })),
   };
