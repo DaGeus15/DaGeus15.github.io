@@ -27,6 +27,10 @@ export const logos = {
   codificadas: `${dir}/tcs.webp`,
   csei: `${dir}/csei.webp`,
   hatunsoft: `${dir}/hatunsoft.webp`,
+  // perfiles públicos (enlaces de Fuera del código y de los eventos)
+  goodreads: `${dir}/goodreads.webp`,
+  steam: `${dir}/steam.webp`,
+  codificadasSite: `${dir}/tcs.webp`,
 };
 
 export default logos;

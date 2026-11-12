@@ -1,5 +1,6 @@
 import { FiArrowUpRight, FiBookOpen, FiTrendingUp } from "react-icons/fi";
 import { LuGamepad2 } from "react-icons/lu";
+import Image from "next/image";
 import SectionHeading from "./SectionHeading";
 
 /* Feather no tiene mando de juego; el de Lucide es del mismo trazo. */
@@ -10,7 +11,9 @@ const ICONS = { trend: FiTrendingUp, book: FiBookOpen, gamepad: LuGamepad2 };
  * perfil público si lo quiere enlazar. Pocas fichas y cortas: es para
  * conocerla, no compite con el trabajo.
  *
- * La ficha no es un enlace; el enlace va en texto, debajo. El icono va en la
+ * Fichas iguales en una rejilla que llena el ancho: el icono arriba, el
+ * texto, y el enlace siempre al pie con el logo de su web (Goodreads,
+ * Steam). La ficha no es un enlace; el enlace va aparte. El icono va en la
  * misma pastilla de cristal imitado que los logotipos del stack (`--tile-*`).
  */
 export default function Hobbies({ t }) {
@@ -31,6 +34,7 @@ export default function Hobbies({ t }) {
               {h.url && (
                 <a href={h.url} target="_blank" rel="noopener noreferrer" className="role-link hobby__link">
                   <span className="role-link__label">
+                    {h.siteLogo && <Image className="role-link__logo" src={h.siteLogo} alt="" width={40} height={40} />}
                     {h.link}
                     <FiArrowUpRight className="role-link__arrow" aria-hidden="true" />
                   </span>

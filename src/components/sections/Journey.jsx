@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { FiArrowRight, FiArrowUpRight, FiAward, FiMic, FiUsers } from "react-icons/fi";
 import SectionHeading from "./SectionHeading";
 import LogoTile from "@/components/ui/LogoTile";
@@ -55,6 +56,7 @@ export default function Journey({ t }) {
                 {a.url && (
                   <a href={a.url} target="_blank" rel="noopener noreferrer" className="role-link journey__link">
                     <span className="role-link__label">
+                      {a.siteLogo && <Image className="role-link__logo" src={a.siteLogo} alt="" width={40} height={40} />}
                       {new URL(a.url).hostname.replace(/^www\./, "")}
                       <FiArrowUpRight className="role-link__arrow" aria-hidden="true" />
                     </span>

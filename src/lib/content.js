@@ -100,8 +100,9 @@ export function getContent(lang) {
       ...c.activities[a.id],
       kindLabel: c.activityKinds[a.kind],
       logo: logos[a.id] ?? null,
+      siteLogo: a.url ? logos[`${a.id}Site`] ?? null : null,
     })),
-    hobbies: hobbiesBase.map((h) => ({ ...h, ...c.hobbies[h.id] })),
+    hobbies: hobbiesBase.map((h) => ({ ...h, ...c.hobbies[h.id], siteLogo: h.site ? logos[h.site] : null })),
   };
 
   cache.set(lang, content);

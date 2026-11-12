@@ -21,7 +21,9 @@ body {
 .work-card,
 .case-cover,
 .contact__form,
-.next-project {
+.next-project,
+.role,
+.hobby {
   position: relative;
   background: var(--surface-grad);
   box-shadow: var(--shadow-card);
@@ -30,7 +32,9 @@ body {
 .work-card::before,
 .case-cover::before,
 .contact__form::before,
-.next-project::before {
+.next-project::before,
+.role::before,
+.hobby::before {
   content: "";
   position: absolute;
   top: 0;

@@ -5,8 +5,9 @@ import { FiArrowUpRight } from "react-icons/fi";
 import RichText from "@/lib/RichText";
 
 /**
- * Experiencia: cada puesto a dos columnas, quién y cuándo a la izquierda, qué
- * hice a la derecha. Todo a la vista, sin desplegables: con un solo puesto,
+ * Experiencia: cada puesto en una ficha a todo el ancho. Arriba, quién y
+ * cuándo en una línea (logo, empresa, rol, fechas); debajo, qué hice y, al
+ * lado, sus webs y el stack. Todo a la vista, sin desplegables: con un solo puesto,
  * esconder los logros detrás de un clic sólo resta.
  *
  * Debajo de la empresa, sus webs públicas (el producto y lo que publiqué), con
@@ -29,38 +30,24 @@ export default function Experience({ t, pageTitle = false }) {
       <ol className="roles">
         {t.experience.map((role) => (
           <li className="role reveal" key={role.id}>
-            <div className="role__who">
-              {role.logo && (
-                <div className="role__logo">
-                  <LogoTile src={role.logo} size="lg" />
-                </div>
-              )}
-              <Item className="role__company">{role.company}</Item>
-              <p className="role__title">{role.role}</p>
-              <p className="role__when mono">
-                {role.date}
-                {role.current && <span className="role__current">{ui.currentRole}</span>}
-              </p>
-              <p className="role__where">{role.location}</p>
-              {role.links?.length > 0 && (
-                <ul className="role__links" aria-label={ui.roleLinks}>
-                  {role.links.map((link) => (
-                    <li key={link.id}>
-                      <a href={link.url} target="_blank" rel="noopener noreferrer" className="role-link">
-                        <span className="role-link__label">
-                          {link.logo && <Image className="role-link__logo" src={link.logo} alt="" width={40} height={40} />}
-                          {role.linkText[link.id].label}
-                          <FiArrowUpRight className="role-link__arrow" aria-hidden="true" />
-                        </span>
-                        <span className="role-link__note">{role.linkText[link.id].note}</span>
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
+            {/* Cabecera a todo el ancho: quién y cuándo, en una línea. */}
+            <header className="role__head">
+              {role.logo && <LogoTile src={role.logo} size="lg" />}
+              <div className="role__id">
+                <Item className="role__company">{role.company}</Item>
+                <p className="role__title">{role.role}</p>
+              </div>
+              <div className="role__meta">
+                <p className="role__when mono">
+                  {role.current && <span className="role__current">{ui.currentRole}</span>}
+                  {role.date}
+                </p>
+                <p className="role__where">{role.location}</p>
+              </div>
+            </header>
 
-            <div className="role__what">
+            {/* Qué hice, y al lado sus webs públicas y el stack del puesto. */}
+            <div className="role__body">
               <ul className="role__bullets">
                 {role.bullets.map((bullet) => (
                   <li key={bullet}>
@@ -68,18 +55,39 @@ export default function Experience({ t, pageTitle = false }) {
                   </li>
                 ))}
               </ul>
-              {role.stack?.length > 0 && (
-                <div className="role__stack">
-                  <span className="role__stack-label">{ui.roleStack}</span>
-                  <ul className="role__chips">
-                    {role.stack.map((s) => (
-                      <li key={s.name} className="role__chip mono">
-                        {s.name}
+
+              <aside className="role__side">
+                {role.links?.length > 0 && (
+                  <ul className="role__links" aria-label={ui.roleLinks}>
+                    {role.links.map((link) => (
+                      <li key={link.id}>
+                        <a href={link.url} target="_blank" rel="noopener noreferrer" className="role-link">
+                          <span className="role-link__label">
+                            {link.logo && (
+                              <Image className="role-link__logo" src={link.logo} alt="" width={40} height={40} />
+                            )}
+                            {role.linkText[link.id].label}
+                            <FiArrowUpRight className="role-link__arrow" aria-hidden="true" />
+                          </span>
+                          <span className="role-link__note">{role.linkText[link.id].note}</span>
+                        </a>
                       </li>
                     ))}
                   </ul>
-                </div>
-              )}
+                )}
+                {role.stack?.length > 0 && (
+                  <div className="role__stack">
+                    <span className="role__stack-label">{ui.roleStack}</span>
+                    <ul className="role__chips">
+                      {role.stack.map((s) => (
+                        <li key={s.name} className="role__chip mono">
+                          {s.name}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </aside>
             </div>
           </li>
         ))}
