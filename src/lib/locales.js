@@ -22,6 +22,8 @@ export const SITE_URL = "https://dageus15.github.io";
 export const homePath = (lang) => `/${lang}/`;
 export const projectPath = (lang, id) => `/${lang}/projects/${id}/`;
 export const notePath = (lang, id) => `/${lang}/notes/${id}/`;
+/** Las páginas de primer nivel (`projects`, `experience`, `about`, `notes`). */
+export const pagePath = (lang, page) => `/${lang}/${page}/`;
 
 /** Fecha corta de una nota ("21 oct 2026" / "Oct 21, 2026"). En UTC: la
     fecha es un día, no un instante, y no debe moverse con la zona del build. */

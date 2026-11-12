@@ -8,12 +8,12 @@ import LiquidLens from "./LiquidLens";
 import CvDownload from "@/components/ui/CvDownload";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import useScrollSpy from "@/lib/useScrollSpy";
-import { sectionIds } from "@/content/navigation";
 
-/* La portada (`#top`) también se observa: al volver arriba no queda marcada
-   ninguna sección. Constante de módulo: una lista nueva en cada render
-   reconectaría el observer. */
-const SPY_IDS = ["top", ...sectionIds];
+/* En el inicio, la única sección de la píldora es el contacto; la portada
+   (`#top`) también se observa para que al volver arriba no quede marcado.
+   Constante de módulo: una lista nueva en cada render reconectaría el
+   observer. */
+const HOME_SPY = ["top", "contact"];
 const NO_IDS = [];
 
 /**
@@ -21,16 +21,32 @@ const NO_IDS = [];
  * (donde está el pulgar). Es lo único que se desplaza por encima del
  * contenido, así que es el único cristal del sitio.
  *
- * En la portada lleva las secciones con una lente de cristal que se estira
- * hasta la activa (`LiquidLens`). En un caso de estudio, la vuelta al
- * portafolio. En los dos, el CV, el idioma y el tema.
+ * En las páginas lleva los enlaces a las demás, con una lente de cristal
+ * que se estira hasta la activa (`LiquidLens`): la página en la que se está
+ * (`current`) o, en el inicio, el contacto cuando se llega a él. En un caso
+ * de estudio o una nota, la vuelta atrás. En todas, el CV, el idioma y el
+ * tema.
+ *
+ * `items` llegan con su `href` resuelto desde el servidor (página o ancla).
  *
  * `labels` son sólo las cadenas que usa: el objeto `ui` entero lleva funciones
  * y no puede cruzar a un componente de cliente.
  */
-export default function SiteNav({ variant = "home", items = [], labels, name, homeHref, backHref, lang, langHref }) {
+export default function SiteNav({
+  variant = "home",
+  current = null,
+  items = [],
+  labels,
+  name,
+  homeHref,
+  backHref,
+  lang,
+  langHref,
+}) {
   const isHome = variant === "home";
-  const [active] = useScrollSpy(isHome ? SPY_IDS : NO_IDS);
+  const onHomePage = isHome && current === null;
+  const [spied] = useScrollSpy(onHomePage ? HOME_SPY : NO_IDS);
+  const active = current ?? (spied === "contact" ? "contact" : null);
   const listRef = useRef(null);
 
   return (
@@ -51,7 +67,7 @@ export default function SiteNav({ variant = "home", items = [], labels, name, ho
           </Link>
         )}
 
-        {isHome ? (
+        {onHomePage ? (
           <a href="#top" className="site-nav__name">
             {name}
           </a>
@@ -70,16 +86,18 @@ export default function SiteNav({ variant = "home", items = [], labels, name, ho
             </li>
             {items.map((item) => {
               const isActive = item.id === active;
+              const props = {
+                href: item.href,
+                "data-id": item.id,
+                className: "site-nav__link",
+                "aria-current": isActive ? (item.anchor ? "location" : "page") : undefined,
+              };
+              const label = <span className="site-nav__label">{item.label}</span>;
               return (
                 <li key={item.id} data-mobile={item.mobile || undefined}>
-                  <a
-                    href={`#${item.id}`}
-                    data-id={item.id}
-                    className="site-nav__link"
-                    aria-current={isActive ? "location" : undefined}
-                  >
-                    <span className="site-nav__label">{item.label}</span>
-                  </a>
+                  {/* Un ancla del propio inicio es un `<a>`; una página, un
+                      `Link` (navegación en el cliente y precarga). */}
+                  {item.href.startsWith("#") ? <a {...props}>{label}</a> : <Link {...props}>{label}</Link>}
                 </li>
               );
             })}

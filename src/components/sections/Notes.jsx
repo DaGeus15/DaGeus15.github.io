@@ -12,12 +12,12 @@ import { formatDate, notePath } from "@/lib/locales";
  * (enlace estirado sobre toda la fila) y una línea de resumen. El texto
  * completo vive en `/[lang]/notes/[id]`.
  */
-export default function Notes({ t }) {
+export default function Notes({ t, pageTitle = false }) {
   const { ui, lang } = t;
 
   return (
     <section id="notes" className="section" aria-labelledby="notes-title">
-      <SectionHeading id="notes" title={t.sections.notes.title} intro={t.sections.notes.intro} />
+      <SectionHeading id="notes" title={t.sections.notes.title} intro={t.sections.notes.intro} pageTitle={pageTitle} />
 
       <ol className="notes-list">
         {t.notes.map((note) => (

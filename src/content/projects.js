@@ -10,6 +10,8 @@
  * Campos:
  *   year     Como en el CV.
  *   status   "production" pinta "En producción".
+ *   featured Sale en el inicio, entre los tres destacados (los más
+ *            vistosos; en orden de esta lista). Los siete están en Proyectos.
  *   context  Contexto sin traducir (p. ej. el programa).
  *   team     Personas en el equipo (sale en la ficha del caso).
  *   metrics  Cifras de un vistazo: `value` aquí, la etiqueta en copy.js. La
@@ -159,6 +161,7 @@ export const projects = [
   },
   {
     id: "helpdesk",
+    featured: true,
     year: "2026",
     context: "Hackathon · UTA",
     /* Sin `value` en la primera: "85 min" se traduce. */
@@ -213,6 +216,7 @@ export const projects = [
   },
   {
     id: "fiado",
+    featured: true,
     year: "2026",
     team: 6,
     /* Sin `value`: "2 de 3" se traduce. */
@@ -263,6 +267,7 @@ export const projects = [
   },
   {
     id: "gasoline",
+    featured: true,
     year: "2025 – 2026",
     team: 4,
     metrics: [

@@ -93,12 +93,31 @@ export const copy = {
     },
 
     nav: {
-      projects: "Trabajo",
+      projects: "Proyectos",
       experience: "Experiencia",
-      notes: "Notas",
-      stack: "Stack",
       about: "Sobre mí",
+      notes: "Notas",
       contact: "Contacto",
+    },
+
+    /* Título y descripción de cada página (metadatos y vista previa). */
+    pages: {
+      projects: {
+        title: "Proyectos",
+        description: "Siete sistemas con su caso de estudio: arquitectura, capturas y las decisiones que tomé.",
+      },
+      experience: {
+        title: "Experiencia",
+        description: "Backend en Java y Spring Boot en Alquimiasoft, y el stack que uso, por capas.",
+      },
+      about: {
+        title: "Sobre mí",
+        description: "Formación, certificaciones, idiomas, competencias y congresos, y lo que hago fuera del código.",
+      },
+      notes: {
+        title: "Notas",
+        description: "Problemas concretos que resolví, con el código real.",
+      },
     },
 
     /* Las cuatro capas de la pila 3D (estructura en `stackLayers.js`). Van
@@ -111,7 +130,7 @@ export const copy = {
 
     sections: {
       projects: {
-        title: "Trabajo seleccionado",
+        title: "Proyectos",
         intro:
           "Siete sistemas, uno en producción. Cada uno tiene su caso de estudio con capturas, arquitectura y las decisiones que tomé.",
       },
@@ -125,6 +144,18 @@ export const copy = {
         intro: "Agrupado por capa, con dónde lo he usado de verdad.",
       },
       about: { title: "Sobre mí" },
+      featured: {
+        title: "Proyectos destacados",
+        intro: "Tres de los siete sistemas que he construido. Cada uno tiene su caso de estudio.",
+        more: "Ver los siete proyectos",
+      },
+      journey: {
+        title: "Competencias y congresos",
+        intro: "Donde la programación es por gusto: concursos, congresos y comunidad.",
+      },
+      hobbies: {
+        title: "Fuera del código",
+      },
       contact: {
         title: "¿Hablamos?",
         intro:
@@ -562,14 +593,21 @@ export const copy = {
 
     certifications: [
       {
+        title: "EF SET English Certificate: 82/100, C2",
+        issuer: "EF Standard English Test · 2026",
+        url: "https://cert.efset.org/wjrW19",
+      },
+      {
         title: "Cambridge B2 First (FCE), calificación B",
         issuer: "Cambridge Assessment English · 2021",
       },
+      { title: "Data Science Essentials with Python", issuer: "Cisco Networking Academy · 2026" },
       {
         title: "Diseño y Monitoreo de IoT para Sistemas de Energía con ESP32 (32 h)",
         issuer: "FISEI, UTA · 2025",
       },
       { title: "Soporte y Seguridad de Redes", issuer: "Cisco Networking Academy · 2024" },
+      { title: "Introducción al Internet de las Cosas", issuer: "Cisco Networking Academy · 2024" },
       {
         title: "Business Intelligence: Power BI, análisis de datos y ETL",
         issuer: "Credly",
@@ -579,8 +617,27 @@ export const copy = {
 
     languages: [
       { name: "Español", level: "Nativo" },
-      { name: "Inglés", level: "B2 · Cambridge B2 First" },
+      { name: "Inglés", level: "C2 · EF SET (82/100) · B2 Cambridge First" },
     ],
+
+    activityKinds: { competition: "Competencia", congress: "Congreso", community: "Comunidad" },
+    activities: {
+      grokbot: { title: "Grok Bot Ambato Meetup", org: "Universidad Técnica de Ambato", note: "Meetup de la comunidad sobre agentes de IA." },
+      hackathon: { title: "Hackathon UTA 2026", org: "Universidad Técnica de Ambato", note: "Construí sola el asistente de cursos del CTT-FISEI, orquestando agentes de IA." },
+      congresoUta: { title: "III Congreso Universal de las Ciencias y de la Investigación", org: "Universidad Técnica de Ambato · 32 h", note: "Asistí y lo aprobé." },
+      codificadas: { title: "Codificadas, primera edición", org: "TCS · programación competitiva para mujeres", note: "Competencia regional en línea." },
+      csei: { title: "CSEI 2024: VI Conference on Computer Science, Electronics and Industrial Engineering", org: "FISEI, Universidad Técnica de Ambato", note: "Participé en la conferencia, en línea." },
+      hatunsoft: { title: "HatunSoft, primer concurso de programación", org: "FISEI, Universidad Técnica de Ambato", note: "Cinco horas de ejercicios en el ágora de la FISEI." },
+    },
+
+    hobbies: {
+      learning: {
+        title: "Aprendiendo análisis de datos",
+        text: "Python para ciencia de datos (Cisco, 2026) y Power BI.",
+      },
+      reading: { title: "Leer", text: "Lo que estoy leyendo y lo que ya leí.", link: "Mi Goodreads" },
+      games: { title: "Videojuegos", text: "Para desconectar.", link: "Mi Steam" },
+    },
   },
 
   /* ────────────────────────────── ENGLISH ────────────────────────────── */
@@ -665,12 +722,30 @@ export const copy = {
     },
 
     nav: {
-      projects: "Work",
+      projects: "Projects",
       experience: "Experience",
-      notes: "Notes",
-      stack: "Stack",
       about: "About",
+      notes: "Notes",
       contact: "Contact",
+    },
+
+    pages: {
+      projects: {
+        title: "Projects",
+        description: "Seven systems, each with its case study: architecture, screenshots and the decisions I made.",
+      },
+      experience: {
+        title: "Experience",
+        description: "Java and Spring Boot backend at Alquimiasoft, and the stack I use, by layer.",
+      },
+      about: {
+        title: "About",
+        description: "Education, certifications, languages, competitions and conferences, and what I do outside code.",
+      },
+      notes: {
+        title: "Notes",
+        description: "Specific problems I solved, with the real code.",
+      },
     },
 
     stackLayers: {
@@ -680,7 +755,7 @@ export const copy = {
 
     sections: {
       projects: {
-        title: "Selected work",
+        title: "Projects",
         intro:
           "Seven systems, one of them in production. Each has its own case study with screenshots, architecture and the decisions I made.",
       },
@@ -694,6 +769,18 @@ export const copy = {
         intro: "Grouped by layer, with where I've actually used it.",
       },
       about: { title: "About" },
+      featured: {
+        title: "Featured projects",
+        intro: "Three of the seven systems I've built. Each one has its case study.",
+        more: "See all seven projects",
+      },
+      journey: {
+        title: "Competitions and conferences",
+        intro: "Where programming is for fun: contests, conferences and community.",
+      },
+      hobbies: {
+        title: "Outside code",
+      },
       contact: {
         title: "Let's talk",
         intro:
@@ -1124,14 +1211,21 @@ export const copy = {
 
     certifications: [
       {
+        title: "EF SET English Certificate: 82/100, C2",
+        issuer: "EF Standard English Test · 2026",
+        url: "https://cert.efset.org/wjrW19",
+      },
+      {
         title: "Cambridge B2 First (FCE), Grade B",
         issuer: "Cambridge Assessment English · 2021",
       },
+      { title: "Data Science Essentials with Python", issuer: "Cisco Networking Academy · 2026" },
       {
         title: "IoT Design & Monitoring for Energy Systems with ESP32 (32 h)",
         issuer: "FISEI, UTA · 2025",
       },
       { title: "Network Support and Security", issuer: "Cisco Networking Academy · 2024" },
+      { title: "Introduction to the Internet of Things", issuer: "Cisco Networking Academy · 2024" },
       {
         title: "Business Intelligence: Power BI, data analysis and ETL",
         issuer: "Credly",
@@ -1141,8 +1235,27 @@ export const copy = {
 
     languages: [
       { name: "Spanish", level: "Native" },
-      { name: "English", level: "B2 · Cambridge B2 First" },
+      { name: "English", level: "C2 · EF SET (82/100) · B2 Cambridge First" },
     ],
+
+    activityKinds: { competition: "Competition", congress: "Conference", community: "Community" },
+    activities: {
+      grokbot: { title: "Grok Bot Ambato Meetup", org: "Universidad Técnica de Ambato", note: "A community meetup about AI agents." },
+      hackathon: { title: "UTA 2026 Hackathon", org: "Universidad Técnica de Ambato", note: "I built the CTT-FISEI course assistant on my own, orchestrating AI agents." },
+      congresoUta: { title: "3rd Universal Congress of Sciences and Research", org: "Universidad Técnica de Ambato · 32 h", note: "Attended and passed." },
+      codificadas: { title: "Codificadas, first edition", org: "TCS · competitive programming for women", note: "A regional online competition." },
+      csei: { title: "CSEI 2024: VI Conference on Computer Science, Electronics and Industrial Engineering", org: "FISEI, Universidad Técnica de Ambato", note: "Took part in the conference, online." },
+      hatunsoft: { title: "HatunSoft, first programming contest", org: "FISEI, Universidad Técnica de Ambato", note: "Five hours of problems in the FISEI agora." },
+    },
+
+    hobbies: {
+      learning: {
+        title: "Learning data analysis",
+        text: "Python for data science (Cisco, 2026) and Power BI.",
+      },
+      reading: { title: "Reading", text: "What I'm reading and what I've read.", link: "My Goodreads" },
+      games: { title: "Video games", text: "To switch off.", link: "My Steam" },
+    },
   },
 };
 

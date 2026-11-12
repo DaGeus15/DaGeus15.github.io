@@ -1,18 +1,19 @@
-import { FiArrowUpRight } from "react-icons/fi";
+import { FiArrowUpRight, FiAward, FiBookOpen, FiGlobe } from "react-icons/fi";
 import SectionHeading from "./SectionHeading";
 import RichText from "@/lib/RichText";
 
 /**
- * Sobre mí: la bio breve y la ficha de formación, certificaciones e idiomas.
- * El retrato vive en la portada; repetirlo aquí no aporta. Sin hobbies ni
- * hardware: no le dicen nada a quien contrata.
+ * Sobre mí: la bio breve y la ficha de formación, certificaciones e idiomas,
+ * cada una con su icono (el mismo trazo que el resto). El retrato vive en la
+ * portada; repetirlo aquí no aporta. Las competencias y los hobbies tienen su
+ * sección debajo, en esta misma página (Journey, Hobbies).
  */
-export default function About({ t }) {
+export default function About({ t, pageTitle = false }) {
   const { ui, education, profile } = t;
 
   return (
     <section id="about" className="section" aria-labelledby="about-title">
-      <SectionHeading id="about" title={t.sections.about.title} />
+      <SectionHeading id="about" title={t.sections.about.title} pageTitle={pageTitle} />
 
       <div className="about">
         <div className="about__text">
@@ -27,7 +28,10 @@ export default function About({ t }) {
 
         <div className="facts reveal">
           <div className="fact">
-            <h3 className="fact__head">{ui.education}</h3>
+            <h3 className="fact__head">
+              <FiBookOpen aria-hidden="true" />
+              {ui.education}
+            </h3>
             <p className="fact__title">{education.degree}</p>
             <p className="fact__meta">{education.school}</p>
             <p className="fact__note">
@@ -36,7 +40,10 @@ export default function About({ t }) {
           </div>
 
           <div className="fact">
-            <h3 className="fact__head">{ui.languages}</h3>
+            <h3 className="fact__head">
+              <FiGlobe aria-hidden="true" />
+              {ui.languages}
+            </h3>
             <dl className="fact-list">
               {t.languages.map((l) => (
                 <div key={l.name}>
@@ -48,7 +55,10 @@ export default function About({ t }) {
           </div>
 
           <div className="fact fact--wide">
-            <h3 className="fact__head">{ui.certifications}</h3>
+            <h3 className="fact__head">
+              <FiAward aria-hidden="true" />
+              {ui.certifications}
+            </h3>
             <ul className="fact-list fact-list--grid">
               {t.certifications.map((cert) => (
                 <li key={cert.title}>

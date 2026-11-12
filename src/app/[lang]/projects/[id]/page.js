@@ -9,7 +9,7 @@ import Gallery from "@/components/project/Gallery";
 import Frame from "@/components/project/Frame";
 import RichText from "@/lib/RichText";
 import { getContent } from "@/lib/content";
-import { LANGS, OG_IMAGE, homePath, otherLang, projectPath } from "@/lib/locales";
+import { LANGS, OG_IMAGE, homePath, otherLang, pagePath, projectPath } from "@/lib/locales";
 import { projectIds } from "@/content/projects";
 
 /**
@@ -80,7 +80,7 @@ export default async function CaseStudy({ params }) {
         labels={{ mainNav: ui.mainNav, switchLang: ui.switchLang, back: ui.backHome }}
         name={t.profile.name}
         homeHref={homePath(lang)}
-        backHref={`${homePath(lang)}#projects`}
+        backHref={pagePath(lang, "projects")}
         lang={lang}
         langHref={langHref}
       />

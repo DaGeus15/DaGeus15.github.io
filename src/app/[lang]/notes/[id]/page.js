@@ -4,7 +4,7 @@ import SiteNav from "@/components/layout/SiteNav";
 import Footer from "@/components/layout/Footer";
 import RichText from "@/lib/RichText";
 import { getContent } from "@/lib/content";
-import { LANGS, OG_IMAGE, formatDate, homePath, notePath, otherLang, projectPath } from "@/lib/locales";
+import { LANGS, OG_IMAGE, formatDate, homePath, notePath, otherLang, pagePath, projectPath } from "@/lib/locales";
 import { noteIds } from "@/content/notes";
 
 /**
@@ -84,7 +84,7 @@ export default async function NotePage({ params }) {
         labels={{ mainNav: ui.mainNav, switchLang: ui.switchLang, back: ui.backHome }}
         name={t.profile.name}
         homeHref={homePath(lang)}
-        backHref={`${homePath(lang)}#notes`}
+        backHref={pagePath(lang, "notes")}
         lang={lang}
         langHref={notePath(otherLang(lang), id)}
       />

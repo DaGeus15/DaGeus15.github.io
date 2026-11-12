@@ -39,9 +39,15 @@ silencio.
 - **La disponibilidad va arriba, encima del nombre** (`profile.availability`
   en `copy.js`): es lo primero que pregunta un reclutador y lleva al
   contacto. Si deja de buscar, se borra la cadena y desaparece.
-- **Una sola página, una sola forma de leerla**, más una página por proyecto y una por nota.
-  Nada de modos de lectura ni "ver más" que escondan contenido: lo que está
-  oculto no se lee.
+- **Cinco páginas, cada una con un tema: Inicio, Proyectos, Experiencia,
+  Sobre mí y Notas** (`content/navigation.js`), más una por proyecto y una
+  por nota. Era una sola página; con las competencias, congresos,
+  certificados y hobbies ya no cabía todo sin esconder nada. El inicio es lo
+  que lee el reclutador con prisa: portada, tres proyectos destacados
+  (`featured` en `projects.js`) con el enlace a los siete, y el contacto.
+  Dentro de cada página, nada de modos de lectura ni "ver más" que escondan
+  contenido: lo que está oculto no se lee. El título de la primera sección de
+  cada página es su `<h1>` (`pageTitle`).
 - **El CV que se descarga es una versión pública: sin teléfono.** Los
   originales (con teléfono) son locales y no se suben. Se redacta el PDF
   original, no el `.docx`, que suele ir por detrás: se borra la línea de
@@ -341,11 +347,13 @@ silencio.
 - **Puntero y scroll con motion values**, no `useState` en `pointermove`; el
   rectángulo se mide al entrar, no en cada movimiento. Nada de `setState` en
   el montaje: `useSyncExternalStore`.
-- **El scroll-spy marca la sección que cruza una línea al 40% de la altura**,
-  no la de mayor proporción visible: una sección más alta que la pantalla
-  nunca tiene proporción alta y la navegación se quedaba una por detrás. La
-  portada (`#top`) también se observa, para que al volver arriba no quede
-  nada marcado. Los ids deben ser estables (constante de módulo).
+- **La píldora marca la página en la que se está** (`current`, desde
+  `PageShell`); en el inicio, el contacto cuando se llega a él, con el
+  scroll-spy: la sección que cruza una línea al 40% de la altura, no la de
+  mayor proporción visible (una sección más alta que la pantalla nunca tiene
+  proporción alta y la navegación se quedaba una por detrás). La portada
+  (`#top`) también se observa, para que al volver arriba no quede nada
+  marcado. Los ids deben ser estables (constante de módulo).
 
 ## 3D (pila)
 

@@ -1213,6 +1213,28 @@
   }
 }
 
+/* Logo de la empresa en una pastilla clara (igual en los dos temas). */
+.role__logo {
+  display: block;
+  width: 2.75rem;
+  height: 2.75rem;
+  margin-bottom: var(--sp-4);
+  border-radius: 0.8rem;
+  border: 1px solid var(--tile-border);
+  background: var(--logo-bg);
+  box-shadow: var(--tile-shadow);
+  object-fit: contain;
+}
+
+.role-link__logo {
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 0.35rem;
+  border: 1px solid var(--tile-border);
+  background: var(--logo-bg);
+  object-fit: contain;
+}
+
 .role__company {
   font-size: clamp(1.4rem, 1.2rem + 0.6vw, 1.75rem);
   font-weight: 650;
@@ -1678,6 +1700,173 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr));
   gap: var(--sp-4) var(--sp-6);
+}
+
+/* El icono de cada ficha, apagado: acompaña al rótulo, no compite. */
+.fact__head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.fact__head svg {
+  flex-shrink: 0;
+  width: 1.05em;
+  height: 1.05em;
+  color: var(--muted);
+}
+
+/* ── Competencias y congresos (Journey.jsx) ─────────────────────────────
+   Como el índice de notas: año y tipo a la izquierda, el evento a la
+   derecha. La fila no es un enlace: el velo marca qué se lee. */
+.journey {
+  border-top: 1px solid var(--border);
+}
+
+.journey__row {
+  position: relative;
+  display: grid;
+  gap: var(--sp-2) var(--sp-8);
+  padding-block: var(--sp-6);
+  border-bottom: 1px solid var(--border);
+}
+
+.journey__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1) var(--sp-3);
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+@media (min-width: 1024px) {
+  .journey__row {
+    grid-template-columns: 14rem minmax(0, 1fr);
+  }
+
+  .journey__meta {
+    flex-direction: column;
+  }
+}
+
+.journey__kind {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.journey__kind svg {
+  width: 0.95em;
+  height: 0.95em;
+  transition:
+    translate var(--dur-base) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+}
+
+.journey__title {
+  max-width: 46ch;
+  font-size: clamp(1.1rem, 1rem + 0.4vw, 1.3rem);
+  font-weight: 650;
+  font-stretch: var(--title-stretch);
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+.journey__org {
+  margin-top: var(--sp-1);
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.journey__note {
+  max-width: var(--measure);
+  margin-top: var(--sp-2);
+  line-height: 1.6;
+}
+
+.journey__link {
+  margin-top: var(--sp-1);
+}
+
+.journey__row::before {
+  content: "";
+  position: absolute;
+  inset: 0 calc(var(--sp-3) * -1);
+  border-radius: var(--r-md);
+  background: linear-gradient(90deg, var(--lens-hover), transparent 85%);
+  opacity: 0;
+  transition: opacity var(--dur-base) var(--ease-out);
+  pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .journey__row:hover::before {
+    opacity: 1;
+  }
+
+  .journey__row:hover .journey__kind svg {
+    translate: 0 -1px;
+    color: var(--foreground);
+  }
+}
+
+/* ── Fuera del código (Hobbies.jsx) ─────────────────────────────────────
+   Fichas cortas con el icono en la pastilla de cristal imitado del stack.
+   Al pasar el puntero la pastilla sube, como las teclas del stack: marca qué
+   se lee; el enlace va aparte, en texto. */
+.hobbies {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
+  gap: var(--sp-6);
+}
+
+.hobby {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-2);
+  padding-top: var(--sp-5);
+  border-top: 1px solid var(--border);
+}
+
+.hobby__icon {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  margin-bottom: var(--sp-2);
+  border-radius: 0.8rem;
+  border: 1px solid var(--tile-border);
+  background: var(--tile-grad);
+  box-shadow: var(--tile-shadow);
+  transition:
+    translate var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out);
+}
+
+.hobby__icon svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.hobby__title {
+  font-size: 1.05rem;
+  font-weight: 650;
+}
+
+.hobby__text {
+  max-width: 34ch;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hobby:hover .hobby__icon {
+    translate: 0 -2px;
+    box-shadow: var(--tile-shadow), var(--btn-lift);
+  }
 }
 
 /* ── Contacto ───────────────────────────────────────────────────────── */

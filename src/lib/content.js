@@ -7,6 +7,8 @@ import navBase from "@/content/navigation";
 import stackLayers from "@/content/stackLayers";
 import social from "@/content/social";
 import notesBase from "@/content/notes";
+import activitiesBase from "@/content/activities";
+import hobbiesBase from "@/content/hobbies";
 import { DEFAULT_LANG } from "./locales";
 
 /**
@@ -66,6 +68,7 @@ export function getContent(lang) {
     social,
     nav: navBase.map((s) => ({ ...s, label: c.nav[s.id] })),
     sections: c.sections,
+    pages: c.pages,
     // Capas de la pila, con su nombre accesible ya resuelto: la pila es un
     // componente de cliente y `goTo` es una función.
     layers: stackLayers.map((l) => {
@@ -91,6 +94,12 @@ export function getContent(lang) {
     education: c.education,
     certifications: c.certifications,
     languages: c.languages,
+    activities: activitiesBase.map((a) => ({
+      ...a,
+      ...c.activities[a.id],
+      kindLabel: c.activityKinds[a.kind],
+    })),
+    hobbies: hobbiesBase.map((h) => ({ ...h, ...c.hobbies[h.id] })),
   };
 
   cache.set(lang, content);

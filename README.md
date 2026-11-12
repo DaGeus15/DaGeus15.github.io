@@ -1,9 +1,10 @@
 # Portafolio · Daylé García Fernández
 
 Portafolio personal construido con **Next.js 16** (App Router) y exportado como
-sitio estático a GitHub Pages. Una sola página: la portada con su retrato
-(la cara arriba al cargar), trabajo, experiencia, stack con la pila 3D (OGL),
-notas, sobre mí y contacto. Cada proyecto tiene su caso de estudio con
+sitio estático a GitHub Pages. Cinco páginas: Inicio (la portada con su
+retrato, tres proyectos destacados y el contacto), Proyectos, Experiencia
+(con el stack y la pila 3D en OGL), Sobre mí (formación, certificaciones,
+competencias y congresos, hobbies) y Notas. Cada proyecto tiene su caso de estudio con
 arquitectura, funcionalidades, un reto concreto y galería. En español y en
 inglés, con tema oscuro y claro.
 
@@ -55,7 +56,10 @@ actualizá estos archivos con él.
 | Notas: fecha, proyecto y fragmentos de código     | `content/notes.js`       |
 | Grupos del stack, iconos y herramientas           | `content/skills.js`      |
 | GitHub, LinkedIn y clave del formulario           | `content/social.js`      |
-| Orden de las secciones                            | `content/navigation.js`  |
+| Páginas de la píldora y su orden                  | `content/navigation.js`  |
+| Competencias, congresos y comunidad               | `content/activities.js`  |
+| Hobbies (y sus perfiles públicos)                 | `content/hobbies.js`     |
+| Proyectos destacados del inicio                   | `featured` en `content/projects.js` |
 | Capas de la pila 3D y a qué grupo del stack llevan | `content/stackLayers.js` |
 | Retrato de la portada (generado; no editar)       | `content/portrait.js`    |
 

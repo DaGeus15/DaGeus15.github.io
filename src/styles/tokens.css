@@ -146,6 +146,8 @@
   --rim-light: rgba(224, 182, 118, 0.65);
   /* Pastillas de cristal de los logotipos del stack. */
   --tile-grad: linear-gradient(180deg, rgba(159, 180, 204, 0.16), rgba(159, 180, 204, 0.04));
+  /* Fondo de los logos de empresa: claro en los dos temas (son de color). */
+  --logo-bg: #ffffff;
   --tile-border: rgba(201, 212, 226, 0.16);
   --tile-sheen: rgba(255, 255, 255, 0.14);
   --tile-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), inset 0 -1px 0 rgba(0, 0, 0, 0.3),
