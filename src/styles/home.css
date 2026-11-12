@@ -194,6 +194,10 @@
 }
 
 .hero__actions {
+  /* Encima de los datos: la entrada (.enter) hace de cada bloque una capa
+     propia y los datos, que van después, tapaban el menú del CV. */
+  position: relative;
+  z-index: 2;
   display: flex;
   flex-wrap: wrap;
   gap: var(--sp-3);
@@ -418,9 +422,10 @@
 @media (max-width: 1023px) {
   .hero__portrait {
     order: -1;
-    /* La persona es el 65% del ancho. 84dvh la contiene en tablet,
-       donde a ese ancho el retrato se comería la frase. */
-    --portrait-w: min(calc(65vw / 0.47), calc(84dvh / var(--portrait-ratio, 0.8785)));
+    /* La persona es el 44% del ancho. Al 65% llenaba más de media pantalla
+       y al abrir el enlace en el teléfono se veía sólo la foto: la primera
+       pantalla tiene que dejar ver nombre, rol, frase y acciones. */
+    --portrait-w: min(calc(44vw / 0.47), calc(57dvh / var(--portrait-ratio, 0.8785)));
     width: var(--portrait-w);
     /* La coronilla está al 19.1% del lienzo: lo de encima es el aire del
        degradado y sube por detrás del borde de la pantalla. */
@@ -429,21 +434,21 @@
        lienzo se alinea al inicio (la cara se salía por la derecha). */
     justify-self: unsafe center;
     /* El nombre puede pisar la blusa ya disuelta. */
-    margin-bottom: -36%;
+    margin-bottom: -24%;
   }
 
   /* En claro la tinta marina sobre la blusa no se lee: el texto empieza
      debajo. Va después de la regla de arriba. */
   [data-theme="light"] .hero__portrait {
-    margin-bottom: -8%;
+    margin-bottom: -5%;
   }
 }
 
-/* 320×568: a 65vw la frase en claro se sale. El tope baja sólo aquí;
+/* 320×568: a 44vw la frase en claro se sale. El tope baja sólo aquí;
    en 375 y más altas no hace falta y la persona se quedaría chica. */
 @media (max-width: 1023px) and (max-height: 600px) {
   .hero__portrait {
-    --portrait-w: min(calc(65vw / 0.47), calc(59dvh / var(--portrait-ratio, 0.8785)));
+    --portrait-w: min(calc(44vw / 0.47), calc(40dvh / var(--portrait-ratio, 0.8785)));
   }
 }
 

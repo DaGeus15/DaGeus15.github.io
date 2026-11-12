@@ -42,6 +42,13 @@ silencio.
 - **Una sola página, una sola forma de leerla**, más una página por proyecto y una por nota.
   Nada de modos de lectura ni "ver más" que escondan contenido: lo que está
   oculto no se lee.
+- **El CV que se descarga es una versión pública: sin teléfono.** Los
+  originales (con teléfono) son locales y no se suben. Se redacta el PDF
+  original, no el `.docx`, que suele ir por detrás: se borra la línea de
+  contacto de verdad (redacción, no un recuadro blanco que deja el número
+  copiable) y se reescribe sin el teléfono, centrada, con Calibri (el PDF usa
+  Carlito, su clon métrico, en un subconjunto que no sirve para escribir).
+  Correo, ciudad, LinkedIn y GitHub se quedan: ya están en el sitio.
 - **Los hechos salen del CV** (`public/Dayle-Garcia-Fernandez-CV-*.pdf`) **y
   de los informes de cada proyecto.** No inventes cifras ni herramientas. Si
   algo del informe es un objetivo y no un resultado medido, no va como cifra.
@@ -148,6 +155,8 @@ silencio.
   navegador la descubría tarde; el tema sólo se sabe en el navegador, así que
   se pide la del tema aplicado, con las densidades de `image-set()` (si
   difieren, se descarga dos veces).
+- **En móvil la persona ocupa el 44% del ancho.** Al 65% llenaba más de
+  media pantalla y al abrir el enlace en el teléfono sólo se veía la foto.
 - **El texto no cede ante el retrato:** es el retrato el que escala
   (`--person`); la frase nunca por debajo de ~30ch. En móvil y en claro el
   nombre no pisa la blusa (tinta marina sobre marino).
