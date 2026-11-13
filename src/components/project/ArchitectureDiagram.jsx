@@ -99,44 +99,40 @@ export default function ArchitectureDiagram({ diagram, labels, title, legend }) 
 
   useEffect(() => {
     const svg = svgRef.current;
-    if (!svg || typeof svg.pauseAnimations !== "function") return;
+    if (!svg || !("IntersectionObserver" in window)) return;
+    const controlsPackets = typeof svg.pauseAnimations === "function";
+    const frame = svg.parentElement;
 
+    const durations = new Map();
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       svg.querySelectorAll("animateMotion, animate").forEach((el) => {
-        const dur = parseFloat(el.getAttribute("dur"));
-        if (dur) el.setAttribute("dur", `${(dur * 2.5).toFixed(2)}s`);
+        const duration = el.getAttribute("dur");
+        durations.set(el, duration);
+        el.setAttribute("dur", `${(parseFloat(duration) * 2.5).toFixed(2)}s`);
       });
     }
 
-    const io = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) svg.unpauseAnimations();
-      else svg.pauseAnimations();
-    });
-    io.observe(svg);
+    // El marco recorta el SVG en móvil y la barra tapa parte de la ventana.
+    // El margen deja la primera animación para la zona que se puede leer.
+    const bottomInset = parseFloat(getComputedStyle(document.documentElement).scrollPaddingBottom) || 0;
+    if (frame.getBoundingClientRect().top >= window.innerHeight - bottomInset) frame.dataset.build = "pending";
+    if (controlsPackets) svg.pauseAnimations();
 
-    // Construcción: una vez, al entrar en pantalla, el diagrama se arma (los
-    // nodos en cascada, después las conexiones se dibujan y por último
-    // arrancan los paquetes). Explica el sistema en el orden en que se lee.
-    // Sólo si al hidratar todavía no se ve: lo que ya está a la vista no se
-    // esconde para volver a aparecer. Sin JS se ve entero, como siempre.
-    const r = svg.getBoundingClientRect();
-    let build = null;
-    if (r.top > window.innerHeight * 0.9) {
-      svg.dataset.build = "pending";
-      build = new IntersectionObserver(
-        ([entry]) => {
-          if (!entry.isIntersecting) return;
-          svg.dataset.build = "run";
-          build.disconnect();
-        },
-        { threshold: 0.35 },
-      );
-      build.observe(svg);
-    }
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        if (frame.dataset.build === "pending") frame.dataset.build = "run";
+        if (controlsPackets) svg.unpauseAnimations();
+      } else if (controlsPackets) {
+        svg.pauseAnimations();
+      }
+    }, { rootMargin: `0px 0px -${bottomInset}px 0px` });
+    observer.observe(frame);
 
     return () => {
-      io.disconnect();
-      build?.disconnect();
+      observer.disconnect();
+      delete frame.dataset.build;
+      if (controlsPackets) svg.unpauseAnimations();
+      for (const [el, duration] of durations) el.setAttribute("dur", duration);
     };
   }, []);
 
@@ -172,10 +168,7 @@ export default function ArchitectureDiagram({ diagram, labels, title, legend }) 
                 className={e.async ? "diagram__edge is-async" : "diagram__edge"}
                 style={{ "--e": e.index }}
               >
-                {/* `pathLength` normaliza el trazo a 1 para dibujarlo al
-                    construirse; las asíncronas no, que su discontinuo se
-                    mide en unidades reales. */}
-                <path d={e.d} markerEnd={`url(#${arrowId})`} pathLength={e.async ? undefined : 1} />
+                <path d={e.d} markerEnd={`url(#${arrowId})`} />
                 {e.label && (
                   <text x={e.lx} y={e.ly} textAnchor={e.anchor} className="diagram__protocol">
                     {e.label}

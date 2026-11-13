@@ -291,10 +291,10 @@ silencio.
     y vuelve al regresar (`<ViewTransition name="cover-<id>" share="morph">`
     en `WorkCard` y `ShotStage`, con `experimental.viewTransition`).
   Con movimiento reducido no viajan: queda el fundido.
-- **El diagrama se construye una vez** al entrar en pantalla (nodos en
-  cascada, conexiones que se dibujan, paquetes al final): explica el sistema
-  en el orden en que se lee. Sólo si al hidratar todavía no se veía; sin JS
-  se ve entero.
+- **El diagrama está visible desde el HTML.** Al entrar el marco en pantalla
+  se iluminan los nodos y después las conexiones, seguidos por los paquetes.
+  El diagrama ya tiene su propia entrada y la sección no repite el fundido.
+  Se usa opacidad para evitar repintar los trazos durante el scroll.
 - **Las entradas se pintan en CSS.** `.enter` va en cascada al cargar
   (`--i` es el orden). Para `.reveal`, un solo IntersectionObserver por ruta
   dispara la animación al entrar en pantalla por primera vez, con 48px

@@ -50,9 +50,9 @@ export async function generateMetadata({ params }) {
 
 /** Bloque del informe: el rótulo a la izquierda (fijo al desplazar) y el
     contenido a la derecha; `wide` pone el contenido a todo el ancho. */
-function CaseSection({ title, wide = false, children }) {
+function CaseSection({ title, wide = false, reveal = true, children }) {
   return (
-    <section className="case-section reveal" data-wide={wide || undefined}>
+    <section className={reveal ? "case-section reveal" : "case-section"} data-wide={wide || undefined}>
       <h2 className="case-section__title">{title}</h2>
       <div className="case-section__body">{children}</div>
     </section>
@@ -162,7 +162,7 @@ export default async function CaseStudy({ params }) {
         </CaseSection>
 
         {project.diagram && (
-          <CaseSection title={ui.architecture} wide>
+          <CaseSection title={ui.architecture} wide reveal={false}>
             <ArchitectureDiagram
               diagram={project.diagram}
               labels={project.nodes}
