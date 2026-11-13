@@ -30,7 +30,7 @@ export default function Hobbies({ t }) {
                 <Icon />
               </span>
               <h3 className="hobby__title">{h.title}</h3>
-              <p className="hobby__text">{h.text}</p>
+              {h.text && <p className="hobby__text">{h.text}</p>}
               {h.url && (
                 <a href={h.url} target="_blank" rel="noopener noreferrer" className="role-link hobby__link">
                   <span className="role-link__label">

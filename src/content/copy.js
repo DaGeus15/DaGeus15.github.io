@@ -16,7 +16,7 @@ export const copy = {
     meta: {
       title: "Daylé García Fernández · Desarrollo backend",
       description:
-        "Desarrollo backend con Java y Spring Boot. Experiencia con APIs REST, PostgreSQL y pruebas automatizadas. Proyectos con NestJS y Next.js.",
+        "Desarrollo backend con Java, Spring Boot y PostgreSQL. Proyectos con NestJS y Next.js.",
     },
 
     ui: {
@@ -105,15 +105,15 @@ export const copy = {
     pages: {
       projects: {
         title: "Proyectos",
-        description: "Siete casos de estudio con la arquitectura, las capturas y mi contribución a cada proyecto.",
+        description: "Siete casos de estudio con arquitectura, capturas y mis aportes.",
       },
       experience: {
         title: "Experiencia",
-        description: "Mi trabajo con Java y Spring Boot en Alquimiasoft y las tecnologías que uso en cada capa.",
+        description: "Desarrollo backend en Alquimiasoft y mi stack técnico.",
       },
       about: {
         title: "Sobre mí",
-        description: "Mi formación, certificaciones e idiomas, además de concursos, congresos y aficiones.",
+        description: "Formación, certificaciones, idiomas y actividades.",
       },
       notes: {
         title: "Notas",
@@ -130,37 +130,25 @@ export const copy = {
     },
 
     sections: {
-      projects: {
-        title: "Proyectos",
-        intro:
-          "Siete sistemas, cada uno con su caso de estudio.",
-      },
+      projects: { title: "Proyectos" },
       experience: { title: "Experiencia" },
       notes: {
         title: "Notas",
-        intro: "Lo que aprendí resolviendo un problema concreto, con el código real.",
+        intro: "Soluciones explicadas con código.",
       },
-      stack: {
-        title: "Stack",
-        intro: "Las tecnologías que uso en cada capa y los proyectos donde las apliqué.",
-      },
+      stack: { title: "Stack" },
       about: { title: "Sobre mí" },
       featured: {
         title: "Proyectos destacados",
-        intro: "Tres casos de estudio sobre mi trabajo en backend.",
-        more: "Ver los siete proyectos",
+        more: "Ver todos los proyectos",
       },
-      journey: {
-        title: "Competencias y congresos",
-        intro: "Concursos y encuentros en los que he participado con la comunidad tecnológica.",
-      },
+      journey: { title: "Competencias y congresos" },
       hobbies: {
         title: "Fuera del código",
       },
       contact: {
         title: "¿Hablamos?",
-        intro:
-          "Si quieres hablar de un proyecto, colaborar o hacerme una pregunta, escríbeme en español o en inglés.",
+        intro: "Puedes escribirme en español o en inglés.",
       },
     },
 
@@ -174,8 +162,8 @@ export const copy = {
       /* Señal de la portada. Si dejo de buscar, se borra y desaparece. */
       availability: "Disponible para nuevas oportunidades",
       summary: [
-        "En **Alquimiasoft** desarrollo microservicios en Java y Spring Boot con PostgreSQL. Documento las APIs REST con Swagger y escribo pruebas con Mockito.",
-        "En mis proyectos con NestJS y Next.js también trabajo con pruebas, contenedores y CI/CD.",
+        "Desarrollo microservicios en **Alquimiasoft** con Java, Spring Boot y PostgreSQL.",
+        "En mis proyectos con NestJS y Next.js trabajo con pruebas, contenedores y CI/CD.",
       ],
     },
 
@@ -194,7 +182,7 @@ export const copy = {
           "**Más de 10 módulos CRUD** en la API principal, incluido el de facturación.",
           "Funcionalidades y correcciones en aplicaciones **legacy en Spring MVC**.",
           "Documentación de APIs con Swagger/OpenAPI y pruebas con Mockito que mantienen **más del 95 % de cobertura**.",
-          "Contenerización con Docker, revisión de código e integración de interfaces Flutter con el backend en un equipo Scrum.",
+          "Docker, revisión de código e integración de interfaces Flutter en un equipo Scrum.",
         ],
       },
     ],
@@ -255,11 +243,11 @@ export const copy = {
         title: "KAPHIY",
         subtitle: "Pedidos por chat con IA para una cafetería, en producción",
         summary:
-          "Sistema de pedidos en producción en Praliné Coffee House: el comensal pide por chat a un agente de IA, la cocina lo recibe al instante y cada venta llega sola al ERP contable.",
+          "Pedidos por chat con IA en Praliné Coffee House, con un panel de cocina en tiempo real y registro de ventas en el ERP.",
         client: "Praliné Coffee House, Baños de Agua Santa",
         description: [
           "El comensal escanea el QR de su mesa y pide desde una PWA conversando con un agente basado en Gemini, que interpreta lenguaje natural y arma el pedido. La cocina lo recibe al instante en un panel en tiempo real por WebSocket, y cada venta se registra en el ERP contable del cliente para no teclear nada dos veces.",
-          "Está en producción, sostenido por 165 pruebas automatizadas y un pipeline de CI/CD en GitHub Actions que valida cada cambio antes de llegar a un negocio que depende de él a diario. Eso marcó las decisiones técnicas: contratos claros entre módulos, pruebas antes de fusionar y despliegues repetibles.",
+          "En producción, GitHub Actions ejecuta 165 pruebas antes de fusionar cambios. Los contratos entre módulos y el pipeline de CI/CD permiten repetir el despliegue.",
         ],
         features: [
           "El comensal escanea el QR de su mesa y pide por chat, escribiendo o por voz.",
@@ -295,12 +283,12 @@ export const copy = {
       },
       helpdesk: {
         title: "Asistente de cursos CTT-FISEI",
-        subtitle: "Una asesora con IA en Telegram y un panel para tomar el control en vivo",
+        subtitle: "Asistente de Telegram con intervención humana en vivo",
         summary:
-          "Agente de ventas con IA para los Talleres Tecnológicos de la FISEI (UTA): atiende por Telegram, por texto o por voz, con el catálogo real de cursos, y un operador puede tomar la conversación desde un panel en tiempo real sin que el usuario note el cambio. Lo construí sola en la Hackathon UTA 2026, orquestando agentes de IA de programación.",
+          "Asistente de cursos por texto y voz en Telegram. Diseñé el sistema y el panel de intervención en la Hackathon UTA 2026. El código lo escribieron agentes de IA que orquesté.",
         client: "Hackathon UTA 2026 · Talleres Tecnológicos CTT-FISEI",
         description: [
-          "El reto: un centro de capacitación recibe consultas a cualquier hora, y un bot de menús o una respuesta tardía pierden al interesado. La asesora atiende por Telegram a cualquier hora con los 18 cursos reales del CTT-FISEI: recomienda uno o dos según el perfil, responde objeciones y lleva a la inscripción. Cada mensaje aparece al instante en un panel donde el operador ve el estado de cada prospecto (interesado, dudoso, frustrado o lead caliente) y puede tomar el control: la IA se pausa y él responde con el mismo bot.",
+          "El asistente atiende a cualquier hora y recomienda uno o dos de los 18 cursos del CTT-FISEI según el perfil de cada persona. Responde dudas y guía la inscripción. En el panel, el operador ve cada mensaje y el estado del prospecto. Cuando toma el control, la IA se pausa y el operador responde desde el mismo bot.",
           "Una sola llamada al LLM por mensaje, con salida JSON validada con zod (respuesta, estado del lead, intención, perfil y si hace falta un humano): la mitad de latencia y de tokens que encadenar un clasificador y un generador. El modelo nunca es la fuente de los datos comerciales: los precios salen de la base, cada importe de la respuesta se valida contra el catálogo y el enlace de inscripción lo genera el servidor. El panel lee de Supabase en tiempo real y escribe sólo por la API autenticada: la clave pública no puede modificar nada.",
         ],
         features: [
@@ -346,10 +334,10 @@ export const copy = {
         title: "Fiado",
         subtitle: "Verificación facial en vivo para una cooperativa de ahorro y crédito",
         summary:
-          "Simulador de créditos e inversiones para una cooperativa. Mi parte: confirmar la identidad de quien invierte con una prueba de vida en vivo y la comparación de su rostro con la cédula (también desde el celular), el registro y el inicio de sesión, y la portada.",
+          "Simulador de créditos e inversiones. Implementé la verificación de identidad, el traspaso al celular, el registro, el inicio de sesión y la portada.",
         client: "Proyecto académico · Ingeniería Económica para Software, UTA",
         description: [
-          "Fiado simula los servicios digitales de una cooperativa de ahorro y crédito: créditos con los sistemas francés y alemán, con su tabla de amortización en PDF, e inversiones a plazo fijo que se solicitan en línea. Para abrir una póliza, igual que en la app de un banco, hay que demostrar que eres el titular de la cédula. Esa verificación biométrica es mi parte, junto con las cuentas y la sesión de las que depende, y la portada.",
+          "Fiado simula créditos con amortización francesa o alemana, genera tablas en PDF y permite solicitar inversiones a plazo fijo. Para abrir una póliza, la persona debe verificar que es titular de la cédula.",
           "La detección en el navegador sólo guía; decide el servidor. El cliente pide dos gestos al azar, acompaña a la persona con el óvalo y envía un fotograma de frente, uno por gesto y otro de frente al cerrar. El servidor comprueba que todos son la misma persona, que cada gesto se hizo y que el rostro coincide con el de la cédula: una foto o un video grabado de antemano no sirven. Y el reconocimiento está detrás de una interfaz (`BiometricProvider`): cambiar face-api por un proveedor comercial no toca el resto.",
         ],
         features: [
@@ -369,7 +357,7 @@ export const copy = {
         },
         role: "El flujo biométrico de punta a punta: el módulo de biometría en NestJS y Prisma (prueba de vida, comparación facial y auditoría de intentos), la confirmación de identidad del registro, el traspaso al celular con QR y Server-Sent Events, y sus pantallas guiadas en Next.js. Además, el registro y el inicio de sesión con rotación de refresh tokens, y la portada del sitio. En un equipo de seis.",
         scope:
-          "El resto del sistema lo hizo el equipo: los simuladores de crédito (francés y alemán) y de inversiones, la tabla de amortización en PDF y el panel de administración. Esas partes no son mías: aquí sólo aparece lo que hice yo.",
+          "El equipo desarrolló los simuladores de crédito e inversión, las tablas de amortización en PDF y el panel de administración.",
         metrics: {
           gestures: { value: "2 de 3", label: "gestos al azar, sorteados por el servidor" },
           handoff: "seguir en el celular, en vivo en la computadora",
@@ -398,11 +386,11 @@ export const copy = {
         title: "Gasoline System",
         subtitle: "Control de combustible de una flota, en microservicios",
         summary:
-          "Microservicios tras un API Gateway, con gRPC para las llamadas síncronas y eventos NATS para lo asíncrono; cada servicio con su base de datos y su contenedor.",
+          "Control de combustible con gRPC, eventos NATS y una base de datos por servicio.",
         client: "Proyecto académico · Aplicaciones Distribuidas, UTA",
         description: [
           "Control del consumo de combustible de una flota, diseñado como microservicios independientes (autenticación, conductores, vehículos, rutas y combustible), cada uno con su base de datos y su contenedor, detrás de un único API Gateway.",
-          "La comunicación va por dos caminos según lo que se necesita: gRPC cuando un servicio necesita la respuesta de otro al momento, y eventos por NATS cuando basta con avisar sin bloquear al emisor. Fue donde entendí en la práctica lo que cuesta distribuir: consistencia entre bases separadas y fallos parciales.",
+          "Los servicios usan gRPC para respuestas inmediatas y NATS para publicar eventos sin bloquear. Esta separación obliga a gestionar fallos parciales y consistencia entre bases de datos.",
         ],
         features: [
           "Cinco microservicios (autenticación, conductores, vehículos, rutas y combustible) detrás de un API Gateway en NestJS.",
@@ -443,11 +431,11 @@ export const copy = {
         title: "Módulo contable · Junta de Agua de Miñarica",
         subtitle: "Contabilidad por partida doble para una junta comunitaria de agua",
         summary:
-          "El módulo contable del sistema de la Junta de Agua de Miñarica: asientos, periodos, plan de cuentas, cuentas por cobrar y los seis reportes contables en PDF.",
+          "Contabilidad por partida doble con asientos, periodos, plan de cuentas, cuentas por cobrar y seis reportes en PDF.",
         client: "Junta de Agua de Miñarica · vinculación DIVISO, UTA",
         description: [
-          "Proyecto de vinculación (DIVISO, UTA) para digitalizar una junta comunitaria de agua potable que llevaba sus cuentas a mano. El sistema lo construyó un equipo; mi parte fue el módulo contable: la partida doble que recibe lo que factura el resto del sistema y lo convierte en libros y estados financieros.",
-          "Lo importante está en las reglas que el código garantiza: un asiento sólo se guarda si el debe y el haber cuadran, un periodo cerrado ya no admite cambios, sólo se borran asientos pendientes de un periodo abierto y cada cuenta nueva tiene que colgar de una cuenta padre que exista. Es el proyecto que más me enseñó a traducir las reglas de un dominio ajeno, la contabilidad, a validaciones.",
+          "El equipo digitalizó las cuentas de la Junta de Agua de Miñarica en un proyecto de vinculación de la UTA (DIVISO). Mi módulo recibe la facturación y genera libros y estados financieros.",
+          "El código exige que el debe y el haber cuadren y que cada cuenta nueva tenga una cuenta padre válida. Bloquea cambios en periodos cerrados y solo permite borrar asientos pendientes en periodos abiertos.",
         ],
         features: [
           "Asientos de ingreso, egreso y diario: filtrar, aprobar, editar y eliminar (sólo los pendientes de un periodo abierto).",
@@ -533,7 +521,7 @@ export const copy = {
         client: "Proyecto académico, UTA",
         description: [
           "Marketplace donde los usuarios publican productos y servicios y pueden reportar publicaciones, con un flujo de moderación detrás. Backend en NestJS, Prisma y PostgreSQL y frontend en React.",
-          "El foco estuvo tanto en la aplicación como en cómo llega a producción: imágenes Docker multi-stage, despliegue en Azure y un pipeline de GitHub Actions que construye, prueba y despliega en cada push.",
+          "El despliegue usa imágenes Docker multi-stage. GitHub Actions compila, prueba y despliega en Azure con cada push.",
         ],
         features: [
           "Los usuarios publican productos y servicios y pueden reportar publicaciones; detrás hay un flujo de moderación.",
@@ -564,7 +552,7 @@ export const copy = {
     skills: {
       backend: {
         title: "Backend",
-        proof: "Más de 10 módulos CRUD entregados en el API principal de Alquimiasoft, incluida la facturación.",
+        proof: "Más de 10 módulos CRUD en la API de Alquimiasoft, incluido el de facturación.",
       },
       data: {
         title: "Bases de datos",
@@ -580,7 +568,7 @@ export const copy = {
       },
       frontend: {
         title: "Frontend y móvil",
-        proof: "Interfaces en Flutter que consumen el backend, y los frontends de mis proyectos.",
+        proof: "Interfaces en Flutter conectadas al backend.",
       },
     },
 
@@ -632,11 +620,11 @@ export const copy = {
 
     hobbies: {
       learning: {
-        title: "Aprendiendo análisis de datos",
-        text: "Python para ciencia de datos (Cisco, 2026) y Power BI.",
+        title: "Aprendiendo ciencia de datos",
+        text: "Python (Cisco, 2026) y Power BI.",
       },
-      reading: { title: "Leer", text: "Lo que estoy leyendo y lo que ya leí.", link: "Mi Goodreads" },
-      games: { title: "Videojuegos", text: "Para desconectar.", link: "Mi Steam" },
+      reading: { title: "Lectura", link: "Goodreads" },
+      games: { title: "Videojuegos", link: "Steam" },
     },
   },
 
@@ -645,7 +633,7 @@ export const copy = {
     meta: {
       title: "Daylé García Fernández · Software Engineer",
       description:
-        "Backend development with Java and Spring Boot. Experience with REST APIs, PostgreSQL and automated testing. Projects built with NestJS and Next.js.",
+        "Backend development with Java, Spring Boot and PostgreSQL. Projects with NestJS and Next.js.",
     },
 
     ui: {
@@ -733,15 +721,15 @@ export const copy = {
     pages: {
       projects: {
         title: "Projects",
-        description: "Seven case studies covering the architecture, screenshots and my contribution to each project.",
+        description: "Seven case studies with architecture, screenshots and my contributions.",
       },
       experience: {
         title: "Experience",
-        description: "My work with Java and Spring Boot at Alquimiasoft and the technologies I use at each layer.",
+        description: "Backend development at Alquimiasoft and my tech stack.",
       },
       about: {
         title: "About",
-        description: "My education, certifications and languages, plus competitions, conferences and hobbies.",
+        description: "Education, certifications, languages and activities.",
       },
       notes: {
         title: "Notes",
@@ -755,37 +743,25 @@ export const copy = {
     },
 
     sections: {
-      projects: {
-        title: "Projects",
-        intro:
-          "Seven systems, each with its case study.",
-      },
+      projects: { title: "Projects" },
       experience: { title: "Experience" },
       notes: {
         title: "Notes",
-        intro: "What I learned solving a specific problem, with the real code.",
+        intro: "Solutions explained through code.",
       },
-      stack: {
-        title: "Stack",
-        intro: "The technologies I use at each layer and the projects where I used them.",
-      },
+      stack: { title: "Stack" },
       about: { title: "About" },
       featured: {
         title: "Featured projects",
-        intro: "Three case studies on my backend work.",
-        more: "See all seven projects",
+        more: "See all projects",
       },
-      journey: {
-        title: "Competitions and conferences",
-        intro: "Competitions and events I've taken part in with the tech community.",
-      },
+      journey: { title: "Competitions and conferences" },
       hobbies: {
         title: "Outside code",
       },
       contact: {
         title: "Let's talk",
-        intro:
-          "Get in touch in English or Spanish to discuss a project, collaborate or ask a question.",
+        intro: "You can reach me in English or Spanish.",
       },
     },
 
@@ -796,8 +772,8 @@ export const copy = {
       location: "Ambato, Ecuador",
       availability: "Open to new opportunities",
       summary: [
-        "At **Alquimiasoft**, I build Java and Spring Boot microservices with PostgreSQL. I document REST APIs with Swagger and write tests with Mockito.",
-        "In my NestJS and Next.js projects, I also work with testing, containers and CI/CD.",
+        "I build microservices at **Alquimiasoft** with Java, Spring Boot and PostgreSQL.",
+        "My NestJS and Next.js projects use automated tests, containers and CI/CD.",
       ],
     },
 
@@ -816,7 +792,7 @@ export const copy = {
           "**10+ CRUD modules** in the main API, including invoicing.",
           "Features and fixes in **legacy Spring MVC** applications.",
           "API documentation with Swagger/OpenAPI and Mockito tests that maintain **over 95% code coverage**.",
-          "Docker containerization, code review and integration of Flutter interfaces with the backend on a Scrum team.",
+          "Docker, code review and Flutter integration on a Scrum team.",
         ],
       },
     ],
@@ -873,11 +849,11 @@ export const copy = {
         title: "KAPHIY",
         subtitle: "AI chat ordering for a coffee shop, in production",
         summary:
-          "Ordering system in production at Praliné Coffee House: customers order by chatting with an AI agent, the kitchen gets it instantly and every sale lands in the accounting ERP on its own.",
+          "AI chat ordering at Praliné Coffee House, with a real-time kitchen dashboard and sales recorded in the accounting ERP.",
         client: "Praliné Coffee House, Baños de Agua Santa (Ecuador)",
         description: [
           "Customers scan the QR code on their table and order from a PWA by chatting with an agent built on Gemini, which interprets natural language and assembles the order. The kitchen receives it instantly on a real-time board over WebSocket, and every sale is recorded in the client's accounting ERP so nothing is keyed in twice.",
-          "It runs in production, backed by 165 automated tests and a GitHub Actions CI/CD pipeline that validates every change before it reaches a business that depends on it daily. That shaped the technical decisions: clear contracts between modules, tests before merging and repeatable deployments.",
+          "GitHub Actions runs 165 tests before changes are merged. Module contracts and the CI/CD pipeline keep production deployments repeatable.",
         ],
         features: [
           "Customers scan the QR code on their table and order by chat, typing or by voice.",
@@ -913,12 +889,12 @@ export const copy = {
       },
       helpdesk: {
         title: "CTT-FISEI course assistant",
-        subtitle: "An AI sales advisor on Telegram and a dashboard to take over live",
+        subtitle: "Telegram course assistant with live operator handoff",
         summary:
-          "AI sales agent for the FISEI Technology Workshops (UTA): it answers on Telegram, by text or voice, with the real course catalog, and an operator can take over the conversation from a real-time dashboard without the user noticing. I built it on my own at the UTA 2026 Hackathon, orchestrating AI coding agents.",
+          "A Telegram assistant for course inquiries by text and voice. I designed the system and the operator dashboard at the 2026 UTA Hackathon. AI agents I orchestrated wrote the code.",
         client: "UTA 2026 Hackathon · CTT-FISEI Technology Workshops",
         description: [
-          "The challenge: a training centre gets questions at all hours, and a menu bot or a late reply loses the prospect. The advisor answers on Telegram at any hour with the CTT-FISEI's 18 real courses: she recommends one or two based on the profile, handles objections and leads to enrollment. Every message shows up instantly in a dashboard where the operator sees each prospect's state (interested, hesitant, frustrated or hot lead) and can take over: the AI pauses and the operator replies through the same bot.",
+          "The assistant answers around the clock and recommends one or two of CTT-FISEI's 18 courses based on each person's profile. It answers questions and guides enrollment. The dashboard shows each message and the prospect's status. When an operator takes over, the AI pauses and the operator replies through the same bot.",
           "A single LLM call per message, with JSON output validated with zod (reply, lead state, intent, profile and whether a human is needed): half the latency and tokens of chaining a classifier and a generator. The model is never the source of commercial data: prices come from the database, every amount in a reply is checked against the catalog and the enrollment link is built by the server. The dashboard reads from Supabase in real time and writes only through the authenticated API: the public key can't change anything.",
         ],
         features: [
@@ -964,10 +940,10 @@ export const copy = {
         title: "Fiado",
         subtitle: "Live face verification for a credit union",
         summary:
-          "A loan and investment simulator for a credit union. My part: confirming who is investing with a live liveness check and a match of their face against their ID card (from a phone too), sign-up and sign-in, and the landing page.",
+          "A loan and investment simulator. I built identity verification, the phone handoff, sign-up, sign-in and the landing page.",
         client: "Academic project · Engineering Economics for Software, UTA",
         description: [
-          "Fiado simulates the digital services of a credit union: loans with the French and German amortization systems, with the schedule as a PDF, and fixed-term investments you apply for online. To open one, just like in a banking app, you have to prove you are the holder of the ID card. That biometric verification is my part, along with the accounts and sessions it depends on, and the landing page.",
+          "Fiado simulates loans with French or German amortization, generates PDF schedules and accepts fixed-term investment applications. Applicants verify that they are the ID card holder before opening an investment.",
           "Detection in the browser only guides; the server decides. The client asks for two random gestures, guides the person with the oval and sends a frontal frame, one per gesture and a closing frontal one. The server checks that they are all the same person, that each gesture was made and that the face matches the one on the ID: a photo or a pre-recorded video won't pass. And recognition sits behind an interface (`BiometricProvider`): swapping face-api for a commercial provider leaves the rest untouched.",
         ],
         features: [
@@ -987,7 +963,7 @@ export const copy = {
         },
         role: "The biometric flow end to end: the biometrics module in NestJS and Prisma (liveness, face matching and attempt auditing), sign-up identity confirmation, the handoff to the phone with a QR code and Server-Sent Events, and their guided screens in Next.js. Also sign-up and sign-in with refresh-token rotation, and the site's landing page. In a team of six.",
         scope:
-          "The rest of the system was built by the team: the loan (French and German) and investment simulators, the PDF amortization schedule and the admin panel. Those parts aren't mine: only what I built is shown here.",
+          "The team built the loan and investment simulators, the PDF amortization schedules and the admin panel.",
         metrics: {
           gestures: { value: "2 of 3", label: "random gestures, drawn by the server" },
           handoff: "continue on the phone, live on the computer",
@@ -1016,11 +992,11 @@ export const copy = {
         title: "Gasoline System",
         subtitle: "Fleet fuel control, as microservices",
         summary:
-          "Microservices behind an API Gateway, with gRPC for synchronous calls and NATS events for asynchronous ones; each service with its own database and container.",
+          "Fleet fuel tracking with gRPC, NATS events and a database per service.",
         client: "University project · Distributed Applications, UTA",
         description: [
           "Fuel consumption control for a vehicle fleet, designed as independent microservices (authentication, drivers, vehicles, routes and fuel), each with its own database and container, behind a single API Gateway.",
-          "Communication takes two paths depending on the need: gRPC when a service needs another's answer right away, and NATS events when it's enough to notify without blocking the sender. It's where I learned in practice what distribution costs: consistency across separate databases and partial failures.",
+          "Services use gRPC for immediate replies and NATS to publish events without blocking. This separation means handling partial failures and keeping separate databases consistent.",
         ],
         features: [
           "Five microservices (authentication, drivers, vehicles, routes and fuel) behind an API Gateway in NestJS.",
@@ -1061,11 +1037,11 @@ export const copy = {
         title: "Accounting module · Miñarica Water Board",
         subtitle: "Double-entry accounting for a community water board",
         summary:
-          "The accounting module of the Miñarica Water Board's system: journal entries, periods, chart of accounts, receivables and the six accounting reports in PDF.",
+          "Double-entry accounting with journal entries, periods, a chart of accounts, receivables and six PDF reports.",
         client: "Miñarica Water Board · DIVISO outreach programme, UTA",
         description: [
-          "A university outreach project (DIVISO, UTA) to digitise a community drinking-water board that kept its books by hand. The system was built by a team; my part was the accounting module: the double-entry engine that takes what the rest of the system invoices and turns it into books and financial statements.",
-          "What matters is the rules the code guarantees: an entry is only saved if debits equal credits, a closed period no longer accepts changes, only pending entries in an open period can be deleted, and every new account has to hang from a parent account that exists. It's the project that taught me most about turning the rules of an unfamiliar domain, accounting, into validations.",
+          "Our team digitised the Miñarica Water Board's accounts in a UTA outreach project (DIVISO). My module turns invoices into accounting records and financial statements.",
+          "The code requires debits and credits to balance and each new account to have a valid parent. It blocks changes to closed periods and allows deletion only for pending entries in open periods.",
         ],
         features: [
           "Income, expense and general journal entries: filter, approve, edit and delete (only pending ones in an open period).",
@@ -1151,7 +1127,7 @@ export const copy = {
         client: "University project, UTA",
         description: [
           "A marketplace where users publish products and services and can report listings, with a moderation flow behind it. NestJS, Prisma and PostgreSQL on the backend and React on the frontend.",
-          "The focus was as much on the app as on how it reaches production: multi-stage Docker images, deployment to Azure and a GitHub Actions pipeline that builds, tests and deploys on every push.",
+          "The deployment uses multi-stage Docker images. GitHub Actions builds, tests and deploys to Azure on each push.",
         ],
         features: [
           "Users publish products and services and can report listings; a moderation flow sits behind it.",
@@ -1182,7 +1158,7 @@ export const copy = {
     skills: {
       backend: {
         title: "Backend",
-        proof: "10+ CRUD modules delivered in Alquimiasoft's main API service, including invoicing.",
+        proof: "10+ CRUD modules in Alquimiasoft's API, including invoicing.",
       },
       data: {
         title: "Databases",
@@ -1198,7 +1174,7 @@ export const copy = {
       },
       frontend: {
         title: "Frontend & mobile",
-        proof: "Flutter UIs consuming the backend, and the frontends of my own projects.",
+        proof: "Flutter interfaces connected to the backend.",
       },
     },
 
@@ -1250,11 +1226,11 @@ export const copy = {
 
     hobbies: {
       learning: {
-        title: "Learning data analysis",
-        text: "Python for data science (Cisco, 2026) and Power BI.",
+        title: "Learning data science",
+        text: "Python (Cisco, 2026) and Power BI.",
       },
-      reading: { title: "Reading", text: "What I'm reading and what I've read.", link: "My Goodreads" },
-      games: { title: "Video games", text: "To switch off.", link: "My Steam" },
+      reading: { title: "Reading", link: "Goodreads" },
+      games: { title: "Video games", link: "Steam" },
     },
   },
 };
