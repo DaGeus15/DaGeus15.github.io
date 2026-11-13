@@ -1,13 +1,15 @@
+import Image from "next/image";
 import { FiArrowDown, FiArrowRight, FiGlobe, FiMapPin } from "react-icons/fi";
 import CvDownload from "@/components/ui/CvDownload";
 import PortraitFocus from "@/components/hero/PortraitFocus";
+import { slabShape } from "@/components/hero/stackGeometry";
 import portrait from "@/content/portrait";
+import stackLayers from "@/content/stackLayers";
+import { MOBILE_BREAKPOINT } from "@/lib/breakpoints";
 
 /**
  * Portada: el texto a la izquierda y el retrato a la derecha, sin ficha.
- * El lienzo es más ancho que su columna (la pared se apaga hacia la página)
- * y el texto va por encima. En móvil el retrato va arriba, a sangre, y se
- * disuelve hacia el texto.
+ * El retrato tiene fondo transparente y se disuelve hacia el texto en móvil.
  *
  * La ubicación y la ciudadanía van debajo de las acciones, en todos los
  * anchos: una sola lista.
@@ -15,34 +17,64 @@ import portrait from "@/content/portrait";
  * El nombre se parte a mano en dos líneas (nombre + apellidos) para que el
  * corte no dependa del ancho.
  */
-function imageSet(variants) {
-  const [lo, hi] = [...variants].sort((a, b) => a.w - b.w);
-  return `image-set(url("${lo.src}") 1x, url("${hi.src}") 2x)`;
+// El ancho en escritorio sigue el bloque de texto, con estos topes.
+const portraitSizes = `(min-width: ${MOBILE_BREAKPOINT}px) min(44vw, 36rem), min(64vw, 24rem, 49dvh)`;
+const portraitSrcSet = portrait.photo.map(({ src, w }) => `${src} ${w}w`).join(", ");
+const portraitFallback = portrait.photo.find(({ w }) => w >= 640) ?? portrait.photo.at(-1);
+const letters = new Intl.Segmenter(undefined, { granularity: "grapheme" });
+const signatureSlabs = stackLayers
+  .map(({ id }, index) => ({ id, ...slabShape(index, stackLayers.length, 3) }))
+  .reverse();
+
+function NameLine({ line, offset = 0 }) {
+  return (
+    <span className="hero-intro__line">
+      {Array.from(letters.segment(line), ({ segment, index }) =>
+        <span key={index} className="hero-intro__letter" style={{ "--letter": offset + index }}>
+          {segment}
+        </span>,
+      )}
+    </span>
+  );
 }
 
-/** Variables del tema. Sin `data-theme` (sin JS) queda el oscuro, el de serie. */
-function portraitVars() {
-  const block = (theme) => {
-    const photo = imageSet(portrait.photo[theme]);
-    const rim = imageSet(portrait.rim[theme]);
-    return `--portrait-photo:${photo};--portrait-rim:${rim};`;
-  };
-  return `.hero__portrait{${block("dark")}}
-[data-theme="dark"] .hero__portrait{${block("dark")}}
-[data-theme="light"] .hero__portrait{${block("light")}}`;
+function HeroSignature() {
+  return (
+    <svg className="hero-intro__stack" viewBox="28 24 244 412" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="hero-intro-top" x2="0.3" y2="1">
+          <stop className="hero-intro__slab-light" />
+          <stop offset="1" className="hero-intro__slab-shade" />
+        </linearGradient>
+      </defs>
+      {signatureSlabs.map(({ id, body, top }, index) => (
+        <g key={id} className="hero-intro__slab" data-layer={id} style={{ "--layer": index }}>
+          <polygon className="hero-intro__slab-body" points={body} />
+          <polygon className="hero-intro__slab-top" points={top} />
+        </g>
+      ))}
+    </svg>
+  );
 }
 
-/** La foto es un fondo CSS y el navegador la descubría tarde, aunque es lo
-    primero que tiene que verse. El tema sólo se sabe en el navegador: el
-    script del layout ya lo fijó, y aquí se pide la del tema aplicado, con las
-    mismas densidades que `image-set()`. */
-function portraitPreload() {
-  const set = (theme) => {
-    const [lo, hi] = [...portrait.photo[theme]].sort((a, b) => a.w - b.w);
-    return `${lo.src} 1x, ${hi.src} 2x`;
-  };
-  const sets = JSON.stringify({ dark: set("dark"), light: set("light") });
-  return `(function(){var s=${sets};var t=document.documentElement.getAttribute("data-theme");var l=document.createElement("link");l.rel="preload";l.as="image";l.fetchPriority="high";l.imageSrcset=s[t]||s.dark;document.head.appendChild(l);})();`;
+function nameLines(name) {
+  const words = name.split(" ");
+  return [words.slice(0, 2).join(" "), words.slice(2).join(" ")];
+}
+
+/** Firma visual de la primera carga del documento. */
+export function HeroIntro({ profile }) {
+  const [first, last] = nameLines(profile.name);
+  return (
+    <div className="hero-intro" aria-hidden="true" suppressHydrationWarning>
+      <div className="hero-intro__identity">
+        <div className="hero-intro__name">
+          <NameLine line={first} /> <NameLine line={last} offset={first.length + 1} />
+        </div>
+        <HeroSignature />
+      </div>
+    </div>
+  );
 }
 
 function HeroFacts({ profile, className = "hero__facts", style }) {
@@ -62,14 +94,10 @@ function HeroFacts({ profile, className = "hero__facts", style }) {
 
 export default function Hero({ t }) {
   const { profile, ui } = t;
-  const words = profile.name.split(" ");
-  const first = words.slice(0, 2).join(" ");
-  const last = words.slice(2).join(" ");
+  const [first, last] = nameLines(profile.name);
 
   return (
     <section id="top" className="hero" aria-labelledby="hero-title">
-      <style href="portrait-theme" precedence="default">{portraitVars()}</style>
-      <script dangerouslySetInnerHTML={{ __html: portraitPreload() }} />
       <div className="hero__text">
         {profile.availability && (
           <a href="#contact" className="availability enter" style={{ "--i": 0 }}>
@@ -101,16 +129,25 @@ export default function Hero({ t }) {
 
       <div
         className="hero__portrait enter"
-        role="img"
-        aria-label={profile.name}
         style={{
           "--i": 1,
-          "--portrait-ratio": (portrait.h / portrait.w).toFixed(4),
+          "--portrait-ratio": portrait.h / portrait.w,
+          "--portrait-rim": `url("${portrait.rim}")`,
           aspectRatio: `${portrait.w} / ${portrait.h}`,
         }}
       >
-        <div className="hero__photo" />
-        <div className="hero__rim hero__rim--rest" />
+        <picture>
+          <source srcSet={portraitSrcSet} sizes={portraitSizes} />
+          <Image
+            className="hero__photo"
+            src={portraitFallback.src}
+            width={portrait.w}
+            height={portrait.h}
+            loading="eager"
+            fetchPriority="high"
+            alt={profile.name}
+          />
+        </picture>
         <PortraitFocus />
       </div>
     </section>

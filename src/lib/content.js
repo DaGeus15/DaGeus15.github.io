@@ -19,8 +19,8 @@ import { DEFAULT_LANG } from "./locales";
  * Es el ÚNICO sitio donde se hace ese cruce, y siempre POR CLAVE (`id`),
  * nunca por posición: reordenar una lista no descoloca las traducciones.
  *
- * Módulo neutro: lo usan las páginas y los metadatos (servidor). Los
- * componentes de cliente usan `useContent()`, que le pasa el idioma de la ruta.
+ * Las páginas y los metadatos lo usan en el servidor. Las piezas interactivas
+ * reciben sólo las cadenas ya resueltas en el idioma de la ruta.
  */
 const cache = new Map();
 

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { animate, motion, useMotionValue, useTransform } from "framer-motion";
-import { spring } from "@/lib/motion";
+import { spring, tween } from "@/lib/motion";
 
 /**
  * La lente de la sección activa en la píldora: una gota de cristal elevada
@@ -24,10 +24,10 @@ import { spring } from "@/lib/motion";
 export default function LiquidLens({ listRef, active }) {
   const left = useMotionValue(0);
   const right = useMotionValue(0);
+  const opacity = useMotionValue(0);
   const placed = useRef(false);
 
   const width = useTransform([left, right], ([l, r]) => Math.max(r - l, 0));
-  const opacity = useTransform(width, (w) => (w > 1 ? 1 : 0));
 
   useEffect(() => {
     const list = listRef.current;
@@ -35,16 +35,16 @@ export default function LiquidLens({ listRef, active }) {
 
     const measure = (instant) => {
       const link = active ? list.querySelector(`[data-id="${active}"]`) : null;
-      // Sin sección (arriba del todo) o con su enlace oculto (móvil): la
-      // lente se cierra sobre sí misma donde estaba.
+      // Cuando deja de haber sección activa, el cristal se apaga en su sitio.
       if (!link || link.offsetWidth === 0) {
-        const mid = (left.get() + right.get()) / 2;
-        animate(left, mid, spring.snappy);
-        animate(right, mid, spring.snappy);
+        left.stop();
+        right.stop();
+        animate(opacity, 0, tween.fast);
         return;
       }
       const l = link.offsetLeft;
       const r = l + link.offsetWidth;
+      animate(opacity, 1, tween.fast);
       if (instant || !placed.current) {
         // `jump` coloca y además detiene cualquier animación en curso.
         left.jump(l);
@@ -61,7 +61,7 @@ export default function LiquidLens({ listRef, active }) {
     const ro = new ResizeObserver(() => measure(true));
     ro.observe(list);
     return () => ro.disconnect();
-  }, [active, listRef, left, right]);
+  }, [active, listRef, left, right, opacity]);
 
   return <motion.span className="site-nav__active" aria-hidden="true" style={{ x: left, width, opacity }} />;
 }

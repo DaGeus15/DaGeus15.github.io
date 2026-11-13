@@ -1,10 +1,11 @@
 import localFont from "next/font/local";
 import { MotionConfig } from "framer-motion";
 import { ThemeProvider, themeInitScript } from "@/lib/theme";
-import { LanguageProvider } from "@/lib/i18n";
+import { ControlsProvider } from "@/lib/i18n";
 import SpecularRim from "@/components/ui/SpecularRim";
 import { LANGS, SITE_URL, homePath } from "@/lib/locales";
 import { getContent } from "@/lib/content";
+import { homeIntroScript } from "@/lib/homeIntro";
 import profile from "@/content/profile";
 import { OG_IMAGE } from "@/lib/locales";
 import "../globals.css";
@@ -71,12 +72,36 @@ export const viewport = {
 
 export default async function LangLayout({ children, params }) {
   const { lang } = await params;
+  const { ui } = getContent(lang);
+  const cvEs = { href: profile.cvEs, label: ui.cvSpanish, lang: "es" };
+  const cvEn = { href: profile.cvEn, label: ui.cvEnglish, lang: "en" };
+  const controls = {
+    cv: {
+      label: ui.downloadCv,
+      short: ui.cvShort,
+      menu: ui.cvChoose,
+      options: lang === "en" ? [cvEn, cvEs] : [cvEs, cvEn],
+    },
+    theme: {
+      dark: {
+        toggle: ui.toLightMode,
+        system: ui.themeFollows(ui.themeDark),
+        pinned: ui.themePinned(ui.themeDark),
+      },
+      light: {
+        toggle: ui.toDarkMode,
+        system: ui.themeFollows(ui.themeLight),
+        pinned: ui.themePinned(ui.themeLight),
+      },
+    },
+  };
 
   return (
     <html lang={lang} suppressHydrationWarning>
       <head>
         {/* Aplica el tema antes del primer paint para que no haya flash. */}
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        <script dangerouslySetInnerHTML={{ __html: homeIntroScript(homePath(lang)) }} />
       </head>
       <body className={monaSans.variable}>
         {/* `reducedMotion="never"`: el movimiento reducido se decide efecto a
@@ -84,9 +109,9 @@ export default async function LangLayout({ children, params }) {
             —hover, entradas, pulsación— para cualquiera con "Efectos de
             animación" desactivado en Windows. */}
         <MotionConfig reducedMotion="never">
-          <LanguageProvider lang={lang}>
+          <ControlsProvider controls={controls}>
             <ThemeProvider>{children}</ThemeProvider>
-          </LanguageProvider>
+          </ControlsProvider>
         </MotionConfig>
         <SpecularRim />
       </body>

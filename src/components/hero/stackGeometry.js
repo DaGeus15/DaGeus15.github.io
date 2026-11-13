@@ -139,9 +139,9 @@ export const RIM_GRADIENT = (() => {
     superior, el filo de luz (el tramo del contorno superior que mira hacia
     la luz, como en la escena), la cara superior de su núcleo y el punto
     donde se ancla su etiqueta (el punto más a la derecha, a media altura). */
-export function slabShape(i, count) {
+export function slabShape(i, count, segments = SEGMENTS) {
   const y = slabY(i, count);
-  const outline = roundedOutline(SLAB.size / 2, SLAB.radius);
+  const outline = roundedOutline(SLAB.size / 2, SLAB.radius, segments);
   const core = roundedOutline((SLAB.size * CORE.inset) / 2, CORE.radius);
   const top = outline.map((p) => project(p.x, y + SLAB.thick / 2, p.z));
   const bottom = outline.map((p) => project(p.x, y - SLAB.thick / 2, p.z));

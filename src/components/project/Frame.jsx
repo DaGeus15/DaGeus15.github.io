@@ -7,9 +7,9 @@ import cardShots from "@/content/cardShots";
  * navegador falsa: la captura es la protagonista.
  *
  * `alt` vacío cuando la captura es decorativa (en una tarjeta cuyo enlace ya
- * nombra el proyecto); en la galería lleva el pie. `eager` para la que está
- * arriba al cargar (la cabecera de un caso): `priority` está obsoleto en
- * Next 16.
+ * nombra el proyecto); en la galería lleva el pie. La cabecera del caso
+ * carga de inmediato con prioridad alta. Inicio también solicita de
+ * inmediato sus destacados, con prioridad baja para dejar pasar el retrato.
  *
  * `sizes` es para las tarjetas, donde la captura se pinta mucho más chica que
  * el archivo: con él, el navegador elige entre la variante pequeña
@@ -17,7 +17,14 @@ import cardShots from "@/content/cardShots";
  * genera `srcset`, así que va en un `<source>`. La galería y el visor no lo
  * pasan: ahí se ve el original.
  */
-export default function Frame({ shot, alt = "", className = "", eager = false, sizes }) {
+export default function Frame({
+  shot,
+  alt = "",
+  className = "",
+  eager = false,
+  fetchPriority = eager ? "high" : undefined,
+  sizes,
+}) {
   const small = sizes ? cardShots[shot.src] : null;
   return (
     <span className={`frame ${shot.mobile ? "frame--phone" : "frame--window"} ${className}`}>
@@ -30,7 +37,7 @@ export default function Frame({ shot, alt = "", className = "", eager = false, s
           alt={alt}
           className="frame__img"
           loading={eager ? "eager" : "lazy"}
-          fetchPriority={eager ? "high" : undefined}
+          fetchPriority={fetchPriority}
           draggable={false}
         />
       </picture>

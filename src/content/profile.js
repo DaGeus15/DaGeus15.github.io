@@ -1,6 +1,6 @@
 /**
  * Datos personales que NO se traducen. El rol, la frase de presentación, la
- * ubicación y la bio viven en `copy.js` y se unen en `lib/useContent.js`.
+ * ubicación y la bio viven en `copy.js` y se unen en `lib/content.js`.
  *
  * Fuente: el CV (`public/Dayle-Garcia-Fernandez-CV-*.pdf`). Si cambia el CV,
  * este archivo y `copy.js` se actualizan con él.

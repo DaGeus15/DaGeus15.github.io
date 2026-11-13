@@ -39,6 +39,7 @@ export default function Projects({ t, featured = false, pageTitle = false }) {
             <WorkCard
               size={sizes[i] ?? "small"}
               headingLevel={pageTitle ? 2 : 3}
+              eager={featured}
               href={projectPath(lang, p.id)}
               labels={labels}
               project={{

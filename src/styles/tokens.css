@@ -125,6 +125,7 @@
 
   /* Latón. 10:1 sobre el fondo como texto. */
   --accent: #e0b676;
+  --portrait-rim-ink: #f0ce96;
   --accent-hover: #ebc68d;
   --accent-rgb: 224, 182, 118;
   /* Relleno de los CTA, con --on-accent encima (9.5:1). */
@@ -253,6 +254,7 @@
 
   /* Bronce: 5.5:1 sobre el lienzo. */
   --accent: #845922;
+  --portrait-rim-ink: #fff8ec;
   --accent-hover: #6f4a1a;
   --accent-rgb: 132, 89, 34;
   --accent-fill: #142030;

@@ -24,10 +24,11 @@ const SIZES = {
   inset: "9.5rem",
 };
 
-export default function WorkCard({ project, href, size, labels, headingLevel = 3 }) {
+export default function WorkCard({ project, href, size, labels, headingLevel = 3, eager = false }) {
   const Title = `h${headingLevel}`;
   const { cover, inset, metrics = [] } = project;
   const layout = cover.mobile ? "phones" : "window";
+  const fetchPriority = eager ? "low" : undefined;
 
   return (
     <article className="work-card" data-rim data-size={size} data-tone={project.tone} data-layout={layout}>
@@ -66,11 +67,17 @@ export default function WorkCard({ project, href, size, labels, headingLevel = 3
           {/* Mismo nombre que la portada del caso: al abrirlo, la captura
               crece desde aquí (ShotStage.jsx). */}
           <ViewTransition name={`cover-${project.id}`} share="morph">
-            <Frame shot={cover} className="work-card__cover" sizes={cover.mobile ? SIZES.phone : SIZES.window} />
+            <Frame
+              shot={cover}
+              className="work-card__cover"
+              sizes={cover.mobile ? SIZES.phone : SIZES.window}
+              eager={eager}
+              fetchPriority={fetchPriority}
+            />
           </ViewTransition>
           {inset && (
             <span className="work-card__inset">
-              <Frame shot={inset} sizes={SIZES.inset} />
+              <Frame shot={inset} sizes={SIZES.inset} eager={eager} fetchPriority={fetchPriority} />
             </span>
           )}
         </div>

@@ -4,7 +4,7 @@ export const social = [
   {
     id: "linkedin",
     name: "LinkedIn",
-    url: "https://www.linkedin.com/in/dayle-garcia-6a0878170/",
+    url: "https://www.linkedin.com/in/dayle-garcia/",
     handle: "in/dayle-garcia",
   },
 ];

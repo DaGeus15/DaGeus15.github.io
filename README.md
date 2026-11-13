@@ -101,15 +101,15 @@ export const SOURCE_ROOT = "C:/ruta/a/las/imagenes/extraidas";
 
 ### Cambiar la foto
 
-La original es local y no se sube. `public/dayle.jpeg` es un recorte pequeño
-(corta la coronilla) y queda sólo para los datos estructurados.
-
-Hace falta un entorno de Python con `rembg[cpu]`, `scipy` y `pillow` (no son
-dependencias del sitio). Un paso recorta con BiRefNet y genera el halo y el
-filo; el otro saca las WebP por tema y ancho y escribe `content/portrait.js`:
+La fuente de la portada es un retrato local de cabeza y hombros. Con un PNG
+transparente basta Python con `pillow`. Para una foto opaca, `rembg[cpu]`
+recorta la silueta con BiRefNet. El primer paso prepara la foto y la máscara
+del filo. El segundo genera las WebP por ancho y escribe `content/portrait.js`.
+La foto y la máscara son compartidas entre temas. CSS da el color al filo y
+disuelve la parte de abajo del retrato.
 
 ```bash
-python scripts/brand/portrait_layers.py "<ruta de la foto original>"
+python scripts/brand/portrait_layers.py "<ruta del retrato encuadrado>"
 npm run portrait
 ```
 
@@ -145,8 +145,7 @@ src/
 ├── lib/
 │   ├── locales.js         Idiomas y rutas (neutro: servidor y cliente)
 │   ├── content.js         Une copy.js con los datos, por clave
-│   ├── useContent.js      Lo mismo para componentes de cliente
-│   ├── i18n.jsx           Contexto con el idioma de la ruta
+│   ├── i18n.jsx           Textos del CV y del tema resueltos en el servidor
 │   ├── theme.jsx          Tema + script anti-flash
 │   ├── motion.js          Springs compartidos
 │   ├── useScrollSpy.js    Sección activa de la navegación

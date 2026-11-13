@@ -47,7 +47,16 @@ export default function Contact({ t }) {
 
       <div className="contact__form reveal" data-rim>
         <h3 className="contact__form-title">{ui.orForm}</h3>
-        <ContactForm />
+        <ContactForm labels={{
+          formName: ui.formName,
+          formEmail: ui.formEmail,
+          formMessage: ui.formMessage,
+          send: ui.send,
+          sending: ui.sending,
+          sendError: ui.sendError,
+          successTitle: ui.successTitle,
+          successBody: ui.successBody,
+        }} />
       </div>
     </section>
   );

@@ -1,5 +1,5 @@
 import PageShell from "@/components/layout/PageShell";
-import Hero from "@/components/hero/Hero";
+import Hero, { HeroIntro } from "@/components/hero/Hero";
 import Projects from "@/components/sections/Projects";
 import Contact from "@/components/sections/Contact";
 import { getContent } from "@/lib/content";
@@ -20,15 +20,18 @@ export default async function Home({ params }) {
   const t = getContent(lang);
 
   return (
-    <PageShell t={t}>
-      <Hero t={t} />
-      <Projects t={t} featured />
-      <Contact t={t} />
+    <>
+      <HeroIntro profile={t.profile} />
+      <PageShell t={t}>
+        <Hero t={t} />
+        <Projects t={t} featured />
+        <Contact t={t} />
 
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd(t)) }}
-      />
-    </PageShell>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd(t)) }}
+        />
+      </PageShell>
+    </>
   );
 }

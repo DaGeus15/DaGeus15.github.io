@@ -1,18 +1,17 @@
 "use client";
 
 import { createContext, useContext } from "react";
-import { DEFAULT_LANG } from "./locales";
 
 /**
- * El idioma de la ruta, disponible para los componentes de cliente. Lo fija
- * `app/[lang]/layout.js`; no hay estado ni detección aquí (ver `locales.js`).
+ * Cadenas de los controles que se repiten en todas las rutas. El layout las
+ * resuelve en el servidor para evitar llevar el catálogo al navegador.
  */
-const LanguageContext = createContext(DEFAULT_LANG);
+const ControlsContext = createContext(null);
 
-export function LanguageProvider({ lang, children }) {
-  return <LanguageContext.Provider value={lang}>{children}</LanguageContext.Provider>;
+export function ControlsProvider({ controls, children }) {
+  return <ControlsContext.Provider value={controls}>{children}</ControlsContext.Provider>;
 }
 
-export function useLanguage() {
-  return useContext(LanguageContext);
+export function useControls() {
+  return useContext(ControlsContext);
 }

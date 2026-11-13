@@ -137,44 +137,23 @@ silencio.
 
 ## Retrato
 
-- **Sale de la foto original** (local, fuera de git). `public/dayle.jpeg`
-  es un recorte pequeño que corta la coronilla y queda sólo para los datos
-  estructurados. `portrait_layers.py` (Python local con rembg/scipy, paso
-  único) recorta con BiRefNet y genera el halo y el filo; `npm run portrait`
-  saca las WebP por tema y ancho y escribe `content/portrait.js`.
-- **Sin ficha.** La pared arranca junto a la silueta y se disuelve con la
-  distancia (alfa, no el color del fondo horneado: la página tiene grano y
-  resplandor y se veía el rectángulo). Una sola curva de cola larga, y además
-  el color va hacia el del fondo (`HALO` en `portrait_layers.py`): sólo con
-  alfa, la pared clara sobre el marino se leía como una mancha con forma.
-  Cualquier banda especial junto al contorno se lee como un aura de recorte.
-  Y corto y tenue, sólo por los bordes: con un halo amplio y claro alrededor
-  de la cabeza parecía una estampita de la Virgen.
-  La pared se prolonga a los lados y hacia arriba para que el degradado tenga
-  sitio (la foto sólo tenía ~60–100 px).
-- **En claro el halo es más corto y la blusa se funde sólo al final:** la
-  pared gris y el marino sobre papel se leían como neblina. El filo en
-  claro es blanco cálido: el bronce sobre la pared se veía café.
-- **Sin marcador borroso.** Un marcador de 16 px de una imagen con halo
-  transparente tiene alfa en sus bordes y, ampliado, dibuja un borde recto.
-- **La foto se precarga desde un script en `Hero.jsx`.** Es un fondo CSS y el
-  navegador la descubría tarde; el tema sólo se sabe en el navegador, así que
-  se pide la del tema aplicado, con las densidades de `image-set()` (si
-  difieren, se descarga dos veces).
-- **En móvil la persona ocupa el 44% del ancho.** Al 65% llenaba más de
-  media pantalla y al abrir el enlace en el teléfono sólo se veía la foto.
-- **El texto no cede ante el retrato:** es el retrato el que escala
-  (`--person`); la frase nunca por debajo de ~30ch. En móvil y en claro el
-  nombre no pisa la blusa (tinta marina sobre marino).
-- **El tinte de la pared empieza de cero en la silueta.** Cambiar su color de
-  golpe pegado al recorte deja ver el borde ("dientes").
-- **En escritorio el retrato encaja en el bloque de texto y no lo estira.**
-  Va fuera de la rejilla (`position: absolute`): la cabeza a la altura de la
-  pastilla (la coronilla está al 19.1% del lienzo) y la blusa disuelta en la
-  línea de datos; la portada mide lo que su texto. Con el retrato en la
-  rejilla y un alto de pantalla completa quedaban 363px vacíos antes de
-  Trabajo. Su centro va al 78% de la ventana, pero su borde derecho no pasa
-  del de la página: en 1920 se iba al borde de la pantalla, lejos de todo.
+- **Cabeza y hombros, con la coronilla entera.** La fuente es local.
+  `portrait_layers.py` conserva el alfa de un PNG recortado o recorta la
+  silueta con BiRefNet si la foto es opaca. También genera una máscara de
+  filo desde el mismo alfa. `npm run portrait` crea las WebP y escribe
+  `content/portrait.js`. `public/dayle.jpeg` queda para datos estructurados.
+- **La silueta deja ver la página** y se disuelve de forma progresiva bajo
+  la cara. La pared clara junto a la silueta se veía como un halo. El filo
+  se pinta en CSS, latón en oscuro y blanco cálido en claro, y aparece sólo
+  donde lo revela el foco del puntero o el scroll táctil.
+- **El navegador elige la foto por ancho y densidad.** El `<picture>` publica
+  las variantes WebP con `sizes` y un `next/image` de carga inmediata. Así un
+  teléfono no descarga el lienzo de escritorio y el cambio de tema reutiliza
+  la misma foto. El ancho móvil se replica en `sizes` y en `home.css`.
+- **En escritorio el retrato es absoluto:** la coronilla queda cerca de la
+  pastilla, los hombros se disuelven hacia la línea de datos y el texto marca
+  el alto de la portada. En móvil se centra arriba y su ancho se limita para
+  que el nombre y el rol queden en la primera pantalla.
 
 ## Logos
 
@@ -279,11 +258,16 @@ silencio.
   `bounce` + `visualDuration`) **y OGL sólo para la pila 3D.**
   Sin GSAP, Three.js ni react-spring: Three.js pesaba ~130 KB comprimidos
   para cuatro cajas; OGL, ~15 KB. Nada rebota: no hay gestos con inercia.
-- **Un solo momento de autor**: las losas caen y se apilan cuando la pila
+- **Una firma breve al cargar el documento de Inicio**: el nombre se escribe
+  y las cuatro losas se apilan sobre un velo de cristal. Durante la entrada
+  se cargan la fuente, el retrato y las variantes responsivas de los
+  destacados. El velo se retira al terminar, con un límite de 2,4 s para
+  conexiones lentas. Una interacción lo puede saltar. Al navegar por el
+  sitio no vuelve a aparecer y con movimiento reducido queda un fundido corto.
+- **En Stack, las losas caen y se apilan** cuando la pila
   entra en pantalla (en Stack), no al cargar; si al hidratar ya se veía, no
   caen. Cuando entra la escena de cristal, una luz baja UNA vez por las
-  capas (de Cliente a Infra, como una petición). El resto del movimiento es
-  respuesta (hover, puntero, scroll, el foco del retrato), no decoración.
+  capas (de Cliente a Infra, como una petición).
 - **El foco del retrato es respuesta, no un momento de autor.** Con ratón,
   sólo el tramo del contorno cercano al puntero (motion values + spring; un
   círculo que viaja con `transform` y un filo contra-desplazado); en táctil,

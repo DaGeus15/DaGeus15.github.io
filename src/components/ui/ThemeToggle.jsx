@@ -3,22 +3,22 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { FiSun, FiMoon } from "react-icons/fi";
 import { useTheme } from "@/lib/theme";
-import useContent from "@/lib/useContent";
+import { useControls } from "@/lib/i18n";
 import { tween } from "@/lib/motion";
 
 /** Cambio de tema. Sigue al navegador salvo que el visitante lo fije. */
 export default function ThemeToggle() {
   const { theme, toggleTheme, isDark, followsSystem } = useTheme();
-  const { ui } = useContent();
-  const mode = isDark ? ui.themeDark : ui.themeLight;
+  const { theme: labels } = useControls();
+  const current = labels[theme];
 
   return (
     <button
       type="button"
       onClick={(e) => toggleTheme(e.currentTarget)}
       className="pref-btn"
-      aria-label={isDark ? ui.toLightMode : ui.toDarkMode}
-      title={followsSystem ? ui.themeFollows(mode) : ui.themePinned(mode)}
+      aria-label={current.toggle}
+      title={followsSystem ? current.system : current.pinned}
     >
       <AnimatePresence mode="wait" initial={false}>
         <motion.span

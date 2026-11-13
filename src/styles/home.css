@@ -10,10 +10,8 @@
 }
 
 /* ── Portada ────────────────────────────────────────────────────────────
-   Dividida: texto a la izquierda, retrato a la derecha, sin ficha. El
-   lienzo sale del ancho de la página (el gutter) para que el halo pueda
-   apagarse antes del borde; `clip` lo recorta sin crear scroll. Un solo
-   punto de corte de ventana, 1024px. */
+   Dividida: texto a la izquierda, retrato a la derecha, sin ficha.
+   Un solo punto de corte de ventana, 1024px. */
 .hero {
   --hero-pad: calc(var(--nav-clear) + var(--sp-5));
   container-type: inline-size;
@@ -30,12 +28,6 @@
 }
 
 @media (min-width: 1024px) {
-  /* El lienzo del retrato sale de la ventana. `hidden` en el body no
-     impide el arrastre horizontal; `clip` sí, y no toca el eje vertical. */
-  html {
-    overflow-x: clip;
-  }
-
   .hero {
     position: relative;
     /* La portada mide lo que mide el texto. El hueco hasta el título de
@@ -44,19 +36,9 @@
        extra debajo de los datos. */
     min-height: 0;
     padding-bottom: 0;
-    /* El lienzo sale de la página hacia el margen. Recortarlo aquí lo
-       cortaría en el borde de la página; el fundido llega al de la ventana
-       y `html` evita el arrastre. */
-    overflow-x: visible;
     /* El texto conserva la columna de antes (1.15 de 2). El retrato no
        ocupa pista: si la ocupara, el alto de la portada lo marcaría él. */
     grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
-    /* Centro del lienzo, que es el centro de la persona: al 78% de la
-       ventana, pero su borde derecho (23.5% del lienzo desde el centro) no
-       pasa del de la página. En monitores anchos se iba al borde de la
-       pantalla, lejos del texto y fuera de la columna del contenido. El %
-       se resuelve contra el lienzo en `translate` y en la máscara. */
-    --person-at: min(78vw, calc(50vw + var(--page-max) / 2 - var(--page-gutter) - 23.5%));
   }
 }
 
@@ -67,9 +49,7 @@
        y el centrado deja de centrar. */
     grid-template-columns: minmax(0, 1fr);
     gap: 0;
-    /* La cabeza está a ~3% del lienzo. --sp-4 la deja entre 1.5 y 2.5rem
-       del borde en 320, 375 y 768, sin agrandar el retrato. Sin la pila,
-       el relleno de abajo se sumaba al de la sección siguiente. */
+    /* La coronilla tiene aire y el retrato deja sitio para leer la portada. */
     padding-top: var(--sp-4);
     padding-bottom: 0;
   }
@@ -176,6 +156,177 @@
   white-space: nowrap;
 }
 
+/* El script del layout activa el velo sólo al cargar Inicio. La salida se
+   aplica al nodo actual para que una navegación no reinicie la presentación. */
+.hero-intro {
+  --intro-keystroke: calc(var(--stagger) * 0.8);
+  --intro-first-key: calc(var(--stagger) * 1.5);
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 310;
+  place-items: center;
+  padding: var(--sp-5);
+  pointer-events: none;
+  color: var(--glass-ink-muted);
+  background: var(--glass-sheen), var(--glass-bg-thick);
+  backdrop-filter: var(--glass-thick);
+}
+
+[data-home-intro="playing"] .hero-intro,
+.hero-intro[data-leaving] {
+  display: grid;
+}
+
+.hero-intro[data-leaving] {
+  animation: intro-clear var(--dur-base) var(--ease-out) both;
+}
+
+.hero-intro__identity {
+  display: flex;
+  align-items: center;
+  gap: clamp(var(--sp-3), 5vw, var(--sp-8));
+}
+
+.hero-intro[data-leaving] .hero-intro__identity {
+  animation: intro-lift var(--dur-base) var(--ease-out) both;
+}
+
+.hero-intro__name {
+  font-size: clamp(1.6rem, 6vw, 5rem);
+  font-weight: 680;
+  font-stretch: var(--display-stretch);
+  line-height: 0.98;
+  letter-spacing: -0.04em;
+}
+
+.hero-intro__line {
+  position: relative;
+  display: block;
+  white-space: nowrap;
+}
+
+.hero-intro__letter {
+  --keystroke-delay: calc(var(--intro-first-key) + var(--letter) * var(--intro-keystroke));
+  position: relative;
+  animation: intro-type var(--intro-keystroke) steps(1, end) var(--keystroke-delay) both;
+}
+
+.hero-intro__line:first-child::before,
+.hero-intro__letter::after {
+  content: "";
+  position: absolute;
+  inset-block: 0.16em 0.08em;
+  inset-inline-start: 100%;
+  inline-size: max(2px, 0.035em);
+  border-radius: var(--r-pill);
+  background: var(--accent);
+  opacity: 0;
+  animation: intro-caret var(--intro-keystroke) steps(1, end)
+    calc(var(--keystroke-delay) + var(--intro-keystroke)) forwards;
+}
+
+.hero-intro__line:first-child::before {
+  inset-inline-start: 0;
+  animation: intro-caret calc(var(--intro-first-key) + var(--intro-keystroke)) steps(1, end) forwards;
+}
+
+.hero-intro__line:first-child .hero-intro__letter:last-child::after {
+  animation-duration: calc(2 * var(--intro-keystroke));
+}
+
+.hero-intro__line:last-child .hero-intro__letter:last-child::after {
+  animation-duration: var(--dur-fast);
+}
+
+.hero-intro__stack {
+  flex: none;
+  inline-size: clamp(3.25rem, 13vw, 10rem);
+  block-size: clamp(3rem, 11vw, 8.5rem);
+  overflow: visible;
+}
+
+.hero-intro__slab {
+  animation: intro-slab calc(var(--dur-base) * 1.5) var(--ease-out) both;
+  animation-delay: calc(var(--dur-base) * (1 + var(--layer)));
+}
+
+.hero-intro__slab-light {
+  stop-color: var(--stack-svg-rim);
+  stop-opacity: var(--stack-svg-top-hi);
+}
+
+.hero-intro__slab-shade {
+  stop-color: var(--stack-svg-shade);
+  stop-opacity: var(--stack-svg-top-lo);
+}
+
+.hero-intro__slab-body {
+  fill: var(--stack-svg-shade);
+  fill-opacity: var(--stack-svg-body-hi);
+}
+
+.hero-intro__slab-top {
+  fill: url("#hero-intro-top");
+  stroke: var(--glass-ink-muted);
+  stroke-opacity: 0.38;
+  stroke-width: 1px;
+  vector-effect: non-scaling-stroke;
+}
+
+.hero-intro__slab[data-layer="api"] .hero-intro__slab-top {
+  stroke: var(--accent);
+  stroke-opacity: 1;
+}
+
+@keyframes intro-type {
+  from { opacity: 0; }
+}
+
+@keyframes intro-caret {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes intro-slab {
+  from {
+    opacity: 0;
+    transform: translateY(clamp(-3rem, -3.5vw, -1rem));
+  }
+}
+
+@keyframes intro-lift {
+  to { transform: translateY(-0.5rem); }
+}
+
+@keyframes intro-clear {
+  from { opacity: 1; }
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+/* Un salto con teclado debe mostrar el destino desde el primer foco. */
+.hero-intro:has(~ :focus-visible, ~ * :focus-visible) {
+  visibility: hidden !important;
+}
+
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .hero-intro {
+    background: var(--surface);
+    backdrop-filter: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-home-intro-preview]) .hero-intro :is(.hero-intro__letter, .hero-intro__slab, .hero-intro__identity),
+  :root:not([data-home-intro-preview]) .hero-intro__line:first-child::before,
+  :root:not([data-home-intro-preview]) .hero-intro__letter::after {
+    animation: none;
+  }
+}
+
 .hero__role {
   margin-top: var(--sp-5);
   font-size: clamp(1.15rem, 1rem + 0.6vw, 1.5rem);
@@ -239,40 +390,40 @@
   position: relative;
   z-index: 0;
   min-width: 0;
-  /* La blusa se disuelve. En claro se mantiene más: el marino sobre el
-     papel se leía como neblina. */
-  --portrait-fade: linear-gradient(to bottom, #000 56%, transparent 100%);
+  /* La transparencia del recorte deja pasar el fondo. El fundido arranca
+     debajo de la cara y termina antes del borde recto de la foto. */
+  --portrait-fade: linear-gradient(to bottom, #000 60%, rgb(0 0 0 / 0.7) 75%, transparent 98%);
 }
 
 [data-theme="light"] .hero__portrait {
-  --portrait-fade: linear-gradient(to bottom, #000 73%, transparent 95%);
+  /* El papel claro hace visible el fundido antes. Conserva el volumen
+     de los hombros y concentra la disolución en el borde inferior. */
+  --portrait-fade: linear-gradient(to bottom, #000 69%, rgb(0 0 0 / 0.9) 78%, transparent 98%);
 }
 
 .hero__photo,
 .hero__rim {
   position: absolute;
   inset: 0;
-  background: center / 100% 100% no-repeat;
-  mask-image: var(--portrait-fade);
 }
 
 .hero__photo {
-  background-image: var(--portrait-photo);
+  width: 100%;
+  height: 100%;
+  mask-image: var(--portrait-fade);
 }
 
 .hero__rim {
-  background-image: var(--portrait-rim);
-}
-
-/* En reposo, sin filo: un contorno dorado permanente se sumaba al halo y
-   se leía como una aureola. Sólo se enciende el tramo cercano al puntero. */
-.hero__rim--rest {
-  opacity: 0;
+  background: var(--portrait-rim-ink);
+  mask-image: var(--portrait-rim), var(--portrait-fade);
+  mask-composite: intersect;
+  mask-repeat: no-repeat;
+  mask-size: 100% 100%;
 }
 
 /* El foco: un círculo de bordes suaves deja ver el filo. Se mueve el
    círculo; el filo de dentro va al revés y se queda quieto. En reposo el
-   círculo no se ve (opacidad 0): queda el filo tenue. */
+   círculo no se ve (opacidad 0). */
 .hero__light {
   position: absolute;
   inset: 0;
@@ -297,11 +448,11 @@
   left: 0;
   top: 0;
   width: 100cqi;
-  height: calc(100cqi * var(--portrait-ratio, 0.8785));
+  height: calc(100cqi * var(--portrait-ratio));
 }
 
 /* Táctil: el foco baja por el contorno mientras la portada sale. Sin
-   soporte de scroll-timeline no hay animación y queda el filo en reposo.
+   soporte de scroll-timeline se ve el retrato en reposo.
    Nada al cargar: antes de salir, el círculo sigue en opacidad 0. */
 @supports (animation-timeline: view()) {
   @media (pointer: coarse) {
@@ -324,23 +475,23 @@
 @keyframes portrait-scan {
   from {
     opacity: 0;
-    transform: translate(calc(50cqi - 8rem), calc(100cqi * var(--portrait-ratio, 0.8785) * 0.175 - 8rem));
+    transform: translate(calc(50cqi - 8rem), calc(100cqi * var(--portrait-ratio) * 0.12 - 8rem));
   }
   18% {
     opacity: 1;
   }
   to {
     opacity: 1;
-    transform: translate(calc(50cqi - 8rem), calc(100cqi * var(--portrait-ratio, 0.8785) * 0.754 - 8rem));
+    transform: translate(calc(50cqi - 8rem), calc(100cqi * var(--portrait-ratio) * 0.70 - 8rem));
   }
 }
 
 @keyframes portrait-scan-back {
   from {
-    transform: translate(calc(8rem - 50cqi), calc(8rem - 100cqi * var(--portrait-ratio, 0.8785) * 0.175));
+    transform: translate(calc(8rem - 50cqi), calc(8rem - 100cqi * var(--portrait-ratio) * 0.12));
   }
   to {
-    transform: translate(calc(8rem - 50cqi), calc(8rem - 100cqi * var(--portrait-ratio, 0.8785) * 0.754));
+    transform: translate(calc(8rem - 50cqi), calc(8rem - 100cqi * var(--portrait-ratio) * 0.70));
   }
 }
 
@@ -385,72 +536,21 @@
 
 @media (min-width: 1024px) {
   .hero__portrait {
-    /* Fuera de la rejilla: el alto es el tramo de la pastilla a los datos
-       (el bottom del hero, sin relleno). La coronilla está al 19.1% del
-       lienzo (encima va el aire del degradado); este top la deja en la
-       pastilla. El ancho sale del
-       aspect-ratio, así que la persona encoge con el texto. */
+    /* Fuera de la rejilla: el texto marca el alto. El tope de ancho
+       conserva aire entre los hombros y la columna de texto. */
     position: absolute;
-    top: calc((var(--hero-pad) - 19.1%) / 0.809);
-    bottom: 0;
-    left: min(0px, calc((var(--page-max) - 100vw) / 2));
-    width: auto;
-    height: auto;
-    margin: 0;
-    /* `translate` y no `transform`: la entrada anima `transform` y, si
-       compartieran propiedad, el lienzo saltaría al acabar. */
-    translate: calc(var(--person-at) - 50%) 0;
-  }
-
-  /* Fundido hasta el borde de la ventana, cruzado con el de abajo.
-     Si el lienzo no llega a la ventana, el tramo cae fuera del cuadro y
-     el halo se apaga con su propio alfa. */
-  .hero__photo,
-  .hero__rim {
-    --portrait-clip: calc(100vw - var(--person-at) + 50%);
-    mask-image:
-      linear-gradient(
-        to right,
-        #000 calc(var(--portrait-clip) - var(--sp-8)),
-        transparent var(--portrait-clip)
-      ),
-      var(--portrait-fade);
-    mask-composite: intersect;
-    mask-repeat: no-repeat;
-    mask-size: 100% 100%;
+    top: calc(var(--hero-pad) - var(--sp-2));
+    right: var(--page-gutter);
+    height: min(calc(100% - var(--hero-pad) + var(--sp-4)), calc(min(44vw, 36rem) * var(--portrait-ratio)));
   }
 }
 
 @media (max-width: 1023px) {
   .hero__portrait {
     order: -1;
-    /* La persona es el 44% del ancho. Al 65% llenaba más de media pantalla
-       y al abrir el enlace en el teléfono se veía sólo la foto: la primera
-       pantalla tiene que dejar ver nombre, rol, frase y acciones. */
-    --portrait-w: min(calc(44vw / 0.47), calc(57dvh / var(--portrait-ratio, 0.8785)));
-    width: var(--portrait-w);
-    /* La coronilla está al 19.1% del lienzo: lo de encima es el aire del
-       degradado y sube por detrás del borde de la pantalla. */
-    margin-top: calc(var(--portrait-w) * var(--portrait-ratio, 0.8785) * -0.191 + var(--sp-5));
-    /* Desborda su pista: sin `unsafe`, el centrado se vuelve "seguro" y el
-       lienzo se alinea al inicio (la cara se salía por la derecha). */
-    justify-self: unsafe center;
-    /* El nombre puede pisar la blusa ya disuelta. */
-    margin-bottom: -24%;
-  }
-
-  /* En claro la tinta marina sobre la blusa no se lee: el texto empieza
-     debajo. Va después de la regla de arriba. */
-  [data-theme="light"] .hero__portrait {
-    margin-bottom: -5%;
-  }
-}
-
-/* 320×568: a 44vw la frase en claro se sale. El tope baja sólo aquí;
-   en 375 y más altas no hace falta y la persona se quedaría chica. */
-@media (max-width: 1023px) and (max-height: 600px) {
-  .hero__portrait {
-    --portrait-w: min(calc(44vw / 0.47), calc(40dvh / var(--portrait-ratio, 0.8785)));
+    /* También se replica en sizes, donde el navegador elige la descarga. */
+    width: min(64vw, 24rem, 49dvh);
+    justify-self: center;
   }
 }
 

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiDownload } from "react-icons/fi";
-import useContent from "@/lib/useContent";
+import { useControls } from "@/lib/i18n";
 import { tween } from "@/lib/motion";
 
 /**
@@ -18,7 +18,7 @@ import { tween } from "@/lib/motion";
  * se abre el menú; en la píldora, que está arriba, hacia abajo.
  */
 export default function CvDownload({ compact = false, placement = "up" }) {
-  const { profile, ui, lang } = useContent();
+  const { cv } = useControls();
   const [open, setOpen] = useState(false);
   const wrapRef = useRef(null);
 
@@ -40,11 +40,6 @@ export default function CvDownload({ compact = false, placement = "up" }) {
     };
   }, [open]);
 
-  const es = { href: profile.cvEs, label: ui.cvSpanish, code: "ES", lang: "es" };
-  const en = { href: profile.cvEn, label: ui.cvEnglish, code: "EN", lang: "en" };
-  // El del idioma de la página, primero.
-  const options = lang === "en" ? [en, es] : [es, en];
-
   return (
     <div className="cv-download" ref={wrapRef}>
       <button
@@ -53,10 +48,10 @@ export default function CvDownload({ compact = false, placement = "up" }) {
         className={`btn btn--primary cv-button ${compact ? "btn--sm" : ""}`}
         aria-haspopup="menu"
         aria-expanded={open}
-        aria-label={compact ? ui.downloadCv : undefined}
+        aria-label={compact ? cv.label : undefined}
       >
         <FiDownload aria-hidden="true" />
-        {compact ? ui.cvShort : ui.downloadCv}
+        {compact ? cv.short : cv.label}
       </button>
 
       <AnimatePresence>
@@ -65,15 +60,15 @@ export default function CvDownload({ compact = false, placement = "up" }) {
             className="cv-menu"
             data-placement={placement}
             role="menu"
-            aria-label={ui.cvChoose}
+            aria-label={cv.menu}
             initial={{ opacity: 0, y: placement === "down" ? -4 : 4, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: placement === "down" ? -4 : 4, scale: 0.98 }}
             transition={tween.fast}
           >
-            {options.map((o) => (
+            {cv.options.map((o) => (
               <a
-                key={o.code}
+                key={o.lang}
                 href={o.href}
                 download
                 role="menuitem"
@@ -81,7 +76,7 @@ export default function CvDownload({ compact = false, placement = "up" }) {
                 onClick={() => setOpen(false)}
               >
                 <span className="cv-menu__code mono" aria-hidden="true">
-                  {o.code}
+                  {o.lang.toUpperCase()}
                 </span>
                 <span lang={o.lang}>{o.label}</span>
               </a>

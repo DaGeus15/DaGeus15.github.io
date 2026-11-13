@@ -4,7 +4,6 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiSend } from "react-icons/fi";
 import { WEB3FORMS_ACCESS_KEY } from "@/content/social";
-import useContent from "@/lib/useContent";
 import { tween } from "@/lib/motion";
 
 /** Trazo del check de éxito: se dibuja una vez. Es un momento raro, así que
@@ -22,8 +21,7 @@ const checkVariants = {
     enviando para siempre. */
 const SUBMIT_TIMEOUT_MS = 15000;
 
-export default function ContactForm() {
-  const { ui } = useContent();
+export default function ContactForm({ labels }) {
   const [status, setStatus] = useState(null);
 
   const handleSubmit = async (e) => {
@@ -71,8 +69,8 @@ export default function ContactForm() {
               animate="visible"
             />
           </svg>
-          <p className="form-success__title">{ui.successTitle}</p>
-          <p className="form-success__body">{ui.successBody}</p>
+          <p className="form-success__title">{labels.successTitle}</p>
+          <p className="form-success__body">{labels.successBody}</p>
         </motion.div>
       ) : (
         <motion.form
@@ -84,22 +82,22 @@ export default function ContactForm() {
         >
           <div className="form-row">
             <label className="form-field">
-              <span className="form-label">{ui.formName}</span>
+              <span className="form-label">{labels.formName}</span>
               <input type="text" name="name" required className="form-input" autoComplete="name" />
             </label>
             <label className="form-field">
-              <span className="form-label">{ui.formEmail}</span>
+              <span className="form-label">{labels.formEmail}</span>
               <input type="email" name="email" required className="form-input" autoComplete="email" />
             </label>
           </div>
           <label className="form-field">
-            <span className="form-label">{ui.formMessage}</span>
+            <span className="form-label">{labels.formMessage}</span>
             <textarea name="message" required className="form-input form-textarea" rows={5} />
           </label>
 
           {status === "error" && (
             <p className="form-error" role="alert">
-              {ui.sendError}
+              {labels.sendError}
             </p>
           )}
 
@@ -107,12 +105,12 @@ export default function ContactForm() {
             {status === "submitting" ? (
               <>
                 <span className="spinner" aria-hidden="true" />
-                {ui.sending}
+                {labels.sending}
               </>
             ) : (
               <>
                 <FiSend aria-hidden="true" />
-                {ui.send}
+                {labels.send}
               </>
             )}
           </button>
