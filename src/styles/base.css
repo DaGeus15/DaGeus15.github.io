@@ -463,8 +463,18 @@ code {
   }
 }
 
+.reveal {
+  --reveal-opacity: 0.4;
+  --reveal-rise: 0.875rem;
+}
+
+.reveal[data-scroll-pending] {
+  opacity: var(--reveal-opacity);
+  transform: translateY(var(--reveal-rise));
+}
+
 .reveal[data-scroll-reveal] {
-  animation: reveal var(--reveal-duration, var(--dur-base)) var(--ease-out) backwards;
+  animation: reveal var(--reveal-duration, var(--dur-slow)) var(--ease-out) backwards;
   animation-delay: calc(var(--reveal-order, 0) * var(--dur-fast) / 4);
 }
 
@@ -475,8 +485,8 @@ code {
 
 @keyframes reveal {
   from {
-    opacity: var(--reveal-opacity, 0.78);
-    transform: translateY(var(--reveal-rise, 0.5rem));
+    opacity: var(--reveal-opacity);
+    transform: translateY(var(--reveal-rise));
   }
 }
 
@@ -486,9 +496,9 @@ code {
   }
 
   .reveal {
-    --reveal-opacity: 0.9;
+    --reveal-opacity: 0.68;
     --reveal-rise: 0rem;
-    --reveal-duration: var(--dur-fast);
+    --reveal-duration: var(--dur-base);
   }
 }
 

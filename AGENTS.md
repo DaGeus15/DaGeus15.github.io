@@ -297,8 +297,9 @@ silencio.
   se ve entero.
 - **Las entradas se pintan en CSS.** `.enter` va en cascada al cargar
   (`--i` es el orden). Para `.reveal`, un solo IntersectionObserver por ruta
-  dispara la animación al entrar en pantalla por primera vez. El HTML ya se
-  ve, incluso sin JS, y el efecto no se deshace al subir. No uses
+  dispara la animación al entrar en pantalla por primera vez, con 48px
+  visibles por encima de la barra móvil. El HTML ya se ve, incluso sin JS,
+  y el efecto no se deshace al subir. No uses
   `initial={{ opacity: 0 }}` de framer: esconde contenido hasta que hidrata.
 - **Movimiento reducido se decide efecto a efecto.** `MotionConfig` va con
   `reducedMotion="never"`. `base.css` quita el scroll suave y las entradas
