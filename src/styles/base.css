@@ -449,17 +449,8 @@ code {
 }
 
 /* ── Entradas ─────────────────────────────────────────────────────────
-   Dos mecanismos, los dos en CSS para que funcionen antes de hidratar y sin
-   JavaScript:
-
-   · `.enter`: al cargar, en cascada (`--i` es la posición). Para la
-     portada, que está a la vista desde el primer fotograma.
-   · `.reveal`: ligado al scroll con `animation-timeline: view()`. Donde no
-     hay soporte el contenido simplemente está: el peor caso es "no se nota",
-     nunca "no se ve".
-
-   Sólo opacity y transform, y pocos píxeles: es movimiento pequeño, así que
-   anima también con movimiento reducido (ver AGENTS.md). */
+   `.enter` va en cascada al cargar. `.reveal` se ve desde el primer HTML.
+   Cuando entra en pantalla, ScrollReveal dispara una sola entrada breve. */
 .enter {
   animation: enter 0.8s var(--ease-out) both;
   animation-delay: calc(var(--i, 0) * var(--stagger) + 60ms);
@@ -472,27 +463,32 @@ code {
   }
 }
 
-@supports (animation-timeline: view()) {
-  .reveal {
-    animation: reveal linear both;
-    animation-timeline: view();
-    animation-range: entry 0% entry 45%;
-  }
+.reveal[data-scroll-reveal] {
+  animation: reveal var(--reveal-duration, var(--dur-base)) var(--ease-out) backwards;
+  animation-delay: calc(var(--reveal-order, 0) * var(--dur-fast) / 4);
+}
+
+.reveal:is(:focus-within, :target, :has(:target)) {
+  --reveal-opacity: 1;
+  --reveal-rise: 0rem;
 }
 
 @keyframes reveal {
   from {
-    opacity: 0;
-    transform: translateY(24px);
+    opacity: var(--reveal-opacity, 0.78);
+    transform: translateY(var(--reveal-rise, 0.5rem));
   }
 }
 
-/* Movimiento reducido: sólo se quita el scroll suave, que arrastra la página
-   entera. Los efectos que mueven la escena deciden su versión suave uno a
-   uno; lo pequeño anima siempre. */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  .reveal {
+    --reveal-opacity: 0.9;
+    --reveal-rise: 0rem;
+    --reveal-duration: var(--dur-fast);
   }
 }
 

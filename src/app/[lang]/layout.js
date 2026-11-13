@@ -3,6 +3,7 @@ import { MotionConfig } from "framer-motion";
 import { ThemeProvider, themeInitScript } from "@/lib/theme";
 import { ControlsProvider } from "@/lib/i18n";
 import SpecularRim from "@/components/ui/SpecularRim";
+import ScrollReveal from "@/components/ui/ScrollReveal";
 import { LANGS, SITE_URL, homePath } from "@/lib/locales";
 import { getContent } from "@/lib/content";
 import { homeIntroScript } from "@/lib/homeIntro";
@@ -113,6 +114,7 @@ export default async function LangLayout({ children, params }) {
             <ThemeProvider>{children}</ThemeProvider>
           </ControlsProvider>
         </MotionConfig>
+        <ScrollReveal />
         <SpecularRim />
       </body>
     </html>

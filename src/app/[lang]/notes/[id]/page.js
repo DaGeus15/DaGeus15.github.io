@@ -56,7 +56,7 @@ function Block({ block, code }) {
 
   const snippet = code[block.code];
   return (
-    <figure className="note-code">
+    <figure className="note-code reveal">
       <figcaption className="note-code__file mono">{snippet.file}</figcaption>
       {/* Desplazable de lado en pantallas estrechas: el código no se parte. */}
       <pre tabIndex={0}>

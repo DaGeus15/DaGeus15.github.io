@@ -295,14 +295,15 @@ silencio.
   cascada, conexiones que se dibujan, paquetes al final): explica el sistema
   en el orden en que se lee. Sólo si al hidratar todavía no se veía; sin JS
   se ve entero.
-- **Las entradas son CSS**, para que funcionen antes de hidratar y sin JS:
-  `.enter` (cascada al cargar, `--i` es el orden) y `.reveal` (ligada al scroll
-  con `animation-timeline: view()`; sin soporte, el contenido simplemente
-  está). No uses `initial={{ opacity: 0 }}` de framer para entradas: el HTML
-  sale invisible hasta que hidrata.
+- **Las entradas se pintan en CSS.** `.enter` va en cascada al cargar
+  (`--i` es el orden). Para `.reveal`, un solo IntersectionObserver por ruta
+  dispara la animación al entrar en pantalla por primera vez. El HTML ya se
+  ve, incluso sin JS, y el efecto no se deshace al subir. No uses
+  `initial={{ opacity: 0 }}` de framer: esconde contenido hasta que hidrata.
 - **Movimiento reducido se decide efecto a efecto.** `MotionConfig` va con
-  `reducedMotion="never"` y `base.css` sólo quita el scroll suave. Lo pequeño
-  (hover, entradas de pocos px, desplegables) anima siempre; lo que se mueve
+  `reducedMotion="never"`. `base.css` quita el scroll suave y las entradas
+  al bajar quedan en un fundido. Lo pequeño (hover y desplegables) anima
+  siempre; lo que se mueve
   más (la caída de las losas, el giro de la pila, los paquetes de los
   diagramas) hace el mismo gesto en corto o más lento. Peor caso: "suave",
   nunca "quieto".
