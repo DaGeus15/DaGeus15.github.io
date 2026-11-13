@@ -19,9 +19,9 @@ silencio.
   nunca disfraz (terminal falsa, texto verde sobre negro). El visitante
   principal es un reclutador con 30 segundos: quién, qué hace y la prueba,
   arriba y sin navegación que aprender.
-- **Su cara va en la portada, arriba al cargar.** En escritorio, a la
-  derecha; en móvil, arriba de todo, con el nombre y el rol en la primera
-  pantalla. El sitio es suyo y un reclutador quiere ver a quién está
+- **Su cara se ve al cargar.** En escritorio va a la derecha de la portada.
+  En móvil, el recorte circular va en Inicio de la barra inferior y el
+  nombre y el rol usan el ancho de la portada. Un reclutador quiere ver a quién está
   leyendo; antes la foto estaba al final (Sobre mí) y la portada la ocupaba
   la pila 3D. Sobre mí ya no repite la foto.
 - **La portada resume; el caso de estudio lo cuenta todo.** Cada proyecto sale
@@ -147,13 +147,13 @@ silencio.
   se pinta en CSS, latón en oscuro y blanco cálido en claro, y aparece sólo
   donde lo revela el foco del puntero o el scroll táctil.
 - **El navegador elige la foto por ancho y densidad.** El `<picture>` publica
-  las variantes WebP con `sizes` y un `next/image` de carga inmediata. Así un
-  teléfono no descarga el lienzo de escritorio y el cambio de tema reutiliza
-  la misma foto. El ancho móvil se replica en `sizes` y en `home.css`.
+  las variantes WebP con `sizes` para escritorio y en móvil reutiliza el
+  recorte ligero del enlace Inicio.
 - **En escritorio el retrato es absoluto:** la coronilla queda cerca de la
   pastilla, los hombros se disuelven hacia la línea de datos y el texto marca
-  el alto de la portada. En móvil se centra arriba y su ancho se limita para
-  que el nombre y el rol queden en la primera pantalla.
+  el alto de la portada. En móvil, Inicio muestra el avatar en todas las
+  páginas de primer nivel. Así la foto acompaña al nombre sin ocupar una
+  fila por encima del texto.
 
 ## Logos
 
@@ -268,7 +268,7 @@ silencio.
   entra en pantalla (en Stack), no al cargar; si al hidratar ya se veía, no
   caen. Cuando entra la escena de cristal, una luz baja UNA vez por las
   capas (de Cliente a Infra, como una petición).
-- **El foco del retrato es respuesta, no un momento de autor.** Con ratón,
+- **El foco del retrato grande responde a la lectura.** Con ratón,
   sólo el tramo del contorno cercano al puntero (motion values + spring; un
   círculo que viaja con `transform` y un filo contra-desplazado); en táctil,
   lo recorre el scroll (CSS scroll-driven). Nada al cargar. Es un resaltado
@@ -423,15 +423,13 @@ silencio.
 
 - **Un solo punto de corte de VENTANA: 1024px** (`lib/breakpoints.js`). Por
   encima, portada dividida (texto y retrato) y píldora arriba; por debajo,
-  una columna y la píldora abajo (donde está el pulgar), con tres secciones.
+  una columna y la barra abajo (donde está el pulgar).
   Lo que depende del ancho de una TARJETA usa `@container` (la tarjeta ancha
   de KAPHIY).
-- **Toques de 44px en táctil** (`pointer: coarse`): enlaces de la píldora
-  (`--nav-link-h`, que también da la altura de la lente), idioma, tema y
-  botones de icono. Para que quepan tres secciones en un teléfono de 360px,
-  la píldora móvil es compacta (menos relleno, letra 0.82rem); por debajo de
-  360px deja Trabajo y Contacto. Medilo: el tema llegó a salirse de la
-  pantalla en 320px sin que nada se viera roto en 375px.
+- **Toques de 44px en táctil.** En móvil, Proyectos, Experiencia, Sobre mí,
+  Notas y Contacto comparten una fila. Inicio, CV, idioma y tema tienen
+  su propia fila. La barra conserva todos los destinos en 320px y reserva
+  su altura al final del documento para dejar el pie y los campos accesibles.
 - **El nombre de la portada va siempre en dos líneas**: su tamaño no pasa
   del 12% del ancho de su columna (`cqi`, la columna es contenedor). Con la
   raíz que crece en monitores grandes, "Daylé García" se partía y quedaban

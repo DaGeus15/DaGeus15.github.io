@@ -7,15 +7,13 @@
  * nada, y cada tema pasó a tener su página. El inicio resume y enlaza.
  *
  * `anchor`: no es una página sino una sección del inicio (el contacto).
- * `mobile`: también en la píldora de móvil, que va abajo y sólo tiene sitio
- * para tres enlaces junto al idioma y el tema.
  */
 export const pages = [
-  { id: "projects", mobile: true },
+  { id: "projects" },
   { id: "experience" },
-  { id: "about", mobile: true },
+  { id: "about" },
   { id: "notes" },
-  { id: "contact", anchor: true, mobile: true },
+  { id: "contact", anchor: true },
 ];
 
 export const pageIds = pages.filter((p) => !p.anchor).map((p) => p.id);

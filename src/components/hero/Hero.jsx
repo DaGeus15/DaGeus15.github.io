@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { FiArrowDown, FiArrowRight, FiGlobe, FiMapPin } from "react-icons/fi";
+import { FiArrowDown, FiArrowRight, FiMapPin } from "react-icons/fi";
 import CvDownload from "@/components/ui/CvDownload";
 import PortraitFocus from "@/components/hero/PortraitFocus";
 import { slabShape } from "@/components/hero/stackGeometry";
@@ -9,16 +9,15 @@ import { MOBILE_BREAKPOINT } from "@/lib/breakpoints";
 
 /**
  * Portada: el texto a la izquierda y el retrato a la derecha, sin ficha.
- * El retrato tiene fondo transparente y se disuelve hacia el texto en móvil.
+ * En móvil, la barra muestra el recorte circular de este retrato.
  *
- * La ubicación y la ciudadanía van debajo de las acciones, en todos los
- * anchos: una sola lista.
+ * La ubicación va debajo de las acciones.
  *
  * El nombre se parte a mano en dos líneas (nombre + apellidos) para que el
  * corte no dependa del ancho.
  */
 // El ancho en escritorio sigue el bloque de texto, con estos topes.
-const portraitSizes = `(min-width: ${MOBILE_BREAKPOINT}px) min(44vw, 36rem), min(64vw, 24rem, 49dvh)`;
+const portraitSizes = "min(44vw, 36rem)";
 const portraitSrcSet = portrait.photo.map(({ src, w }) => `${src} ${w}w`).join(", ");
 const portraitFallback = portrait.photo.find(({ w }) => w >= 640) ?? portrait.photo.at(-1);
 const letters = new Intl.Segmenter(undefined, { granularity: "grapheme" });
@@ -77,21 +76,6 @@ export function HeroIntro({ profile }) {
   );
 }
 
-function HeroFacts({ profile, className = "hero__facts", style }) {
-  return (
-    <ul className={className} style={style}>
-      <li>
-        <FiMapPin aria-hidden="true" />
-        {profile.location}
-      </li>
-      <li>
-        <FiGlobe aria-hidden="true" />
-        {profile.citizenship}
-      </li>
-    </ul>
-  );
-}
-
 export default function Hero({ t }) {
   const { profile, ui } = t;
   const [first, last] = nameLines(profile.name);
@@ -124,7 +108,10 @@ export default function Hero({ t }) {
           </a>
         </div>
 
-        <HeroFacts profile={profile} className="hero__facts enter" style={{ "--i": 5 }} />
+        <p className="hero__location enter" style={{ "--i": 5 }}>
+          <FiMapPin aria-hidden="true" />
+          {profile.location}
+        </p>
       </div>
 
       <div
@@ -137,6 +124,7 @@ export default function Hero({ t }) {
         }}
       >
         <picture>
+          <source media={`(width < ${MOBILE_BREAKPOINT}px)`} srcSet={profile.mobilePortrait} />
           <source srcSet={portraitSrcSet} sizes={portraitSizes} />
           <Image
             className="hero__photo"

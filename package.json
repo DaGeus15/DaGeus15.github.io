@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "postbuild": "node scripts/fix-windows-export.mjs",
     "preview:out": "node serve-out.mjs",
     "start": "next start",
     "lint": "eslint",

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { FiArrowLeft } from "react-icons/fi";
 import LangSwitch from "./LangSwitch";
@@ -38,6 +39,7 @@ export default function SiteNav({
   items = [],
   labels,
   name,
+  mobilePortrait,
   homeHref,
   backHref,
   lang,
@@ -48,6 +50,12 @@ export default function SiteNav({
   const [spied] = useScrollSpy(onHomePage ? HOME_SPY : NO_IDS);
   const active = current ?? (spied === "contact" ? "contact" : null);
   const listRef = useRef(null);
+  const mobileHome = isHome && (
+    <>
+      <Image className="site-nav__avatar" src={mobilePortrait} alt="" width={36} height={36} />
+      {labels.home}
+    </>
+  );
 
   return (
     <header className="site-nav" data-variant={variant}>
@@ -94,7 +102,7 @@ export default function SiteNav({
               };
               const label = <span className="site-nav__label">{item.label}</span>;
               return (
-                <li key={item.id} data-mobile={item.mobile || undefined}>
+                <li key={item.id}>
                   {/* Un ancla del propio inicio es un `<a>`; una página, un
                       `Link` (navegación en el cliente y precarga). */}
                   {item.href.startsWith("#") ? <a {...props}>{label}</a> : <Link {...props}>{label}</Link>}
@@ -105,6 +113,15 @@ export default function SiteNav({
         )}
 
         <div className="site-nav__prefs">
+          {isHome && (onHomePage ? (
+            <a href="#top" className="site-nav__mobile-home" aria-current={active ? undefined : "page"}>
+              {mobileHome}
+            </a>
+          ) : (
+            <Link href={homeHref} className="site-nav__mobile-home">
+              {mobileHome}
+            </Link>
+          ))}
           <div className="site-nav__cv">
             <CvDownload compact placement="down" />
           </div>

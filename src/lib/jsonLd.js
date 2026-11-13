@@ -16,7 +16,6 @@ export function personJsonLd(t) {
     image: `${SITE_URL}${t.profile.avatar}`,
     email: `mailto:${t.profile.email}`,
     address: { "@type": "PostalAddress", addressLocality: "Ambato", addressCountry: "EC" },
-    nationality: { "@type": "Country", name: "Spain" },
     worksFor: current ? { "@type": "Organization", name: current.company } : undefined,
     alumniOf: { "@type": "CollegeOrUniversity", name: t.education.school },
     knowsLanguage: ["es", "en"],

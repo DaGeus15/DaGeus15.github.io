@@ -20,27 +20,32 @@ const checkVariants = {
 /** El servicio es externo: si no responde, sale el error en vez de quedarse
     enviando para siempre. */
 const SUBMIT_TIMEOUT_MS = 15000;
+const FORM_ENDPOINT = "https://api.web3forms.com/submit";
 
-export default function ContactForm({ labels }) {
+export default function ContactForm({ email, labels }) {
   const [status, setStatus] = useState(null);
+  const [emailDraft, setEmailDraft] = useState(null);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (status === "submitting") return;
+    const fields = new FormData(event.currentTarget);
     setStatus("submitting");
 
-    const formData = new FormData(e.target);
-    formData.append("access_key", WEB3FORMS_ACCESS_KEY);
-
     try {
-      const res = await fetch("https://api.web3forms.com/submit", {
+      const res = await fetch(FORM_ENDPOINT, {
         method: "POST",
-        body: formData,
+        headers: { Accept: "application/json" },
+        body: fields,
         signal: AbortSignal.timeout(SUBMIT_TIMEOUT_MS),
       });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (!res.ok || (await res.json()).success !== true) {
+        throw new Error("Web3Forms did not confirm delivery");
+      }
       setStatus("success");
-      e.target.reset();
     } catch {
+      const body = [fields.get("message"), fields.get("name")].join("\r\n\r\n");
+      setEmailDraft(`mailto:${email}?body=${encodeURIComponent(body)}`);
       setStatus("error");
     }
   };
@@ -75,11 +80,15 @@ export default function ContactForm({ labels }) {
       ) : (
         <motion.form
           key="form"
+          action={FORM_ENDPOINT}
+          method="post"
           onSubmit={handleSubmit}
+          aria-busy={status === "submitting"}
           className="contact-form"
           exit={{ opacity: 0 }}
           transition={tween.fast}
         >
+          <input type="hidden" name="access_key" value={WEB3FORMS_ACCESS_KEY} />
           <div className="form-row">
             <label className="form-field">
               <span className="form-label">{labels.formName}</span>
@@ -97,7 +106,7 @@ export default function ContactForm({ labels }) {
 
           {status === "error" && (
             <p className="form-error" role="alert">
-              {labels.sendError}
+              {labels.sendError} <a href={emailDraft}>{labels.emailFallback}</a>.
             </p>
           )}
 

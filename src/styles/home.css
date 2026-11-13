@@ -45,13 +45,16 @@
 @media (max-width: 1023px) {
   .hero {
     min-height: 0;
-    /* Pista explícita: sin ella crece hasta el ancho del lienzo del retrato
-       y el centrado deja de centrar. */
     grid-template-columns: minmax(0, 1fr);
     gap: 0;
-    /* La coronilla tiene aire y el retrato deja sitio para leer la portada. */
-    padding-top: var(--sp-4);
+    padding-top: var(--sp-7);
     padding-bottom: 0;
+  }
+
+  .hero__text > .availability {
+    max-width: 100%;
+    white-space: normal;
+    padding-inline: 0.65rem;
   }
 }
 
@@ -363,22 +366,16 @@
   transform: translateY(2px);
 }
 
-.hero__facts {
+.hero__location {
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--sp-2) var(--sp-5);
+  align-items: center;
+  gap: var(--sp-2);
   margin-top: var(--sp-6);
   color: var(--muted);
   font-size: 0.86rem;
 }
 
-.hero__facts li {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.hero__facts svg {
+.hero__location svg {
   flex-shrink: 0;
 }
 
@@ -451,11 +448,11 @@
   height: calc(100cqi * var(--portrait-ratio));
 }
 
-/* Táctil: el foco baja por el contorno mientras la portada sale. Sin
+/* En pantallas grandes con entrada táctil, el foco baja por el contorno. Sin
    soporte de scroll-timeline se ve el retrato en reposo.
    Nada al cargar: antes de salir, el círculo sigue en opacidad 0. */
 @supports (animation-timeline: view()) {
-  @media (pointer: coarse) {
+  @media (min-width: 1024px) and (pointer: coarse) {
     .hero__spot {
       animation: portrait-scan linear both;
       animation-timeline: --hero-view;
@@ -547,10 +544,7 @@
 
 @media (max-width: 1023px) {
   .hero__portrait {
-    order: -1;
-    /* También se replica en sizes, donde el navegador elige la descarga. */
-    width: min(64vw, 24rem, 49dvh);
-    justify-self: center;
+    display: none;
   }
 }
 
@@ -2335,6 +2329,11 @@
 .form-error {
   color: var(--danger);
   font-size: 0.9rem;
+}
+
+.form-error a {
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
 }
 
 .contact-form .btn {

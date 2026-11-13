@@ -207,13 +207,30 @@
   margin-right: var(--sp-1);
 }
 
-/* Móvil: abajo, donde está el pulgar, con tres secciones, el idioma y el
-   tema. El nombre ya está enorme en la portada y el CV tiene su botón allí.
-   Va DESPUÉS de las reglas base: con la misma especificidad, gana la última. */
+.site-nav__mobile-home {
+  display: none;
+}
+
+/* Dos filas dan sitio a las cinco secciones y a los controles. La lente
+   sigue en una sola fila y conserva su recorrido horizontal. */
 @media (max-width: 1023px) {
   .site-nav {
     top: auto;
     bottom: calc(var(--sp-3) + env(safe-area-inset-bottom));
+    max-width: calc(100% - 2 * var(--sp-2));
+  }
+
+  .site-nav[data-variant="home"] {
+    width: min(calc(100% - 2 * var(--sp-2)), 32rem);
+  }
+
+  .site-nav[data-variant="home"] .site-nav__pill {
+    --nav-link-h: var(--nav-mobile-row);
+    display: grid;
+    gap: 0;
+    height: auto;
+    padding: var(--nav-mobile-inset);
+    border-radius: var(--r-lg);
   }
 
   /* Abajo, lo que se acerca viene de arriba: la capa crece hacia arriba. */
@@ -221,26 +238,67 @@
     inset: auto 0 0;
   }
 
-  .site-nav__name,
-  .site-nav__links li:not([data-mobile]) {
+  .site-nav__name {
     display: none;
   }
 
-  /* Compacta: tres secciones, idioma y tema con toques de 44px tienen que
-     caber en un teléfono de 360px. */
   .site-nav__links {
     gap: 0;
-    padding-inline: var(--sp-1);
-    border-left: none;
+    padding-inline: 0;
+    border: 0;
+  }
+
+  .site-nav__links > li:not(.site-nav__lens) {
+    flex: 1 0 auto;
   }
 
   .site-nav__link {
-    padding: 0 0.5rem;
-    font-size: 0.82rem;
+    width: 100%;
+    justify-content: center;
+    min-height: var(--nav-mobile-row);
+    padding-inline: 0.18rem;
+    font-size: clamp(0.75rem, 3.3vw, 0.875rem);
   }
 
-  .site-nav[data-variant="home"] .site-nav__cv {
-    display: none;
+  .site-nav[data-variant="home"] .site-nav__prefs {
+    justify-content: flex-end;
+    padding-inline: var(--sp-1);
+    border-top: 1px solid var(--border);
+  }
+
+  .site-nav[data-variant="home"] .cv-button {
+    min-height: var(--nav-mobile-row);
+  }
+
+  .site-nav__mobile-home {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+    min-height: var(--nav-mobile-row);
+    margin-inline-end: auto;
+    padding-inline: var(--sp-1) var(--sp-3);
+    border-radius: var(--r-pill);
+    color: var(--muted);
+    font-size: 0.86rem;
+    font-weight: 600;
+    transition: scale var(--dur-fast) var(--ease-out);
+  }
+
+  .site-nav__mobile-home[aria-current] {
+    color: var(--foreground);
+  }
+
+  .site-nav__avatar {
+    width: var(--sp-7);
+    height: var(--sp-7);
+    flex: none;
+    object-fit: cover;
+    border: 1px solid var(--border-strong);
+    border-radius: 50%;
+  }
+
+  .site-nav__mobile-home:active {
+    scale: 0.96;
   }
 }
 
@@ -248,7 +306,7 @@
    lente sigue la altura del enlace (--nav-link-h). */
 @media (pointer: coarse) {
   :root {
-    --nav-link-h: 2.75rem;
+    --nav-link-h: var(--nav-mobile-row);
   }
 
   /* Y lo mismo para los botones de icono (copiar el correo, el visor). */
@@ -256,20 +314,6 @@
   .icon-btn {
     width: 2.75rem;
     height: 2.75rem;
-  }
-}
-
-/* Teléfonos muy estrechos (320-359px): tres secciones, idioma y tema no
-   caben con toques de 44px; el tema se salía de la pantalla. Quedan Trabajo
-   y Contacto (la prueba y la acción); "Sobre mí" está al bajar. Desde 360px
-   (los teléfonos de hoy: 360, 375, 390, 393, 412…) caben las tres. */
-@media (max-width: 359px) {
-  .site-nav__links li:has(> [data-id="about"]) {
-    display: none;
-  }
-
-  .site-nav__link {
-    padding: 0 0.6rem;
   }
 }
 
@@ -319,6 +363,10 @@
     top: auto;
     bottom: calc(100% + var(--sp-3));
     transform-origin: bottom right;
+  }
+
+  .site-nav[data-variant="home"] .cv-menu[data-placement="down"] {
+    bottom: calc(100% + var(--nav-mobile-row) + var(--sp-3));
   }
 }
 
@@ -373,6 +421,6 @@
 /* Que la píldora de abajo no tape el pie. */
 @media (max-width: 1023px) {
   .site-footer {
-    padding-bottom: calc(var(--nav-h) + var(--sp-8) + env(safe-area-inset-bottom));
+    padding-bottom: calc(var(--nav-mobile-clear) + var(--sp-5));
   }
 }

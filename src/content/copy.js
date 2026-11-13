@@ -14,9 +14,9 @@ export const copy = {
   /* ────────────────────────────── ESPAÑOL ────────────────────────────── */
   es: {
     meta: {
-      title: "Daylé García Fernández · Software Engineer",
+      title: "Daylé García Fernández · Desarrollo backend",
       description:
-        "Software Engineer: microservicios en Java y Spring Boot, APIs REST, PostgreSQL y pruebas con Mockito. Sistemas completos en producción con NestJS y Next.js. Ciudadanía UE.",
+        "Desarrollo backend con Java y Spring Boot. Experiencia con APIs REST, PostgreSQL y pruebas automatizadas. Proyectos con NestJS y Next.js.",
     },
 
     ui: {
@@ -86,7 +86,8 @@ export const copy = {
       formMessage: "Mensaje",
       send: "Enviar mensaje",
       sending: "Enviando…",
-      sendError: "No se pudo enviar el mensaje. Inténtalo de nuevo o escríbeme al correo.",
+      sendError: "No se pudo enviar el mensaje. Puedes reintentar o",
+      emailFallback: "enviarlo por correo",
       successTitle: "Mensaje enviado",
       successBody: "Gracias. Te responderé lo antes posible.",
       footer: "Diseñado y construido por Daylé García con Next.js y OGL. Exportado en estático.",
@@ -104,15 +105,15 @@ export const copy = {
     pages: {
       projects: {
         title: "Proyectos",
-        description: "Siete sistemas con su caso de estudio: arquitectura, capturas y las decisiones que tomé.",
+        description: "Siete casos de estudio con la arquitectura, las capturas y mi contribución a cada proyecto.",
       },
       experience: {
         title: "Experiencia",
-        description: "Backend en Java y Spring Boot en Alquimiasoft, y el stack que uso, por capas.",
+        description: "Mi trabajo con Java y Spring Boot en Alquimiasoft y las tecnologías que uso en cada capa.",
       },
       about: {
         title: "Sobre mí",
-        description: "Formación, certificaciones, idiomas, competencias y congresos, y lo que hago fuera del código.",
+        description: "Mi formación, certificaciones e idiomas, además de concursos, congresos y aficiones.",
       },
       notes: {
         title: "Notas",
@@ -141,17 +142,17 @@ export const copy = {
       },
       stack: {
         title: "Stack",
-        intro: "Agrupado por capa, con dónde lo he usado de verdad.",
+        intro: "Las tecnologías que uso en cada capa y los proyectos donde las apliqué.",
       },
       about: { title: "Sobre mí" },
       featured: {
         title: "Proyectos destacados",
-        intro: "Tres de los siete, con su caso de estudio.",
+        intro: "Tres casos de estudio sobre mi trabajo en backend.",
         more: "Ver los siete proyectos",
       },
       journey: {
         title: "Competencias y congresos",
-        intro: "Donde la programación es por gusto: concursos, congresos y comunidad.",
+        intro: "Concursos y encuentros en los que he participado con la comunidad tecnológica.",
       },
       hobbies: {
         title: "Fuera del código",
@@ -159,7 +160,7 @@ export const copy = {
       contact: {
         title: "¿Hablamos?",
         intro:
-          "¿Buscas a alguien para tu equipo? Escríbeme, en español o en inglés.",
+          "Si quieres hablar de un proyecto, colaborar o hacerme una pregunta, escríbeme en español o en inglés.",
       },
     },
 
@@ -168,21 +169,20 @@ export const copy = {
          "Ingeniera de Software" se lee como el título universitario. */
       role: "Software Engineer",
       pitch:
-        "Construyo software de punta a punta: microservicios en Java y Spring Boot, APIs REST y pruebas que sostienen producción.",
+        "Desarrollo microservicios en Java y Spring Boot, diseño APIs REST y escribo pruebas automatizadas.",
       location: "Ambato, Ecuador",
-      citizenship: "Ciudadanía española (UE), sin necesidad de visado",
       /* Señal de la portada. Si dejo de buscar, se borra y desaparece. */
       availability: "Disponible para nuevas oportunidades",
       summary: [
-        "Soy desarrolladora backend. En **Alquimiasoft** construyo microservicios en Java y Spring Boot: APIs REST, PostgreSQL, Swagger y pruebas en Mockito.",
-        "Fuera del trabajo hago sistemas completos con NestJS y Next.js. Me interesa lo que pasa entre el código y producción: pruebas, contenedores y CI/CD.",
+        "En **Alquimiasoft** desarrollo microservicios en Java y Spring Boot con PostgreSQL. Documento las APIs REST con Swagger y escribo pruebas con Mockito.",
+        "En mis proyectos con NestJS y Next.js también trabajo con pruebas, contenedores y CI/CD.",
       ],
     },
 
     experience: [
       {
         id: "alquimiasoft",
-        role: "Desarrolladora Backend",
+        role: "Desarrolladora backend",
         location: "Ambato, Ecuador",
         date: "Feb 2026 – Actualidad",
         linkText: {
@@ -191,10 +191,10 @@ export const copy = {
         },
         bullets: [
           "**Microservicios en Java/Spring Boot**: APIs REST, lógica de negocio y PostgreSQL.",
-          "**Más de 10 módulos CRUD** en el API principal, incluida la facturación.",
+          "**Más de 10 módulos CRUD** en la API principal, incluido el de facturación.",
           "Funcionalidades y correcciones en aplicaciones **legacy en Spring MVC**.",
-          "APIs documentadas con Swagger/OpenAPI y **más del 95% de cobertura** con Mockito.",
-          "Docker, PRs con code review e interfaces en Flutter, en un equipo Scrum.",
+          "Documentación de APIs con Swagger/OpenAPI y pruebas con Mockito que mantienen **más del 95 % de cobertura**.",
+          "Contenerización con Docker, revisión de código e integración de interfaces Flutter con el backend en un equipo Scrum.",
         ],
       },
     ],
@@ -464,7 +464,7 @@ export const copy = {
         },
         role: "El módulo contable: backend en NestJS y Prisma y sus pantallas en React. Asientos, periodos, plan de cuentas, cuentas por cobrar y reportes.",
         scope:
-          "El sistema completo, hecho en equipo, incluye además la facturación electrónica conforme al SRI, clientes, sucursales y lecturas de medidores, y se entregó con capacitación al personal. Esas partes no son mías: aquí sólo aparece el módulo contable.",
+          "El equipo también desarrolló la facturación electrónica conforme al SRI y la gestión de clientes, sucursales y lecturas de medidores. La entrega incluyó capacitación al personal.",
         metrics: {
           reports: "reportes contables oficiales en PDF",
           balance: { value: "debe = haber", label: "validado antes de guardar cada asiento" },
@@ -645,7 +645,7 @@ export const copy = {
     meta: {
       title: "Daylé García Fernández · Software Engineer",
       description:
-        "Software Engineer: Java and Spring Boot microservices, REST APIs, PostgreSQL and Mockito testing. Complete systems in production with NestJS and Next.js. EU citizen.",
+        "Backend development with Java and Spring Boot. Experience with REST APIs, PostgreSQL and automated testing. Projects built with NestJS and Next.js.",
     },
 
     ui: {
@@ -715,7 +715,8 @@ export const copy = {
       formMessage: "Message",
       send: "Send message",
       sending: "Sending…",
-      sendError: "The message couldn't be sent. Please try again or email me directly.",
+      sendError: "Your message couldn't be sent. You can try again or",
+      emailFallback: "send it by email",
       successTitle: "Message sent",
       successBody: "Thank you. I'll get back to you as soon as I can.",
       footer: "Designed and built by Daylé García with Next.js and OGL. Statically exported.",
@@ -732,15 +733,15 @@ export const copy = {
     pages: {
       projects: {
         title: "Projects",
-        description: "Seven systems, each with its case study: architecture, screenshots and the decisions I made.",
+        description: "Seven case studies covering the architecture, screenshots and my contribution to each project.",
       },
       experience: {
         title: "Experience",
-        description: "Java and Spring Boot backend at Alquimiasoft, and the stack I use, by layer.",
+        description: "My work with Java and Spring Boot at Alquimiasoft and the technologies I use at each layer.",
       },
       about: {
         title: "About",
-        description: "Education, certifications, languages, competitions and conferences, and what I do outside code.",
+        description: "My education, certifications and languages, plus competitions, conferences and hobbies.",
       },
       notes: {
         title: "Notes",
@@ -766,17 +767,17 @@ export const copy = {
       },
       stack: {
         title: "Stack",
-        intro: "Grouped by layer, with where I've actually used it.",
+        intro: "The technologies I use at each layer and the projects where I used them.",
       },
       about: { title: "About" },
       featured: {
         title: "Featured projects",
-        intro: "Three of the seven, with their case studies.",
+        intro: "Three case studies on my backend work.",
         more: "See all seven projects",
       },
       journey: {
         title: "Competitions and conferences",
-        intro: "Where programming is for fun: contests, conferences and community.",
+        intro: "Competitions and events I've taken part in with the tech community.",
       },
       hobbies: {
         title: "Outside code",
@@ -784,20 +785,19 @@ export const copy = {
       contact: {
         title: "Let's talk",
         intro:
-          "Looking for someone for your team? Write to me, in English or Spanish.",
+          "Get in touch in English or Spanish to discuss a project, collaborate or ask a question.",
       },
     },
 
     profile: {
       role: "Software Engineer",
       pitch:
-        "I build software end to end: Java and Spring Boot microservices, REST APIs and tests that hold up in production.",
+        "I build microservices with Java and Spring Boot, design REST APIs and write automated tests.",
       location: "Ambato, Ecuador",
-      citizenship: "Spanish (EU) citizen, no visa sponsorship required",
       availability: "Open to new opportunities",
       summary: [
-        "I'm a backend developer. At **Alquimiasoft** I build Java and Spring Boot microservices: REST APIs, PostgreSQL, Swagger and Mockito tests.",
-        "Outside work I build complete systems with NestJS and Next.js. I care about what happens between the code and production: tests, containers and CI/CD.",
+        "At **Alquimiasoft**, I build Java and Spring Boot microservices with PostgreSQL. I document REST APIs with Swagger and write tests with Mockito.",
+        "In my NestJS and Next.js projects, I also work with testing, containers and CI/CD.",
       ],
     },
 
@@ -815,8 +815,8 @@ export const copy = {
           "**Java/Spring Boot microservices**: REST APIs, business logic and PostgreSQL.",
           "**10+ CRUD modules** in the main API, including invoicing.",
           "Features and fixes in **legacy Spring MVC** applications.",
-          "APIs documented with Swagger/OpenAPI and **95%+ coverage** with Mockito.",
-          "Docker, PRs with code review and Flutter UIs, in a Scrum team.",
+          "API documentation with Swagger/OpenAPI and Mockito tests that maintain **over 95% code coverage**.",
+          "Docker containerization, code review and integration of Flutter interfaces with the backend on a Scrum team.",
         ],
       },
     ],
@@ -1082,7 +1082,7 @@ export const copy = {
         },
         role: "The accounting module: the NestJS and Prisma backend and its React screens. Journal entries, periods, chart of accounts, receivables and reports.",
         scope:
-          "The full system, built by the team, also includes e-invoicing compliant with Ecuador's tax authority (SRI), customers, branches and meter readings, and was delivered with staff training. Those parts aren't mine: only the accounting module is shown here.",
+          "The team also built e-invoicing compliant with Ecuador's tax authority (SRI), along with tools to manage customers, branches and meter readings. The handover included staff training.",
         metrics: {
           reports: "official accounting reports in PDF",
           balance: { value: "debit = credit", label: "checked before each entry is saved" },

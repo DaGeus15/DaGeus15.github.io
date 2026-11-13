@@ -60,6 +60,7 @@ export default function LiquidLens({ listRef, active }) {
     measure(false);
     const ro = new ResizeObserver(() => measure(true));
     ro.observe(list);
+    list.querySelectorAll("[data-id]").forEach((link) => ro.observe(link));
     return () => ro.disconnect();
   }, [active, listRef, left, right, opacity]);
 

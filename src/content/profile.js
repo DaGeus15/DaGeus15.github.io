@@ -16,6 +16,7 @@ export const profile = {
      `public/dayle-avatar.jpg` es la imagen de vista previa (`npm run og`);
      si cambia la foto, regenerá los dos. */
   avatar: "/dayle.jpeg",
+  mobilePortrait: "/assets/images/portrait/avatar.webp",
   /* Las dos versiones del CV: quien lee en español puede querer el inglés para
      mandarlo fuera, así que el botón ofrece ambas. */
   cvEs: "/Dayle-Garcia-Fernandez-CV-ES.pdf",

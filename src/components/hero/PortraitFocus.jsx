@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { useMotionValue, useSpring } from "framer-motion";
-import { HOVER_QUERY } from "@/lib/breakpoints";
+import { HOVER_QUERY, MOBILE_BREAKPOINT } from "@/lib/breakpoints";
 import { spring } from "@/lib/motion";
 
 /**
@@ -59,6 +59,7 @@ export default function PortraitFocus() {
     };
 
     const onEnter = (e) => {
+      if (window.innerWidth < MOBILE_BREAKPOINT) return;
       rect = portrait.getBoundingClientRect();
       portrait.dataset.on = "";
       place(e.clientX, e.clientY, true);

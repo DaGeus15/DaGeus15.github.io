@@ -54,6 +54,9 @@
   /* Línea de lectura: el texto corrido no pasa de aquí aunque el panel sí. */
   --measure: 66ch;
   --nav-h: 3.25rem;
+  --nav-mobile-row: 2.75rem;
+  --nav-mobile-inset: var(--sp-1);
+  --nav-mobile-clear: calc(2 * var(--nav-mobile-row) + 2 * var(--nav-mobile-inset) + var(--sp-3) + env(safe-area-inset-bottom));
   /* Alto de un enlace de la píldora (y de su lente); 44px en táctil. */
   --nav-link-h: 2.35rem;
   /* Aire que la píldora fija deja libre arriba (escritorio) o abajo (móvil). */
