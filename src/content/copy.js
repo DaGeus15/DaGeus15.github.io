@@ -14,9 +14,9 @@ export const copy = {
   /* ────────────────────────────── ESPAÑOL ────────────────────────────── */
   es: {
     meta: {
-      title: "Daylé García Fernández · Desarrollo backend",
+      title: "Daylé García Fernández · Software Engineer",
       description:
-        "Desarrollo backend con Java, Spring Boot y PostgreSQL. Proyectos con NestJS y Next.js.",
+        "Portafolio de Daylé García Fernández. Aplicaciones web y móviles, casos de estudio y notas técnicas.",
     },
 
     ui: {
@@ -157,7 +157,7 @@ export const copy = {
          "Ingeniera de Software" se lee como el título universitario. */
       role: "Software Engineer",
       pitch:
-        "Desarrollo microservicios en Java y Spring Boot, diseño APIs REST y escribo pruebas automatizadas.",
+        "¡Hola! Me encanta crear aplicaciones de todo tipo y ver cómo una idea cobra vida.",
       location: "Ambato, Ecuador",
       /* Señal de la portada. Si dejo de buscar, se borra y desaparece. */
       availability: "Disponible para nuevas oportunidades",
@@ -633,7 +633,7 @@ export const copy = {
     meta: {
       title: "Daylé García Fernández · Software Engineer",
       description:
-        "Backend development with Java, Spring Boot and PostgreSQL. Projects with NestJS and Next.js.",
+        "Daylé García Fernández’s portfolio. Web and mobile apps, case studies, and technical notes.",
     },
 
     ui: {
@@ -768,7 +768,7 @@ export const copy = {
     profile: {
       role: "Software Engineer",
       pitch:
-        "I build microservices with Java and Spring Boot, design REST APIs and write automated tests.",
+        "Hi there! I love building all kinds of apps and seeing ideas come to life.",
       location: "Ambato, Ecuador",
       availability: "Open to new opportunities",
       summary: [

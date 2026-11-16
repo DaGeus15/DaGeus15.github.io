@@ -56,9 +56,8 @@ const text = Buffer.from(`
     .role { font: 500 28px "Segoe UI", "Helvetica Neue", Arial, sans-serif; fill: #e0b676; }
     .mono { font: 400 19px Consolas, "SF Mono", Menlo, monospace; fill: #9ea6ae; }
   </style>
-  <text x="${TEXT_X}" y="262" class="name">Daylé García Fernández</text>
-  <text x="${TEXT_X}" y="308" class="role">Software Engineer</text>
-  <text x="${TEXT_X}" y="352" class="mono">Java · Spring Boot · PostgreSQL · NestJS</text>
+  <text x="${TEXT_X}" y="271" class="name">Daylé García Fernández</text>
+  <text x="${TEXT_X}" y="317" class="role">Software Engineer</text>
   <text x="${Math.round(cx - d / 2)}" y="${H - 52}" class="mono">dageus15.github.io</text>
 </svg>`);
 
