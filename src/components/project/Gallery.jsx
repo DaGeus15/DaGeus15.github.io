@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import Image from "next/image";
-import { FiChevronLeft, FiChevronRight, FiX } from "react-icons/fi";
+import { FiChevronLeft, FiChevronRight, FiMaximize2, FiX } from "react-icons/fi";
 import Frame from "./Frame";
 
 /**
@@ -112,10 +112,12 @@ export default function Gallery({ shots, labels }) {
                   thumbRefs.current[i] = el;
                 }}
                 className="gallery__open"
+                data-rim
                 onClick={() => open(i)}
                 aria-label={s.openLabel}
               >
                 <Frame shot={s} />
+                <span className="gallery__zoom" aria-hidden="true"><FiMaximize2 /></span>
               </button>
               <figcaption className="gallery__caption">{s.caption}</figcaption>
             </figure>

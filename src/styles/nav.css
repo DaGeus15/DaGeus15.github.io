@@ -30,18 +30,10 @@
 }
 
 /* ── Cristal de la píldora ──────────────────────────────────────────────
-   Aproximación web de un material translúcido (no es el Liquid Glass de
-   Apple, que no existe para la web): desenfoque con saturación alta, un
-   tinte, un brillo cenital y un filo especular.
-
-   `backdrop-filter` sólo muestrea lo que queda JUSTO detrás de la caja: una
-   captura que se acerca no tiñe el cristal hasta que ya está debajo, y el
-   cristal se lee plano. Por eso la capa que desenfoca es tres veces más alta
-   que la píldora, hacia donde llega el contenido, y el contenedor la recorta
-   a la forma de la píldora (overflow + radio, que no crean backdrop root).
-   Va en su propio elemento, detrás del contenido (z-index -1 dentro del
-   contexto de `.site-nav`), y no en la píldora: si la píldora llevara el
-   filtro, el menú del CV que vive dentro no podría ser cristal. */
+   El bisel óptico coincide con la forma y las dimensiones de la barra.
+   El blur de respaldo muestrea una zona más alta para difuminar el contenido
+   antes de que llegue al borde. Ambos van detrás de los enlaces en una
+   capa hermana, para dejar que el menú del CV vea la página. */
 .site-nav__glass {
   position: absolute;
   inset: -1px;
@@ -51,11 +43,25 @@
   pointer-events: none;
 }
 
-.site-nav__glass-blur {
+.glass-backdrop__scene {
   position: absolute;
+  inset: 0;
+  backdrop-filter: var(--glass-thick);
+}
+
+.glass-backdrop__optics {
+  position: absolute;
+}
+
+.site-nav__glass-blur {
   inset: 0 0 auto;
   height: 300%;
-  backdrop-filter: var(--glass-thick);
+}
+
+.glass-backdrop__scene[data-refractive] {
+  inset: 0;
+  height: 100%;
+  backdrop-filter: var(--glass-refraction);
 }
 
 /* El tinte y el brillo, encima del desenfoque y del tamaño de la píldora. */
@@ -63,7 +69,61 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: var(--glass-sheen), var(--glass-bg);
+  background: var(--glass-bevel), var(--glass-sheen), var(--glass-bg);
+}
+
+/* Una transmisión uniforme deja ver la óptica en todo el ancho de la
+   barra. El ajuste de contraste se hace en la tinta de cada control. */
+.site-nav__glass:has([data-refractive])::after {
+  background: color-mix(in srgb, var(--glass-bg) 35%, transparent);
+}
+
+.site-nav__pill:has(.site-nav__glass-blur[data-refractive]),
+.site-nav [data-glass-ink="light"] {
+  --nav-ink-shadow: var(--nav-ink-light-shadow);
+  --nav-optical-ink: var(--nav-ink-light);
+  --nav-optical-stroke: 0;
+}
+
+[data-theme="light"] .site-nav__pill:has(.site-nav__glass-blur[data-refractive]),
+.site-nav [data-glass-ink="dark"] {
+  --nav-ink-shadow: var(--nav-ink-dark-shadow);
+  --nav-optical-ink: var(--nav-ink-dark);
+  --nav-optical-stroke: var(--nav-ink-dark-stroke);
+}
+
+.site-nav__pill:has(.site-nav__glass-blur[data-refractive]) :is(.site-nav__name, .site-nav__link, .site-nav__back, .site-nav__mobile-home, .pref-btn) {
+  color: var(--nav-optical-ink);
+  text-shadow: 0 1px 1px var(--nav-ink-shadow);
+  -webkit-text-stroke: var(--nav-optical-stroke) currentColor;
+}
+
+.site-nav__pill:has(.site-nav__glass-blur[data-refractive]) .site-nav__link {
+  transition-duration: var(--dur-nav-ink), 160ms;
+}
+
+.site-nav__reflection {
+  display: none;
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .site-nav__reflection {
+    display: block;
+    position: absolute;
+    z-index: 1;
+    inset: 0 auto 0 50%;
+    width: min(17rem, 75%);
+    margin-left: max(-8.5rem, -37.5%);
+    background:
+      radial-gradient(ellipse 50% 15% at 50% 0%, var(--lens-glint), transparent),
+      radial-gradient(ellipse 50% 12% at 50% 100%, var(--glass-rim-soft), transparent);
+    opacity: 0;
+    transition: opacity var(--dur-fast) var(--ease-out);
+  }
+
+  .site-nav__pill:hover .site-nav__reflection {
+    opacity: 0.9;
+  }
 }
 
 /* Filo especular: 1px más brillante arriba a la izquierda, que se apaga y
@@ -83,7 +143,11 @@
 }
 
 .site-nav__name {
+  display: inline-flex;
+  align-items: center;
+  height: var(--nav-link-h);
   padding: 0 0.85rem 0 0.75rem;
+  border-radius: var(--r-pill);
   font-size: 0.9rem;
   font-weight: 650;
   font-stretch: var(--title-stretch);
@@ -101,14 +165,6 @@
   color: var(--muted);
   font-size: 0.88rem;
   font-weight: 550;
-  transition:
-    color var(--dur-fast) var(--ease-out),
-    background-color var(--dur-fast) var(--ease-out);
-}
-
-.site-nav__back:hover {
-  color: var(--foreground);
-  background: var(--surface-raised);
 }
 
 .site-nav__back svg {
@@ -168,28 +224,103 @@
   height: var(--nav-link-h);
   translate: 0 -50%;
   border-radius: var(--r-pill);
-  border: 1px solid var(--lens-border);
-  background: var(--lens-bg);
-  box-shadow: var(--lens-shadow);
+  background: var(--control-glass);
+  box-shadow: inset 0 -1px 0 var(--lens-selected-edge), var(--control-edge), var(--shadow-float);
+  overflow: hidden;
   pointer-events: none;
 }
 
-/* Hover: una lente tenue bajo el enlace, sin volumen; la activa es la que
-   lo tiene. Sólo con ratón (en táctil se quedaría pegada). */
-.site-nav__link::before {
-  content: "";
+.site-nav__glint {
   position: absolute;
   inset: 0;
+  background: radial-gradient(ellipse 56% 24% at 50% 0%, var(--lens-glint), transparent);
+}
+
+@media (prefers-reduced-motion: reduce), (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .site-nav__glint {
+    display: none;
+  }
+}
+
+/* La pastilla de interacción vive detrás del texto. La sección activa usa
+   la lente compartida, y la portada móvil conserva su propia pastilla. */
+.site-nav :is(.site-nav__name, .site-nav__link, .site-nav__back, .site-nav__mobile-home, .pref-btn) {
+  position: relative;
+  isolation: isolate;
+}
+
+.site-nav :is(.site-nav__name, .site-nav__link, .site-nav__back, .site-nav__mobile-home, .pref-btn)::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
   border-radius: inherit;
-  background: var(--lens-hover);
+  background: var(--control-glass);
+  box-shadow: var(--control-edge);
   opacity: 0;
-  transition: opacity var(--dur-fast) var(--ease-out);
+  scale: 0.95;
+  transition: opacity var(--dur-fast) var(--ease-out), scale var(--dur-fast) var(--ease-out);
+  pointer-events: none;
+}
+
+.site-nav__link[aria-current]::before {
+  background: var(--glass-bevel);
+  box-shadow: none;
+}
+
+.site-nav :is(.site-nav__name, .site-nav__link, .site-nav__back, .site-nav__mobile-home, .pref-btn):is(:active, :focus-visible)::before {
+  opacity: 1;
+  scale: 1;
+}
+
+.site-nav .site-nav__mobile-home[aria-current]::before {
+  opacity: 1;
+  scale: 1;
+  box-shadow: inset 0 -1px 0 var(--lens-selected-edge), var(--control-edge);
+}
+
+.site-nav :is(.site-nav__name, .site-nav__link, .site-nav__back, .site-nav__mobile-home, .pref-btn):focus-visible::before {
+  transition: none;
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .site-nav__link:not([aria-current]):hover::before {
-    opacity: 1;
+  .site-nav :is(.site-nav__name, .site-nav__link, .site-nav__back, .site-nav__mobile-home, .pref-btn):hover:not(:focus-visible, :active, .site-nav__mobile-home[aria-current])::before {
+    opacity: 0.74;
+    scale: 0.97;
   }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-nav :is(.site-nav__name, .site-nav__link, .site-nav__back, .site-nav__mobile-home, .pref-btn)::before {
+    scale: 1;
+    transition-property: opacity;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .glass-backdrop__scene[data-refractive] {
+    backdrop-filter: none;
+  }
+
+  .site-nav__glass:has([data-refractive])::after {
+    background: var(--glass-bg);
+  }
+
+  .site-nav__reflection { display: none; }
+}
+
+.site-nav .cv-button[aria-expanded="true"] {
+  translate: 0;
+}
+
+.cv-button[aria-expanded="true"] {
+  box-shadow: var(--control-edge), inset 0 2px 5px var(--glass-depth);
+}
+
+.cv-button[aria-expanded="true"]::after {
+  background: var(--glass-bevel);
+  transform: none;
+  transition: none;
 }
 
 .site-nav__label {
@@ -289,12 +420,21 @@
   }
 
   .site-nav__avatar {
+    display: block;
     width: var(--sp-7);
     height: var(--sp-7);
     flex: none;
-    object-fit: cover;
-    border: 1px solid var(--border-strong);
+    overflow: hidden;
+    border: 1px solid var(--lens-border);
     border-radius: 50%;
+  }
+
+  .site-nav__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.43);
+    transform-origin: 50% 19%;
   }
 
   .site-nav__mobile-home:active {
@@ -338,10 +478,24 @@
      lo que haya debajo. Es cristal de verdad también dentro de la píldora,
      porque el filtro de ésta va en una capa hermana (`.site-nav__glass`). */
   --muted: var(--glass-ink-muted);
-  background: var(--glass-sheen), var(--glass-bg-thick);
-  backdrop-filter: var(--glass-thick);
   box-shadow: var(--glass-shadow);
   transform-origin: bottom left;
+}
+
+.cv-menu__glass {
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.cv-menu__glass::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--glass-bevel), var(--glass-bg-thick);
 }
 
 .cv-menu[data-placement="down"] {
@@ -376,7 +530,7 @@
   gap: var(--sp-3);
   min-height: 2.5rem;
   padding: 0 var(--sp-3);
-  border-radius: var(--r-sm);
+  border-radius: var(--r-pill);
   font-size: 0.86rem;
   font-weight: 550;
   white-space: nowrap;
@@ -386,9 +540,18 @@
     transform 160ms var(--ease-out);
 }
 
-.cv-menu__item:hover {
-  background: var(--accent-soft);
-  color: var(--accent);
+.cv-menu__item:is(:focus-visible, :active) {
+  background: var(--control-glass);
+  box-shadow: var(--control-edge);
+  color: var(--foreground);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cv-menu__item:hover {
+    background: var(--control-glass);
+    box-shadow: var(--control-edge);
+    color: var(--foreground);
+  }
 }
 
 .cv-menu__item:active {

@@ -20,31 +20,46 @@ export function useScrollSpy(ids) {
 
   useEffect(() => {
     if (!ids.length) return;
-    const crossing = new Set();
+    const sections = ids.map((id) => document.getElementById(id)).filter(Boolean);
+    let height;
+    let observer;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) crossing.add(e.target.id);
-          else crossing.delete(e.target.id);
-        });
-        // Entre dos secciones (en el hueco) no cruza ninguna: se mantiene la
-        // última, que es la que se acaba de leer.
-        const current = ids.find((id) => crossing.has(id));
-        if (current) setActiveId(current);
-      },
-      { rootMargin: "-40% 0px -59% 0px", threshold: 0 },
-    );
+    const observe = () => {
+      const viewportHeight = document.documentElement.clientHeight;
+      if (viewportHeight === height) return;
+      height = viewportHeight;
+      observer?.disconnect();
 
-    ids.forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
-    });
+      // Los porcentajes de rootMargin se calculan sobre el ancho, incluso
+      // en vertical. En píxeles la franja sigue la altura de la ventana.
+      const top = Math.round(height * 0.4);
+      const bottom = Math.round(height * 0.59);
+      const crossing = new Set();
+      observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) crossing.add(e.target.id);
+            else crossing.delete(e.target.id);
+          });
+          // En el hueco entre secciones queda la última que se leyó.
+          const current = ids.find((id) => crossing.has(id));
+          if (current) setActiveId(current);
+        },
+        { rootMargin: `-${top}px 0px -${bottom}px 0px`, threshold: 0 },
+      );
+      sections.forEach((section) => observer.observe(section));
+    };
 
-    return () => observer.disconnect();
+    observe();
+    window.addEventListener("resize", observe);
+    return () => {
+      observer?.disconnect();
+      window.removeEventListener("resize", observe);
+      setActiveId(null);
+    };
   }, [ids]);
 
-  return [activeId];
+  return activeId;
 }
 
 export default useScrollSpy;

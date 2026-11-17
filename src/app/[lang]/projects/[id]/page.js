@@ -1,15 +1,16 @@
 import Link from "next/link";
 import { FiArrowRight, FiArrowUpRight, FiLock } from "react-icons/fi";
-import SiteNav from "@/components/layout/SiteNav";
 import Footer from "@/components/layout/Footer";
 import ArchitectureDiagram from "@/components/project/ArchitectureDiagram";
 import Metrics from "@/components/project/Metrics";
 import ShotStage from "@/components/project/ShotStage";
 import Gallery from "@/components/project/Gallery";
 import Frame from "@/components/project/Frame";
+import TechnologyTile from "@/components/ui/TechnologyTile";
+import { technologyIcon } from "@/content/skills";
 import RichText from "@/lib/RichText";
 import { getContent } from "@/lib/content";
-import { LANGS, OG_IMAGE, homePath, otherLang, pagePath, projectPath } from "@/lib/locales";
+import { LANGS, OG_IMAGE, projectPath } from "@/lib/locales";
 import { projectIds } from "@/content/projects";
 
 /**
@@ -66,25 +67,11 @@ export default async function CaseStudy({ params }) {
   const index = t.projects.findIndex((p) => p.id === id);
   const project = t.projects[index];
   const next = t.projects[(index + 1) % t.projects.length];
-  const langHref = projectPath(otherLang(lang), id);
 
   const shots = project.gallery.map((s) => ({ ...s, openLabel: ui.openShot(s.caption) }));
 
   return (
     <>
-      <a href="#main" className="skip-link">
-        {ui.skipToContent}
-      </a>
-      <SiteNav
-        variant="case"
-        labels={{ mainNav: ui.mainNav, switchLang: ui.switchLang, back: ui.backHome }}
-        name={t.profile.name}
-        homeHref={homePath(lang)}
-        backHref={pagePath(lang, "projects")}
-        lang={lang}
-        langHref={langHref}
-      />
-
       <main id="main" className="page case">
         <header className="case-hero">
           <p className="case-hero__meta mono enter" style={{ "--i": 0 }}>
@@ -221,7 +208,8 @@ export default async function CaseStudy({ params }) {
           <ul className="tech-grid">
             {project.tech.map((tech) => (
               <li key={tech} className="mono">
-                {tech}
+                <TechnologyTile icon={technologyIcon(tech)} />
+                <span>{tech}</span>
               </li>
             ))}
           </ul>

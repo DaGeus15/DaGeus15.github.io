@@ -57,4 +57,46 @@ export const skillGroups = [
   },
 ];
 
+const primaryIcons = new Map(
+  skillGroups.flatMap(({ primary }) => primary.map(({ name, icon }) => [name, icon])),
+);
+
+/* Los casos reutilizan el Stack. Las herramientas sin marca local se
+   reconocen por el símbolo de su función (mensajería, biometría, etc.). */
+const projectIconFiles = {
+  Prisma: "prisma",
+  "Socket.IO": "socket-io",
+  "Gemini API": "gemini",
+  n8n: "n8n",
+  TypeScript: "typescript",
+  Supabase: "supabase",
+  grammY: "send",
+  zod: "zod",
+  Vite: "vite",
+  "Tailwind CSS": "tailwind",
+  Render: "render",
+  Vercel: "vercel",
+  "face-api": "biometrics",
+  "TensorFlow.js (WASM)": "tensorflow",
+  "Server-Sent Events": "events",
+  Vitest: "vitest",
+  gRPC: "rpc",
+  "Protocol Buffers": "serialization",
+  NATS: "nats",
+  "Docker Compose": "docker",
+  JWT: "jwt",
+  Express: "express",
+  "React Native": "react",
+  Expo: "expo",
+  Stripe: "stripe",
+  Clerk: "clerk",
+  Cloudinary: "cloudinary",
+  "Azure App Service": "azure",
+  "Azure Static Web Apps": "azure",
+};
+
+export function technologyIcon(name) {
+  return primaryIcons.get(name) ?? (Object.hasOwn(projectIconFiles, name) ? icon(projectIconFiles[name]) : undefined);
+}
+
 export default skillGroups;

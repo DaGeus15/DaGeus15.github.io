@@ -1,16 +1,16 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useMotionValue, useSpring } from "framer-motion";
+import { useMotionValue } from "framer-motion";
 import { HOVER_QUERY, MOBILE_BREAKPOINT } from "@/lib/breakpoints";
-import { spring } from "@/lib/motion";
+
+const POINTER_REST_MS = 1200;
 
 /**
  * El tramo del contorno más cercano al puntero. El círculo se mueve con
  * transform y el filo de dentro se contra-desplaza para quedarse quieto.
- * Con ratón, un spring; con movimiento reducido, el mismo sitio al instante
- * (en el efecto, no en el render). Sin ratón no se monta: el recorrido lo
- * hace el CSS con el scroll.
+ * La posición se copia del ratón para que el foco llegue con el gesto.
+ * El barrido CSS recupera el filo al dejar el ratón en reposo.
  *
  * El rectángulo se mide al entrar y al cambiar el layout, no en cada
  * movimiento. No se pulsa: ni estado de React ni cursor de mano.
@@ -18,94 +18,88 @@ import { spring } from "@/lib/motion";
 export default function PortraitFocus() {
   const spotRef = useRef(null);
   const innerRef = useRef(null);
-  const px = useMotionValue(0);
-  const py = useMotionValue(0);
-  const sx = useSpring(px, spring.snappy);
-  const sy = useSpring(py, spring.snappy);
+  const position = useMotionValue({ x: 0, y: 0 });
 
   useEffect(() => {
     const spot = spotRef.current;
     const inner = innerRef.current;
     const portrait = spot?.closest(".hero__portrait");
     if (!spot || !inner || !portrait) return;
-    if (!window.matchMedia(HOVER_QUERY).matches) return;
+
+    const observer = new IntersectionObserver(([entry]) => {
+      portrait.toggleAttribute("data-in-view", entry.isIntersecting);
+    });
+    observer.observe(portrait);
+    if (!window.matchMedia(HOVER_QUERY).matches) return () => observer.disconnect();
 
     const reduceQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    let reduce = reduceQuery.matches;
     let rect = null;
+    let radius = 0;
+    let idleTimer;
 
-    const paint = () => {
-      const x = sx.get();
-      const y = sy.get();
+    const unsubscribe = position.on("change", ({ x, y }) => {
       spot.style.transform = `translate3d(${x}px, ${y}px, 0)`;
       inner.style.transform = `translate3d(${-x}px, ${-y}px, 0)`;
-    };
-    const unX = sx.on("change", paint);
-    const unY = sy.on("change", paint);
+    });
 
-    const place = (clientX, clientY, immediate) => {
-      if (!rect) return;
-      const x = clientX - rect.left - spot.offsetWidth / 2;
-      const y = clientY - rect.top - spot.offsetHeight / 2;
-      if (immediate || reduce) {
-        px.jump(x);
-        py.jump(y);
-        sx.jump(x);
-        sy.jump(y);
-      } else {
-        px.set(x);
-        py.set(y);
-      }
+    const release = () => {
+      clearTimeout(idleTimer);
+      delete portrait.dataset.on;
+    };
+
+    const onMove = ({ clientX, clientY, pointerType }) => {
+      if (!rect || pointerType === "touch") return;
+      position.set({ x: clientX - rect.left - radius, y: clientY - rect.top - radius });
+      portrait.dataset.on = "";
+      clearTimeout(idleTimer);
+      if (!reduceQuery.matches) idleTimer = setTimeout(release, POINTER_REST_MS);
     };
 
     const onEnter = (e) => {
-      if (window.innerWidth < MOBILE_BREAKPOINT) return;
+      if (window.innerWidth < MOBILE_BREAKPOINT || e.pointerType === "touch") return;
       rect = portrait.getBoundingClientRect();
-      portrait.dataset.on = "";
-      place(e.clientX, e.clientY, true);
-    };
-    const onMove = (e) => {
-      if (!portrait.hasAttribute("data-on")) return;
-      place(e.clientX, e.clientY, false);
+      radius = spot.offsetWidth / 2;
+      onMove(e);
     };
     const onLeave = () => {
-      delete portrait.dataset.on;
-    };
-    const onReduce = () => {
-      reduce = reduceQuery.matches;
-      if (reduce) {
-        sx.jump(px.get());
-        sy.jump(py.get());
-      }
+      rect = null;
+      release();
     };
     const remeasure = () => {
-      if (portrait.hasAttribute("data-on")) rect = portrait.getBoundingClientRect();
+      if (!rect) return;
+      rect = portrait.getBoundingClientRect();
+      radius = spot.offsetWidth / 2;
     };
 
     portrait.addEventListener("pointerenter", onEnter);
     portrait.addEventListener("pointermove", onMove);
     portrait.addEventListener("pointerleave", onLeave);
     portrait.addEventListener("pointercancel", onLeave);
-    reduceQuery.addEventListener("change", onReduce);
     window.addEventListener("resize", remeasure);
     window.addEventListener("scroll", remeasure, { passive: true });
     return () => {
-      unX();
-      unY();
+      observer.disconnect();
+      unsubscribe();
       portrait.removeEventListener("pointerenter", onEnter);
       portrait.removeEventListener("pointermove", onMove);
       portrait.removeEventListener("pointerleave", onLeave);
       portrait.removeEventListener("pointercancel", onLeave);
-      reduceQuery.removeEventListener("change", onReduce);
       window.removeEventListener("resize", remeasure);
       window.removeEventListener("scroll", remeasure);
-      delete portrait.dataset.on;
+      release();
     };
-  }, [px, py, sx, sy]);
+  }, [position]);
 
   return (
-    <div className="hero__light">
-      <div className="hero__spot" ref={spotRef}>
+    <div className="hero__light" aria-hidden="true">
+      <div className="hero__idle-rim">
+        <div className="hero__spot">
+          <div className="hero__spot-inner">
+            <div className="hero__rim" />
+          </div>
+        </div>
+      </div>
+      <div className="hero__spot hero__spot--interactive" ref={spotRef}>
         <div className="hero__spot-inner" ref={innerRef}>
           <div className="hero__rim" />
         </div>

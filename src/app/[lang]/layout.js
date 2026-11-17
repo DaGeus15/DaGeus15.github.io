@@ -4,6 +4,7 @@ import { ThemeProvider, themeInitScript } from "@/lib/theme";
 import { ControlsProvider } from "@/lib/i18n";
 import SpecularRim from "@/components/ui/SpecularRim";
 import ScrollReveal from "@/components/ui/ScrollReveal";
+import SiteNav from "@/components/layout/SiteNav";
 import { LANGS, SITE_URL, homePath } from "@/lib/locales";
 import { getContent } from "@/lib/content";
 import { homeIntroScript } from "@/lib/homeIntro";
@@ -73,7 +74,7 @@ export const viewport = {
 
 export default async function LangLayout({ children, params }) {
   const { lang } = await params;
-  const { ui } = getContent(lang);
+  const { ui, nav } = getContent(lang);
   const cvEs = { href: profile.cvEs, label: ui.cvSpanish, lang: "es" };
   const cvEn = { href: profile.cvEn, label: ui.cvEnglish, lang: "en" };
   const controls = {
@@ -98,20 +99,30 @@ export default async function LangLayout({ children, params }) {
   };
 
   return (
-    <html lang={lang} suppressHydrationWarning>
-      <head>
-        {/* Aplica el tema antes del primer paint para que no haya flash. */}
+    <html lang={lang} data-scroll-behavior="smooth" suppressHydrationWarning>
+      <body className={monaSans.variable}>
+        {/* Next compone la cabecera. Estos scripts corren antes del
+            contenido visible y dejan el tema y la entrada listos. */}
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <script dangerouslySetInnerHTML={{ __html: homeIntroScript(homePath(lang)) }} />
-      </head>
-      <body className={monaSans.variable}>
+        <div className="ambient-backdrop" aria-hidden="true" />
         {/* `reducedMotion="never"`: el movimiento reducido se decide efecto a
             efecto, no en bloque (ver AGENTS.md). Con "user" se apagaba todo
             —hover, entradas, pulsación— para cualquiera con "Efectos de
             animación" desactivado en Windows. */}
         <MotionConfig reducedMotion="never">
           <ControlsProvider controls={controls}>
-            <ThemeProvider>{children}</ThemeProvider>
+            <ThemeProvider>
+              <a href="#main" className="skip-link">{ui.skipToContent}</a>
+              <SiteNav
+                items={nav}
+                labels={{ mainNav: ui.mainNav, switchLang: ui.switchLang, home: ui.home, back: ui.backHome }}
+                name={profile.name}
+                mobilePortrait={profile.mobilePortrait}
+                lang={lang}
+              />
+              {children}
+            </ThemeProvider>
           </ControlsProvider>
         </MotionConfig>
         <ScrollReveal />

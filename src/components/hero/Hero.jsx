@@ -17,7 +17,7 @@ import { MOBILE_BREAKPOINT } from "@/lib/breakpoints";
  * corte no dependa del ancho.
  */
 // El ancho en escritorio sigue el bloque de texto, con estos topes.
-const portraitSizes = "min(44vw, 36rem)";
+const portraitSizes = "min(47vw, 40rem)";
 const portraitSrcSet = portrait.photo.map(({ src, w }) => `${src} ${w}w`).join(", ");
 const portraitFallback = portrait.photo.find(({ w }) => w >= 640) ?? portrait.photo.at(-1);
 const letters = new Intl.Segmenter(undefined, { granularity: "grapheme" });
@@ -110,7 +110,7 @@ export default function Hero({ t }) {
 
         <p className="hero__location enter" style={{ "--i": 5 }}>
           <FiMapPin aria-hidden="true" />
-          {profile.location}
+          <span>{profile.location}</span>
         </p>
       </div>
 
@@ -123,6 +123,7 @@ export default function Hero({ t }) {
           aspectRatio: `${portrait.w} / ${portrait.h}`,
         }}
       >
+        <div className="hero__studio-light" aria-hidden="true" />
         <picture>
           <source media={`(width < ${MOBILE_BREAKPOINT}px)`} srcSet={profile.mobilePortrait} />
           <source srcSet={portraitSrcSet} sizes={portraitSizes} />

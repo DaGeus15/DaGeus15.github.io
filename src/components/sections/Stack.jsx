@@ -1,5 +1,6 @@
 import SectionHeading from "./SectionHeading";
 import SystemStack from "@/components/hero/SystemStack";
+import TechnologyTile from "@/components/ui/TechnologyTile";
 
 /**
  * Stack como una banda de filas: el grupo, lo que uso (con icono monocromo) y
@@ -35,11 +36,7 @@ export default function Stack({ t }) {
                 <ul className="stack-row__primary">
                   {group.primary.map((tech) => (
                     <li key={tech.name}>
-                      {/* El logotipo, en una pastilla de cristal (sin
-                          desenfoque: la fila se desplaza con la página). */}
-                      <span className="stack-row__tile" aria-hidden="true">
-                        <span className="stack-row__icon" style={{ maskImage: `url(${tech.icon})` }} />
-                      </span>
+                      <TechnologyTile icon={tech.icon} />
                       {tech.name}
                     </li>
                   ))}

@@ -76,7 +76,7 @@ function apply(theme, source, { animate = false, origin = null } = {}) {
 
 /**
  * Script que corre ANTES del primer paint para evitar el flash de tema
- * incorrecto (FOUC). Se inyecta en <head> desde `layout.js`.
+ * incorrecto (FOUC). Se inyecta al principio del cuerpo desde `layout.js`.
  *
  * Se mantiene como string porque debe ejecutarse de forma síncrona y
  * bloqueante, antes de que React hidrate.

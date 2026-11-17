@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FiDownload } from "react-icons/fi";
 import { useControls } from "@/lib/i18n";
 import { tween } from "@/lib/motion";
+import GlassBackdrop from "@/components/layout/GlassBackdrop";
 
 /**
  * CTA principal: el CV, en sus dos versiones. No se elige por el idioma de la
@@ -61,11 +62,12 @@ export default function CvDownload({ compact = false, placement = "up" }) {
             data-placement={placement}
             role="menu"
             aria-label={cv.menu}
-            initial={{ opacity: 0, y: placement === "down" ? -4 : 4, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: placement === "down" ? -4 : 4, scale: 0.98 }}
+            initial={{ y: placement === "down" ? -4 : 4, scale: 0.96 }}
+            animate={{ y: 0, scale: 1 }}
+            exit={{ y: placement === "down" ? -4 : 4, scale: 0.96 }}
             transition={tween.fast}
           >
+            <span className="cv-menu__glass" aria-hidden="true"><GlassBackdrop /></span>
             {cv.options.map((o) => (
               <a
                 key={o.lang}

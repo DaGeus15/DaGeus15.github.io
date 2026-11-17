@@ -8,15 +8,18 @@
    título y su resumen a la derecha. El título es un enlace estirado sobre
    toda la fila. */
 .notes-list {
-  border-top: 1px solid var(--border);
+  display: grid;
+  gap: var(--sp-3);
 }
 
 .note-row {
   position: relative;
+  isolation: isolate;
   display: grid;
   gap: var(--sp-2) var(--sp-8);
-  padding-block: var(--sp-6);
-  border-bottom: 1px solid var(--border);
+  padding: var(--sp-6) clamp(var(--sp-4), 2.4vw, var(--sp-6));
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
   transition: scale 160ms var(--ease-out);
 }
 
@@ -81,17 +84,22 @@
   scale: 0.995;
 }
 
-/* Velo de lectura, como las filas del stack, más el título en acento: esta
-   fila SÍ lleva a algún sitio. */
+/* La luz de fondo atraviesa el tinte. El borde se refuerza al interactuar. */
 .note-row::before {
   content: "";
   position: absolute;
-  inset: 0 calc(var(--sp-3) * -1);
-  border-radius: var(--r-md);
-  background: linear-gradient(90deg, var(--lens-hover), transparent 85%);
-  opacity: 0;
+  z-index: -1;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--control-glass);
+  box-shadow: var(--control-edge);
+  opacity: 0.58;
   transition: opacity var(--dur-base) var(--ease-out);
   pointer-events: none;
+}
+
+.note-row:focus-within::before {
+  opacity: 1;
 }
 
 @media (hover: hover) and (pointer: fine) {

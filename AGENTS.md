@@ -98,7 +98,9 @@ silencio.
   `openShot`…) y no se puede serializar; pasá las cadenas ya resueltas.
 - **El tema sigue al navegador.** `data-theme` es el aplicado y
   `data-theme-source` dice si viene del sistema o del visitante; el script
-  inline del layout deja los dos listos antes de hidratar.
+  inline del layout deja los dos listos antes de hidratar. El tema y la
+  entrada se inicializan al principio del cuerpo, antes del contenido.
+  Next genera la cabecera con sus APIs de metadatos.
 
 ## Capturas
 
@@ -144,15 +146,16 @@ silencio.
   `content/portrait.js`. `public/dayle.jpeg` queda para datos estructurados.
 - **La silueta deja ver la página** y se disuelve de forma progresiva bajo
   la cara. La pared clara junto a la silueta se veía como un halo. El filo
-  se pinta en CSS, latón en oscuro y blanco cálido en claro, y aparece sólo
-  donde lo revela el foco del puntero o el scroll táctil.
+  se pinta en CSS, latón en oscuro y blanco cálido en claro, y aparece donde
+  lo revela el barrido, el foco del puntero o el scroll táctil.
 - **El navegador elige la foto por ancho y densidad.** El `<picture>` publica
   las variantes WebP con `sizes` para escritorio y en móvil reutiliza el
   recorte ligero del enlace Inicio.
 - **En escritorio el retrato es absoluto:** la coronilla queda cerca de la
   pastilla, los hombros se disuelven hacia la línea de datos y el texto marca
   el alto de la portada. En móvil, Inicio muestra el avatar en todas las
-  páginas de primer nivel. Así la foto acompaña al nombre sin ocupar una
+  páginas de primer nivel. El círculo acerca el encuadre a la cara en CSS
+  y reutiliza el WebP ligero. Así la foto acompaña al nombre sin ocupar una
   fila por encima del texto.
 
 ## Logos
@@ -190,9 +193,10 @@ silencio.
 - **Mate = grano + luz cenital, no plano.** Una capa fija de ruido
   (`body::after`), un resplandor arriba de la página, y en las superficies
   grandes un degradado vertical, un filo de luz de 1px arriba y una sombra
-  larga (todo en `styles/light.css`, que va al final). Un negro plano con
-  superficies planas se leía "muy negro", sin cuerpo. Nada de esto se anima;
-  nada de cuadrículas ni resplandores de colores.
+  larga (todo en `styles/light.css`, que va al final). Una capa ambiental
+  independiente mueve un reflejo diagonal detrás de las secciones con
+  `transform`. Se difumina antes de la barra para que la refracción quede
+  en reposo al dejar de desplazar la página.
 - **Tarjetas con capturas oscuras se invierten** (`tone: "dark"` en
   `projects.js`) y redefinen sus tokens dentro, para que el texto pase AA en
   los dos temas y la ventana no flote sobre un blanco.
@@ -209,20 +213,26 @@ silencio.
 
 ## Cristal
 
-- **Cristal sólo en lo que FLOTA sobre contenido**: la píldora, el menú del
-  CV y el fondo del visor (que atenúa y desenfoca la página para enfocar la
-  captura). Tarjetas, paneles y todo lo que se desplaza con la página son
-  opacos: un cristal sobre un fondo liso no se ve (es decoración) y un
-  `backdrop-filter` en contenido que se desplaza repinta en cada fotograma.
+- **Filtros de cristal sólo en lo que FLOTA sobre contenido**: la píldora,
+  el menú del CV, el control de ampliar sobre las capturas y el fondo del
+  visor. Las fichas de Notas y las acciones de Proyectos toman el bisel y
+  el tinte en CSS para que la luz de fondo las atraviese sin sumar
+  `backdrop-filter` a cada tarjeta durante el scroll.
 - **El material es uno, en tokens** (`--glass-*`): desenfoque con saturación
-  alta (180%: el color de debajo se aviva, no se lava), tinte, brillo
+  moderada, tinte neutro, brillo
   cenital (`--glass-sheen`), sombra con filo interior (`--glass-shadow`) y
   un filo especular de 1px (`--glass-specular`, pintado con una máscara de
-  borde). Es una aproximación web: el Liquid Glass de Apple no existe en CSS.
+  borde).
 - **Texto sobre cristal con "vibrancy"**: dentro del cristal `--muted` pasa a
   `--glass-ink-muted`. El peor caso es una captura blanca (o marina, en
   claro) justo debajo; con el gris normal los enlaces caían a ~2:1.
-- **La capa que desenfoca es más grande que la píldora** y se recorta con
+- **La píldora refracta el fondo en Chromium** (`GlassBackdrop.jsx`).
+  Un mapa con las normales del canto se calcula al cambiar las dimensiones
+  y `feDisplacementMap` amplía suavemente el centro y curva los bordes. La
+  barra tiene un tinte uniforme y cambia la tinta según las capturas detrás
+  de cada control. El mapa se reutiliza durante el scroll. El menú del CV
+  tiene una superficie óptica propia fuera de la de la barra.
+- **La capa CSS de respaldo es más grande que la píldora** y se recorta con
   `overflow` + radio (`.site-nav__glass`): `backdrop-filter` sólo muestrea
   lo que está justo detrás, y sin esto el color llega de golpe cuando el
   contenido ya está debajo. Crece hacia donde llega el contenido (abajo en
@@ -240,7 +250,8 @@ silencio.
   flota o se pulsa (píldora, lente, menú, visor, botones secundarios,
   enlaces de contacto) y para la pila, que es la firma del sitio. Las
   pastillas de los logotipos del stack lo IMITAN sin `backdrop-filter`
-  (`--tile-*`). Las fichas de la experiencia llegaron a llevarlo y volvieron
+  (`--tile-*`). Los controles comparten el bisel y el canto de `--control-*`
+  sin sumar filtros. Las fichas de la experiencia llegaron a llevarlo y volvieron
   a ser mate; el retrato también, y ahora ni ficha tiene. Cristal en todas
   partes es el patrón de "sitio hecho por IA" y deja de distinguir nada.
 - **Todo lo que se pulsa es píldora** (botones, enlaces de contacto, la
@@ -269,16 +280,21 @@ silencio.
   caen. Cuando entra la escena de cristal, una luz baja UNA vez por las
   capas (de Cliente a Infra, como una petición).
 - **El foco del retrato grande responde a la lectura.** Con ratón,
-  sólo el tramo del contorno cercano al puntero (motion values + spring; un
+  sólo el tramo del contorno cercano al puntero (motion value directo; un
   círculo que viaja con `transform` y un filo contra-desplazado); en táctil,
-  lo recorre el scroll (CSS scroll-driven). Nada al cargar. Es un resaltado
-  de lectura: sin cursor de mano ni elevación (lo que no se puede pulsar).
+  también sigue el scroll (CSS scroll-driven). Tras la firma inicial, en
+  reposo el filo da una vuelta de aproximadamente 1 s cada 9 s y una luz de
+  estudio se desplaza por detrás del busto. El puntero toma el control del
+  filo al moverse. Fuera de
+  pantalla se pausan ambos ciclos y con movimiento reducido la luz de
+  estudio es estática. La blusa conserva el color de la foto en los dos temas.
 - **Sólo `transform` y `opacity` en lo que se anima por fotograma.** El
   subrayado del correo es `scaleX`. Excepción documentada: la lente de la
   píldora (`LiquidLens.jsx`) cambia de `width` (además de `translateX`): va
   en posición absoluta, así que no mueve nada más, y un `clip-path` le
   recortaba el borde y la sombra que la hacen leerse como cristal elevado.
-  Sus dos bordes van con springs distintos y se estira como una gota.
+  Sus dos bordes van con springs distintos y se estira como una gota. Un
+  reflejo viaja en la misma dirección al activar la lente y se apaga al llegar.
 - **Un gesto por pieza.** Las tarjetas de trabajo se inclinaban, su captura
   pequeña se movía aparte, el filo se encendía y el título cambiaba: cuatro
   efectos a la vez se leían como demo. Quedan el filo de luz y el título.
@@ -329,24 +345,26 @@ silencio.
   elevan una tras otra, la viñeta bajo el puntero que se aclara y alarga su
   raya. Marca qué se está leyendo, no adónde lleva.
 - **Los botones responden como cristal**: suben 1px, la sombra se alarga y
-  un destello los cruza (sólo `transform`). Los secundarios y los enlaces de
-  contacto son pastillas de cristal (`--tile-*`); idioma y tema muestran una
-  mini lente (`--lens-*`) al pasar. La lente de la sección activa es cristal
-  elevado: en claro, blanco sobre blanco sólo se distingue por su borde y su
-  sombra.
+  un destello los cruza (sólo `transform`). La barra refleja el movimiento
+  del ratón en una capa contenida. Las opciones muestran relieve con hover,
+  foco y pulsación, y la lente activa conserva el bisel aun en reposo.
+  El visor, el CV y las acciones secundarias comparten el mismo material.
 - **El punto de "disponible" se enciende una vez** al cargar y se queda
   encendido, como una luz piloto. Sin latido: un pulso perpetuo arriba de
   la página distrae de todo lo demás y se lee como una notificación.
-- **Nada perpetuo salvo lo pequeño**: los paquetes SMIL de los diagramas, que
-  además se pausan fuera de pantalla. Sin latidos ni pulsos.
+- **Movimiento en bucle sólo donde aporta**: los paquetes SMIL de los
+  diagramas y las dos luces del retrato de escritorio se pausan fuera de
+  pantalla. La luz de fondo se desplaza lentamente y queda estática con
+  movimiento reducido.
 - **No ramifiques el árbol renderizado según `useReducedMotion()` o una media
   query**, ni cambies atributos por ellos en el render: descuadra la
   hidratación. Misma estructura siempre; el ajuste va en un efecto o en CSS.
 - **Puntero y scroll con motion values**, no `useState` en `pointermove`; el
   rectángulo se mide al entrar, no en cada movimiento. Nada de `setState` en
   el montaje: `useSyncExternalStore`.
-- **La píldora marca la página en la que se está** (`current`, desde
-  `PageShell`); en el inicio, el contacto cuando se llega a él, con el
+- **La píldora vive en el layout del idioma** y marca la página a partir de
+  su segmento. Así la lente conserva su posición entre rutas y se estira
+  entre pestañas. En el inicio marca el contacto cuando se llega a él, con el
   scroll-spy: la sección que cruza una línea al 40% de la altura, no la de
   mayor proporción visible (una sección más alta que la pantalla nunca tiene
   proporción alta y la navegación se quedaba una por detrás). La portada
@@ -466,8 +484,8 @@ silencio.
 ## Dependencias
 
 - **Sin CDNs externos.** El sitio es estático y funciona offline; assets en
-  `public/`. Los iconos del stack son SVG locales (de `react-icons/si`) que se
-  pintan como máscara en el color del texto.
+  `public/`. Stack y los casos comparten iconos SVG locales de `react-icons`
+  y el mismo bisel. Se pintan como máscara en el color del texto.
 - **`next/image` con `loading="eager"` para lo que está arriba al cargar**;
   `priority` está obsoleto en Next 16.
 

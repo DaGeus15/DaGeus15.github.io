@@ -8,13 +8,72 @@
    · los controles (píldora, botones, marcos), un reflejo interior arriba.
 
    Va al final de los módulos a propósito: con la misma especificidad gana la
-   última regla, así que aquí se decide el fondo de estas superficies. Nada
-   de esto se anima.
+   última regla, así que aquí se decide el fondo de estas superficies. La
+   luz ambiental tiene su propia capa detrás de todo el contenido.
    ========================================================================== */
 
 body {
-  background-image: radial-gradient(72rem 38rem at 50% -10rem, var(--glow), transparent 70%);
+  isolation: isolate;
+  background-image: var(--wallpaper), radial-gradient(72rem 38rem at 50% -10rem, var(--glow), transparent 70%);
   background-repeat: no-repeat;
+}
+
+.ambient-backdrop {
+  position: fixed;
+  inset: var(--nav-clear) 0 0;
+  z-index: -1;
+  overflow: hidden;
+  mask-image: linear-gradient(transparent, #000 16%);
+  pointer-events: none;
+}
+
+.ambient-backdrop::before {
+  content: "";
+  position: absolute;
+  inset: -6% -12%;
+  background: linear-gradient(
+    116deg,
+    transparent 21%,
+    var(--ambient-fringe) 36%,
+    var(--ambient-reflection) 49%,
+    var(--ambient-fringe) 61%,
+    transparent 77%
+  );
+}
+
+@media (max-width: 1023px) {
+  .ambient-backdrop {
+    inset: 0 0 calc(var(--nav-mobile-clear) + var(--sp-2));
+    mask-image: linear-gradient(#000 84%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ambient-backdrop::before {
+    animation: ambient-drift var(--dur-ambient-light) ease-in-out infinite alternate;
+    /* Arranca a media trayectoria, con el reflejo a la vista desde el inicio. */
+    animation-delay: calc(var(--dur-ambient-light) / -2);
+  }
+
+  [data-home-intro="playing"] .ambient-backdrop::before {
+    animation-play-state: paused;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .ambient-backdrop {
+    display: none;
+  }
+}
+
+@keyframes ambient-drift {
+  from {
+    transform: translate3d(-32%, -5%, 0);
+  }
+
+  to {
+    transform: translate3d(32%, 5%, 0);
+  }
 }
 
 /* ── Superficies iluminadas ─────────────────────────────────────────── */
@@ -48,22 +107,27 @@ body {
 
 /* Filo que atrapa la luz: en las superficies enlazables (`data-rim`), el
    borde se enciende en latón alrededor del puntero, como el bisel de un
-   cristal. SpecularRim.jsx mueve el centro; una máscara deja sólo el borde
-   de 1px. Enciende, no revela: sin hover el filo de arriba sigue ahí. */
+   cristal. SpecularRim.jsx mueve el centro; una máscara deja sólo el filo. */
 [data-rim]::after {
   content: "";
   position: absolute;
   inset: 0;
   z-index: 3;
-  padding: 1px;
+  padding: 2px;
   border-radius: inherit;
-  background: radial-gradient(20rem circle at var(--rim-x, 50%) var(--rim-y, 0%), var(--rim-light), transparent 70%);
+  background:
+    radial-gradient(18rem circle at var(--rim-x, 50%) var(--rim-y, 0%), var(--rim-light), transparent 75%),
+    var(--glass-specular);
   mask-image: linear-gradient(#000 0 0), linear-gradient(#000 0 0);
   mask-clip: content-box, border-box;
   mask-composite: exclude;
   opacity: 0;
   transition: opacity var(--dur-base) var(--ease-out);
   pointer-events: none;
+}
+
+[data-rim]:focus-within::after {
+  opacity: 1;
 }
 
 @media (hover: hover) and (pointer: fine) {

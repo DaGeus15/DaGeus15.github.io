@@ -28,4 +28,5 @@ export const spring = {
 export const tween = {
   fast: { duration: 0.2, ease: EASE_OUT },
   base: { duration: 0.32, ease: EASE_OUT },
+  glint: { duration: 0.46, ease: "linear" },
 };

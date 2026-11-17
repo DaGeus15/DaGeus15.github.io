@@ -86,9 +86,9 @@
   white-space: nowrap;
   padding: 0 0.85rem 0 0.75rem;
   border-radius: var(--r-pill);
-  border: 1px solid var(--tile-border);
-  background: var(--tile-grad);
-  box-shadow: var(--tile-shadow);
+  border: 1px solid var(--lens-border);
+  background: var(--control-glass);
+  box-shadow: var(--lens-shadow);
   color: var(--foreground);
   font-size: 0.84rem;
   font-weight: 600;
@@ -131,7 +131,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .availability:hover {
-    border-color: var(--border-strong);
+    border-color: var(--lens-glint);
   }
 
   .availability:hover .availability__arrow {
@@ -373,10 +373,14 @@
   margin-top: var(--sp-6);
   color: var(--muted);
   font-size: 0.86rem;
+  line-height: 1.35;
 }
 
 .hero__location svg {
   flex-shrink: 0;
+  inline-size: 1em;
+  block-size: 1em;
+  translate: 0 -0.06em;
 }
 
 /* Retrato sin ficha. La persona ocupa ~47% del lienzo: el resto es la pared,
@@ -396,6 +400,19 @@
   /* El papel claro hace visible el fundido antes. Conserva el volumen
      de los hombros y concentra la disolución en el borde inferior. */
   --portrait-fade: linear-gradient(to bottom, #000 69%, rgb(0 0 0 / 0.9) 78%, transparent 98%);
+}
+
+.hero__studio-light {
+  position: absolute;
+  inset: -16% -12% -4%;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at 52% 42%,
+    var(--portrait-studio-key),
+    var(--portrait-studio-fill) 36%,
+    transparent 67%
+  );
 }
 
 .hero__photo,
@@ -429,11 +446,12 @@
 }
 
 .hero__spot {
+  --spot-size: 16rem;
   position: absolute;
   left: 0;
   top: 0;
-  width: 16rem;
-  height: 16rem;
+  width: var(--spot-size);
+  height: var(--spot-size);
   border-radius: 50%;
   overflow: hidden;
   opacity: 0;
@@ -448,19 +466,111 @@
   height: calc(100cqi * var(--portrait-ratio));
 }
 
+.hero__idle-rim {
+  display: none;
+}
+
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .hero__studio-light {
+    animation: studio-light-drift var(--dur-studio-light) ease-in-out infinite alternate paused;
+  }
+
+  .hero__idle-rim {
+    display: block;
+    position: absolute;
+    inset: 0;
+    transition: opacity var(--dur-fast) var(--ease-out);
+  }
+
+  .hero__portrait[data-on] .hero__idle-rim {
+    opacity: 0;
+  }
+
+  .hero__idle-rim .hero__spot {
+    --spot-size: 13rem;
+    opacity: 1;
+  }
+
+  /* El foco y la máscara usan la misma trayectoria con signos opuestos.
+     El desplazamiento de uno cancela al otro y el filo queda sobre la foto. */
+  .hero__idle-rim :is(.hero__spot, .hero__spot-inner) {
+    --tour-sign: 1;
+    --tour-height: calc(100cqi * var(--portrait-ratio) * var(--tour-sign));
+    --tour-width: calc(100cqi * var(--tour-sign));
+    --tour-offset: calc(var(--spot-size) * var(--tour-sign) / -2);
+    translate: var(--tour-offset) var(--tour-offset);
+    animation: portrait-rim-tour var(--dur-portrait-rim) linear infinite paused;
+  }
+
+  .hero__idle-rim .hero__spot-inner {
+    --tour-sign: -1;
+    animation-name: portrait-rim-tour, portrait-rim-visibility;
+  }
+
+  :root:not([data-home-intro="playing"]) .hero__portrait[data-in-view] .hero__studio-light,
+  :root:not([data-home-intro="playing"]) .hero__portrait[data-in-view]:not([data-on])
+    .hero__idle-rim :is(.hero__spot, .hero__spot-inner) {
+    animation-play-state: running;
+  }
+}
+
+@keyframes studio-light-drift {
+  from {
+    transform: translate3d(-5%, 2%, 0);
+    opacity: 0.66;
+  }
+  to {
+    transform: translate3d(5%, -4%, 0);
+    opacity: 1;
+  }
+}
+
+/* El filo da una vuelta en 1.04 s (11.5% de 9 s) y luego descansa. */
+@keyframes portrait-rim-tour {
+  0%, 11.5%, 100% {
+    transform: translate3d(calc(var(--tour-width) * 0.50), calc(var(--tour-height) * 0.05), 0);
+  }
+  1.33% {
+    transform: translate3d(calc(var(--tour-width) * 0.63), calc(var(--tour-height) * 0.13), 0);
+  }
+  2.67% {
+    transform: translate3d(calc(var(--tour-width) * 0.71), calc(var(--tour-height) * 0.45), 0);
+  }
+  4.17% {
+    transform: translate3d(calc(var(--tour-width) * 0.84), calc(var(--tour-height) * 0.77), 0);
+  }
+  5.67% {
+    transform: translate3d(calc(var(--tour-width) * 0.51), calc(var(--tour-height) * 0.94), 0);
+  }
+  7.17% {
+    transform: translate3d(calc(var(--tour-width) * 0.17), calc(var(--tour-height) * 0.78), 0);
+  }
+  8.67% {
+    transform: translate3d(calc(var(--tour-width) * 0.29), calc(var(--tour-height) * 0.47), 0);
+  }
+  10.17% {
+    transform: translate3d(calc(var(--tour-width) * 0.37), calc(var(--tour-height) * 0.14), 0);
+  }
+}
+
+@keyframes portrait-rim-visibility {
+  0%, 11.5%, 100% { opacity: 0; }
+  1%, 10.5% { opacity: 0.95; }
+}
+
 /* En pantallas grandes con entrada táctil, el foco baja por el contorno. Sin
    soporte de scroll-timeline se ve el retrato en reposo.
    Nada al cargar: antes de salir, el círculo sigue en opacidad 0. */
 @supports (animation-timeline: view()) {
-  @media (min-width: 1024px) and (pointer: coarse) {
-    .hero__spot {
+  @media (min-width: 1024px) and (pointer: coarse) and (prefers-reduced-motion: no-preference) {
+    .hero__spot--interactive {
       animation: portrait-scan linear both;
       animation-timeline: --hero-view;
       animation-range: exit 0% exit 100%;
       animation-duration: auto;
     }
 
-    .hero__spot-inner {
+    .hero__spot--interactive .hero__spot-inner {
       animation: portrait-scan-back linear both;
       animation-timeline: --hero-view;
       animation-range: exit 0% exit 100%;
@@ -492,22 +602,17 @@
   }
 }
 
-/* Ratón: el círculo aparece al entrar y se apaga al salir, más rápido de
-   lo que entró. El recorrido lo lleva el spring, no esta transición. */
+/* Ratón: el círculo sigue el puntero al instante. El fundido conserva el
+   borde al pasar del seguimiento al barrido en reposo. */
 @media (hover: hover) and (pointer: fine) {
-  .hero__spot,
-  .hero__spot-inner {
-    animation: none;
-  }
-
-  .hero__spot {
+  .hero__spot--interactive {
     opacity: 0;
     transition: opacity var(--dur-fast) var(--ease-out);
   }
 
-  .hero__portrait[data-on] .hero__spot {
+  .hero__portrait[data-on] .hero__spot--interactive {
     opacity: 1;
-    transition-duration: var(--dur-base);
+    transition-duration: var(--dur-portrait-focus);
   }
 }
 
@@ -538,7 +643,7 @@
     position: absolute;
     top: calc(var(--hero-pad) - var(--sp-2));
     right: var(--page-gutter);
-    height: min(calc(100% - var(--hero-pad) + var(--sp-4)), calc(min(44vw, 36rem) * var(--portrait-ratio)));
+    height: min(calc(100% - var(--hero-pad) + var(--sp-8)), calc(min(47vw, 40rem) * var(--portrait-ratio)));
   }
 }
 
@@ -1166,6 +1271,11 @@
   align-items: center;
   gap: 0.45rem;
   margin-top: var(--sp-5);
+  min-height: 2.15rem;
+  padding: 0.25rem 0.7rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-pill);
+  background: var(--glass-bevel), color-mix(in srgb, var(--foreground) 7%, transparent);
   color: var(--accent);
   font-size: 0.88rem;
   font-weight: 600;
@@ -1173,6 +1283,10 @@
 
 .work-card__cta svg {
   transition: transform var(--dur-base) var(--ease-out);
+}
+
+.work-card:focus-within .work-card__cta {
+  border-color: var(--accent-line);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -1186,6 +1300,10 @@
 
   .work-card:hover .work-card__cta svg {
     transform: translateX(4px);
+  }
+
+  .work-card:hover .work-card__cta {
+    border-color: var(--accent-line);
   }
 }
 
@@ -1690,33 +1808,6 @@
   font-weight: 600;
 }
 
-/* Pastilla de cristal del logotipo: el mismo lenguaje que las losas (degradado
-   cenital, filo de luz arriba, reflejo diagonal y sombra corta), pero sin
-   backdrop-filter: la fila se desplaza con la página y un desenfoque ahí
-   repintaría en cada fotograma (ver "Cristal" en AGENTS.md). Estática: no se
-   puede pulsar, así que no responde al hover. */
-.stack-row__tile {
-  position: relative;
-  display: grid;
-  place-items: center;
-  width: 2.25rem;
-  height: 2.25rem;
-  flex-shrink: 0;
-  overflow: hidden;
-  border-radius: 0.7rem;
-  border: 1px solid var(--tile-border);
-  background: var(--tile-grad);
-  box-shadow: var(--tile-shadow);
-}
-
-.stack-row__tile::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, var(--tile-sheen) 0%, transparent 46%);
-  pointer-events: none;
-}
-
 /* Resaltado de lectura de la fila: un velo tenue que se desvanece hacia la
    derecha y las pastillas que se elevan una tras otra, como teclas. No
    promete un clic (ni cursor de mano ni color de acento en el texto): marca
@@ -1736,7 +1827,7 @@
   pointer-events: none;
 }
 
-.stack-row__tile {
+.stack-row .technology-tile {
   transition:
     translate var(--dur-base) var(--ease-out),
     box-shadow var(--dur-base) var(--ease-out);
@@ -1747,31 +1838,18 @@
     opacity: 1;
   }
 
-  .stack-row:hover .stack-row__tile {
+  .stack-row:hover .technology-tile {
     translate: 0 -2px;
     box-shadow: var(--tile-shadow), var(--btn-lift);
   }
 
-  .stack-row__primary li:nth-child(2) .stack-row__tile {
+  .stack-row__primary li:nth-child(2) .technology-tile {
     transition-delay: 40ms;
   }
 
-  .stack-row__primary li:nth-child(3) .stack-row__tile {
+  .stack-row__primary li:nth-child(3) .technology-tile {
     transition-delay: 80ms;
   }
-}
-
-/* Logotipo como máscara: toma el color del texto, monocromo en los dos
-   temas. La imagen de la máscara llega en línea desde Stack.jsx. */
-.stack-row__icon {
-  position: relative;
-  width: 1.15rem;
-  height: 1.15rem;
-  flex-shrink: 0;
-  background: currentColor;
-  mask-position: center;
-  mask-repeat: no-repeat;
-  mask-size: contain;
 }
 
 .stack-row__tools {
@@ -2213,15 +2291,16 @@
 }
 
 .contact-link {
+  --btn-shine: var(--lens-glint);
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
   height: 2.75rem;
   padding: 0 1rem;
   border-radius: var(--r-pill);
-  border: 1px solid var(--tile-border);
-  background: var(--tile-grad);
-  box-shadow: var(--tile-shadow);
+  border: 1px solid var(--lens-border);
+  background: var(--control-glass);
+  box-shadow: var(--lens-shadow);
   font-size: 0.92rem;
   font-weight: 600;
   transition:
@@ -2230,7 +2309,7 @@
 }
 
 .contact-link:hover {
-  border-color: var(--border-strong);
+  border-color: var(--lens-glint);
 }
 
 .contact-link:active {
@@ -2300,7 +2379,7 @@
   padding: 0.75rem 0.9rem;
   border-radius: var(--r-sm);
   border: 1px solid var(--border-strong);
-  background: var(--background);
+  background: var(--glass-bevel), var(--surface-sunken);
   color: var(--foreground);
   font: inherit;
   /* 16px evita el zoom automático de iOS al enfocar. */
@@ -2313,7 +2392,7 @@
 .form-input:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-soft);
+  box-shadow: inset 0 1px 0 var(--glass-rim-soft), 0 0 0 3px var(--accent-soft);
 }
 
 .form-textarea {

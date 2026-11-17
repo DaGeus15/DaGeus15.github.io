@@ -256,6 +256,39 @@ code {
   vertical-align: -0.1em;
 }
 
+/* Bisel compartido por los iconos de Stack y las fichas de proyectos. */
+.technology-tile {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: 0.7rem;
+  border: 1px solid var(--tile-border);
+  background: var(--tile-grad);
+  box-shadow: var(--tile-shadow);
+}
+
+.technology-tile::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--tile-sheen) 0%, transparent 46%);
+  pointer-events: none;
+}
+
+.technology-tile__icon {
+  position: relative;
+  width: 1.15rem;
+  height: 1.15rem;
+  background: currentColor;
+  mask-position: center;
+  mask-repeat: no-repeat;
+  mask-size: contain;
+}
+
 /* ── Botones ──────────────────────────────────────────────────────────
    Una forma: 10px de radio, 44px de alto (objetivo táctil). Primario con el
    relleno de acento (latón en oscuro, marino en claro); secundario con borde. */
@@ -294,15 +327,15 @@ code {
 /* El secundario es una pastilla de cristal (el material de los logotipos
    del stack): degradado cenital, filo de luz arriba, sombra corta. */
 .btn--ghost {
-  --btn-shine: var(--tile-sheen);
-  border-color: var(--tile-border);
-  background: var(--tile-grad);
-  box-shadow: var(--tile-shadow);
+  --btn-shine: var(--lens-glint);
+  border-color: var(--lens-border);
+  background: var(--control-glass);
+  box-shadow: var(--lens-shadow);
   color: var(--foreground);
 }
 
 .btn--ghost:hover {
-  border-color: var(--border-strong);
+  border-color: var(--lens-glint);
 }
 
 /* Hover de los botones (y de los enlaces de contacto, que son botones con
@@ -348,13 +381,20 @@ code {
 
   .btn--ghost:not(:disabled):hover,
   .contact-link:hover {
-    box-shadow: var(--tile-shadow), var(--btn-lift);
+    box-shadow: var(--lens-shadow), var(--btn-lift);
   }
 
   .btn:not(:disabled):hover::after,
   .contact-link:hover::after {
     transform: translateX(110%);
     transition: transform 700ms var(--ease-out);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn::after,
+  .contact-link::after {
+    display: none;
   }
 }
 
@@ -387,26 +427,27 @@ code {
     background-color var(--dur-fast) var(--ease-out);
 }
 
-.icon-btn:hover {
+.icon-btn:is(:focus-visible, :active, [data-copied]) {
   color: var(--foreground);
-  background: var(--surface-raised);
+  background: var(--control-glass);
+  box-shadow: var(--control-edge);
 }
 
-/* Idioma y tema viven en la píldora: al pasar, una mini lente como la de
-   la sección activa. */
-.pref-btn {
-  transition:
-    color var(--dur-fast) var(--ease-out),
-    background-color var(--dur-fast) var(--ease-out),
-    box-shadow var(--dur-fast) var(--ease-out);
+.icon-btn {
+  background: var(--glass-bevel);
+  box-shadow: inset 0 0 0 1px var(--glass-border);
 }
 
-.pref-btn:hover {
-  color: var(--foreground);
-  background: var(--lens-bg);
-  box-shadow:
-    inset 0 0 0 1px var(--lens-border),
-    var(--lens-shadow);
+@media (hover: hover) and (pointer: fine) {
+  .icon-btn:hover,
+  .pref-btn:hover {
+    color: var(--foreground);
+  }
+
+  .icon-btn:hover {
+    background: var(--control-glass);
+    box-shadow: var(--control-edge);
+  }
 }
 
 .icon-btn:active,
@@ -505,21 +546,19 @@ code {
 /* Sin transparencia (o con más contraste): el cristal pasa a ser una
    superficie sólida con su borde. Sin desenfoque, un tinte al 62% dejaría
    el texto de la píldora sobre lo que pase por debajo. */
-@media (prefers-reduced-transparency: reduce) {
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
   :root,
-  [data-theme] {
+  [data-theme],
+  .lightbox {
+    --wallpaper: none;
     --glass-blur: 0px;
     --glass-saturate: 100%;
     --glass-bg: var(--surface);
     --glass-bg-thick: var(--surface);
-  }
-}
-
-@media (prefers-contrast: more) {
-  :root,
-  [data-theme] {
-    --glass-bg: var(--surface);
-    --glass-bg-thick: var(--surface);
     --glass-border: var(--border-strong);
+    --glass-bevel: none;
+    --lens-bg: linear-gradient(var(--surface-raised), var(--surface-raised));
+    --lens-border: var(--muted);
+    --lens-selected-edge: var(--foreground);
   }
 }

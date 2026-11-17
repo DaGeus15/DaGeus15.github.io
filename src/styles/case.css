@@ -291,11 +291,14 @@
 
 .tech-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(11rem, 100%), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(13rem, 100%), 1fr));
   column-gap: var(--sp-5);
 }
 
 .tech-grid li {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
   padding-block: var(--sp-3);
   border-top: 1px solid var(--border);
   font-size: 0.84rem;
@@ -334,11 +337,39 @@
 }
 
 .gallery__open {
+  position: relative;
   display: block;
   width: 100%;
   border-radius: var(--r-md);
   cursor: zoom-in;
   transition: transform var(--dur-base) var(--ease-out);
+}
+
+.gallery__zoom {
+  position: absolute;
+  inset: var(--sp-2) var(--sp-2) auto auto;
+  display: grid;
+  place-items: center;
+  width: 2.15rem;
+  height: 2.15rem;
+  border: 1px solid var(--lens-border);
+  border-radius: var(--r-pill);
+  background: var(--glass-bevel), var(--glass-bg);
+  backdrop-filter: var(--glass-thick);
+  box-shadow: var(--lens-shadow);
+  color: var(--glass-ink-muted);
+  pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .gallery__zoom {
+    opacity: 0.78;
+    transition: opacity var(--dur-fast) var(--ease-out);
+  }
+
+  .gallery__open:is(:hover, :focus-visible) .gallery__zoom {
+    opacity: 1;
+  }
 }
 
 /* El mosaico: el marco de siempre, con proporción fija y la captura
@@ -357,7 +388,7 @@
   overflow: hidden;
   padding: var(--sp-3);
   border-radius: var(--r-md);
-  background: var(--surface-sunken);
+  background: var(--glass-bevel), var(--surface-sunken);
   transition: border-color var(--dur-base) var(--ease-out);
 }
 
@@ -588,10 +619,10 @@
   gap: var(--sp-2) var(--sp-4);
   width: 100%;
   padding: var(--sp-2) var(--sp-2) var(--sp-2) var(--sp-4);
-  border-radius: var(--r-md);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.03));
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--lens-border);
+  background: var(--control-glass);
+  box-shadow: var(--lens-shadow), var(--shadow-float);
 }
 
 .lightbox__caption {
@@ -600,12 +631,17 @@
 }
 
 .lightbox__count {
-  color: var(--muted);
+  color: var(--glass-ink-muted);
 }
 
 .lightbox__controls {
   display: flex;
-  gap: 2px;
+  gap: var(--sp-1);
+  color: var(--foreground);
+}
+
+.lightbox__controls .icon-btn {
+  --muted: var(--glass-ink-muted);
 }
 
 /* ── Siguiente proyecto ─────────────────────────────────────────────── */

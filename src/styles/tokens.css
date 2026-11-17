@@ -21,10 +21,15 @@
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
   --dur-fast: 0.18s;
+  --dur-nav-ink: 0.09s;
   --dur-base: 0.28s;
   --dur-slow: 0.5s;
   /* Entrada de la portada al cargar: paso entre elementos. */
   --stagger: 70ms;
+  --dur-portrait-rim: 9s;
+  --dur-portrait-focus: 0.1s;
+  --dur-studio-light: 12s;
+  --dur-ambient-light: 25s;
 
   /* ── Espaciado (rem: `base.css` sube la raíz en monitores grandes) ── */
   --sp-1: 0.25rem;
@@ -65,10 +70,14 @@
   /* Cristal: lo que flota sobre contenido (la píldora, el menú del CV, las
      etiquetas de la pila, los controles sobre capturas y el fondo del visor).
      El peso sale de aquí para que `prefers-reduced-transparency` lo apague.
-     La saturación alta es lo que lo hace cristal y no niebla: el color de lo
-     que pasa por debajo se aviva en vez de lavarse. */
+     La saturación compensa el color que se pierde en el desenfoque. */
   --glass-blur: 20px;
-  --glass-saturate: 180%;
+  --glass-saturate: 125%;
+  --nav-ink-light: #faf8f4;
+  --nav-ink-dark: #080808;
+  --nav-ink-dark-shadow: rgb(255 251 242 / 0.34);
+  --nav-ink-dark-stroke: 0.014em;
+  --nav-ink-light-shadow: rgb(0 0 0 / 0.74);
   --glass-thick: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   /* Filo especular: la luz entra por arriba a la izquierda y rebota abajo a
      la derecha. Lo pinta `.glass-edge` (light.css) con una máscara de borde. */
@@ -83,6 +92,16 @@
   /* Grano del fondo: ruido fractal pintado una vez, fijo. Es lo que hace que
      el color se lea "mate" y no plano de pantalla. */
   --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* El visor usa el mismo material, con sus propios colores oscuros. */
+:root,
+.lightbox {
+  --glass-bevel:
+    radial-gradient(ellipse 74% 18% at 28% 0%, var(--glass-pearl), transparent 100%),
+    linear-gradient(180deg, transparent 64%, var(--glass-depth));
+  --control-glass: var(--glass-bevel), var(--lens-bg);
+  --control-edge: inset 0 0 0 1px var(--lens-border), var(--lens-shadow);
 }
 
 /* ── Paleta: marino + latón ─────────────────────────────────────────────
@@ -107,7 +126,8 @@
    como texto ≥4.5:1; sobre los rellenos de acento, --on-accent ≥7:1. */
 
 :root,
-[data-theme="dark"] {
+[data-theme="dark"],
+.lightbox {
   color-scheme: dark;
 
   --background: #0f151d;
@@ -129,6 +149,8 @@
   /* Latón. 10:1 sobre el fondo como texto. */
   --accent: #e0b676;
   --portrait-rim-ink: #f0ce96;
+  --portrait-studio-key: rgb(180 155 124 / 0.27);
+  --portrait-studio-fill: rgb(93 112 138 / 0.19);
   --accent-hover: #ebc68d;
   --accent-rgb: 224, 182, 118;
   /* Relleno de los CTA, con --on-accent encima (9.5:1). */
@@ -164,34 +186,37 @@
   --shadow-float: 0 14px 36px -14px rgba(0, 0, 0, 0.65);
   --danger: #f29b8b;
 
-  /* Cristal oscuro: marino al 66%, un brillo cenital y el filo de luz.
-     Peor caso calculado: una captura blanca justo debajo deja el fondo en
-     un gris de ~#626467. Por eso el texto secundario dentro del cristal no
-     es --muted (1.8:1 ahí) sino --glass-ink-muted (4.6:1): "vibrancy",
-     más claro sobre un fondo que cambia.
-     El grosor (lo que lo hace leerse como cristal incluso sobre el fondo
-     liso) son las sombras interiores: luz que entra por el borde de arriba
-     y se oscurece en el de abajo, como el canto de una pieza gruesa. */
-  --glass-bg: rgba(21, 28, 37, 0.66);
-  --glass-ink-muted: #dde0e3;
-  --glass-bg-thick: rgba(21, 28, 37, 0.82);
+  /* El tinte sostiene el contraste sobre capturas claras. El reflejo
+     queda en el canto para que se vea el color que pasa por debajo. */
+  --glass-bg: rgb(19 19 20 / 0.68);
+  --glass-ink-muted: #edeff2;
+  --glass-bg-thick: rgb(23 23 24 / 0.8);
   --glass-sheen: linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0) 60%);
-  --glass-border: rgba(220, 230, 245, 0.14);
+  --glass-border: rgb(235 231 224 / 0.16);
   --glass-rim: rgba(255, 255, 255, 0.38);
   --glass-rim-soft: rgba(255, 255, 255, 0.12);
+  --glass-pearl: rgb(235 230 222 / 0.14);
+  --glass-depth: rgb(14 13 12 / 0.15);
+  --wallpaper:
+    radial-gradient(ellipse 62rem 19rem at 66% -5rem, rgb(189 180 167 / 0.13), transparent 100%),
+    radial-gradient(ellipse 34rem 20rem at 17% -9rem, rgb(196 156 105 / 0.12), transparent 100%);
+  --ambient-fringe: rgb(180 143 105 / 0.09);
+  --ambient-reflection: rgb(218 174 119 / 0.19);
   --glass-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.14),
     inset 0 10px 16px -12px rgba(255, 255, 255, 0.1),
     inset 0 -10px 18px -14px rgba(0, 0, 0, 0.55),
     0 18px 40px -18px rgba(0, 0, 0, 0.7);
   /* La lente de la sección activa: cristal más claro y elevado. */
-  --lens-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.17), rgba(255, 255, 255, 0.05));
-  --lens-border: rgba(255, 255, 255, 0.13);
+  --lens-bg: linear-gradient(174deg, rgb(246 242 231 / 0.13), rgb(237 230 218 / 0.035) 90%);
+  --lens-border: rgb(235 228 215 / 0.21);
+  --lens-hover: rgb(235 228 215 / 0.08);
+  --lens-selected-edge: rgb(227 190 135 / 0.44);
+  --lens-glint: rgb(244 245 241 / 0.43);
   --lens-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.13),
     inset 0 -1px 0 rgba(0, 0, 0, 0.25),
     0 6px 14px -6px rgba(0, 0, 0, 0.6);
-  --lens-hover: rgba(255, 255, 255, 0.06);
   /* Sombra larga de un botón que sube al pasar el ratón. */
   --btn-lift: 0 10px 22px -12px rgba(0, 0, 0, 0.75);
 
@@ -258,6 +283,8 @@
   /* Bronce: 5.5:1 sobre el lienzo. */
   --accent: #845922;
   --portrait-rim-ink: #fff8ec;
+  --portrait-studio-key: rgb(211 183 148 / 0.44);
+  --portrait-studio-fill: rgb(141 157 176 / 0.14);
   --accent-hover: #6f4a1a;
   --accent-rgb: 132, 89, 34;
   --accent-fill: #142030;
@@ -285,32 +312,38 @@
   --shadow-float: 0 12px 28px -14px rgba(20, 32, 48, 0.3);
   --danger: #b42318;
 
-  /* Cristal claro al 56%: al 72% con brillo blanco se leía como una píldora
-     blanca opaca y la lente activa (blanca) desaparecía. Peor caso: una
-     captura marina debajo (~#959595); el texto pasa con --foreground (5.5:1)
-     y --glass-ink-muted (4.7:1). El grosor, en las sombras interiores. */
-  --glass-bg: rgba(251, 250, 247, 0.56);
-  --glass-ink-muted: #1f2b3a;
+  /* El tinte de papel deja ver las capturas oscuras y conserva el contraste
+     de la tinta marina. El relieve se apoya en un canto más frío. */
+  --glass-bg: rgba(251, 250, 247, 0.54);
+  --glass-ink-muted: #17212e;
   --glass-bg-thick: rgba(251, 250, 247, 0.84);
-  --glass-sheen: linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0) 55%);
+  --glass-sheen: linear-gradient(180deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0) 55%);
   --glass-border: rgba(20, 32, 48, 0.12);
   --glass-rim: rgba(255, 255, 255, 1);
   --glass-rim-soft: rgba(255, 255, 255, 0.55);
+  --glass-pearl: rgb(255 255 255 / 0.52);
+  --glass-depth: rgb(96 90 85 / 0.09);
+  --wallpaper:
+    radial-gradient(ellipse 61rem 20rem at 65% -5rem, rgb(157 151 141 / 0.13), transparent 100%),
+    radial-gradient(ellipse 35rem 19rem at 17% -8rem, rgb(201 164 120 / 0.17), transparent 100%);
+  --ambient-fringe: rgb(177 131 79 / 0.12);
+  --ambient-reflection: rgb(255 250 236 / 0.67);
   --glass-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.95),
     inset 0 10px 16px -12px rgba(255, 255, 255, 0.85),
     inset 0 -10px 18px -14px rgba(20, 32, 48, 0.22),
     0 14px 32px -16px rgba(20, 32, 48, 0.32);
-  /* La lente activa: blanca, con borde y sombra para que se lea elevada
-     sobre el cristal (sin eso, blanco sobre blanco no se distingue). */
-  --lens-bg: linear-gradient(180deg, #ffffff, rgba(255, 255, 255, 0.78));
-  --lens-border: rgba(20, 32, 48, 0.11);
+  /* La lente activa deja ver el tinte de la barra y marca su base con un filo. */
+  --lens-bg: linear-gradient(174deg, rgb(255 255 255 / 0.48), rgb(172 163 151 / 0.18) 90%);
+  --lens-border: rgb(57 53 48 / 0.22);
+  --lens-hover: rgb(57 53 48 / 0.07);
+  --lens-selected-edge: rgb(92 78 61 / 0.35);
+  --lens-glint: rgb(101 95 88 / 0.28);
   --lens-shadow:
-    inset 0 1px 0 #ffffff,
+    inset 0 1px 0 rgb(255 255 255 / 0.5),
     inset 0 -1px 0 rgba(20, 32, 48, 0.06),
     0 1px 2px rgba(20, 32, 48, 0.12),
     0 6px 14px -6px rgba(20, 32, 48, 0.3);
-  --lens-hover: rgba(20, 32, 48, 0.06);
   --btn-lift: 0 10px 22px -12px rgba(20, 32, 48, 0.45);
 
   /* En claro, las tarjetas de capturas oscuras son marinas. */
