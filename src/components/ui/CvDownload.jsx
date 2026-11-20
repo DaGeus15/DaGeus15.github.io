@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiDownload } from "react-icons/fi";
+import { FiFileText } from "react-icons/fi";
 import { useControls } from "@/lib/i18n";
 import { tween } from "@/lib/motion";
 import GlassBackdrop from "@/components/layout/GlassBackdrop";
@@ -14,6 +14,10 @@ import GlassBackdrop from "@/components/layout/GlassBackdrop";
  *
  * El menú se cierra al pulsar fuera y con Escape; `pointerdown` para que se
  * cierre antes de que el gesto termine, como los menús del sistema.
+ *
+ * El PDF se abre en una pestaña nueva en vez de descargarse: se lee al
+ * instante en el visor del navegador, que también ofrece guardarlo, y quien
+ * lo abre no pierde la página.
  *
  * `compact`: botón pequeño con "CV" (en la píldora). `placement`: hacia dónde
  * se abre el menú; en la píldora, que está arriba, hacia abajo.
@@ -51,7 +55,7 @@ export default function CvDownload({ compact = false, placement = "up" }) {
         aria-expanded={open}
         aria-label={compact ? cv.label : undefined}
       >
-        <FiDownload aria-hidden="true" />
+        <FiFileText aria-hidden="true" />
         {compact ? cv.short : cv.label}
       </button>
 
@@ -72,7 +76,8 @@ export default function CvDownload({ compact = false, placement = "up" }) {
               <a
                 key={o.lang}
                 href={o.href}
-                download
+                target="_blank"
+                rel="noopener"
                 role="menuitem"
                 className="cv-menu__item"
                 onClick={() => setOpen(false)}
