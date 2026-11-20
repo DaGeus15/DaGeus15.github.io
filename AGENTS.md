@@ -44,7 +44,7 @@ silencio.
   por nota. Era una sola página; con las competencias, congresos,
   certificados y hobbies ya no cabía todo sin esconder nada. El inicio es lo
   que lee el reclutador con prisa: portada, tres proyectos destacados
-  (`featured` en `projects.js`) con el enlace a los siete, y el contacto.
+  (`featured` en `projects.js`) con el enlace a todos, y el contacto.
   Dentro de cada página, nada de modos de lectura ni "ver más" que escondan
   contenido: lo que está oculto no se lee. El título de la primera sección de
   cada página es su `<h1>` (`pageTitle`).
