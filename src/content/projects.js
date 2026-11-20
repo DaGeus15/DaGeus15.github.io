@@ -11,7 +11,7 @@
  *   year     Como en el CV.
  *   status   "production" pinta "En producción".
  *   featured Sale en el inicio, entre los tres destacados (los más
- *            vistosos; en orden de esta lista). Los siete están en Proyectos.
+ *            vistosos; en orden de esta lista). Todos están en Proyectos.
  *   context  Contexto sin traducir (p. ej. el programa).
  *   team     Personas en el equipo (sale en la ficha del caso).
  *   metrics  Cifras de un vistazo: `value` aquí, la etiqueta en copy.js. La
@@ -73,6 +73,16 @@ const helpdesk = {
   courses: shot("helpdesk", "courses", 1372, 890),
   landing: shot("helpdesk", "public-landing", 1372, 890),
   login: shot("helpdesk", "mobile-login", 647, 1400),
+};
+
+/* MiniWasp: producción, con una sala de demostración y personas ficticias. */
+const miniwasp = {
+  home: shot("miniwasp", "home", 1600, 1000),
+  room: shot("miniwasp", "public-room", 1600, 1000),
+  whisper: shot("miniwasp", "whisper", 1600, 1000),
+  blocked: shot("miniwasp", "blocked-message", 1600, 1000),
+  mobileHome: shot("miniwasp", "mobile-home", 647, 1400),
+  mobileRoom: shot("miniwasp", "mobile-room", 647, 1400),
 };
 
 const gasoline = {
@@ -156,6 +166,54 @@ export const projects = [
         { from: "api", to: "db" },
         { from: "api", to: "kitchen", label: "WebSocket" },
         { from: "api", to: "erp", label: "REST", async: true },
+      ],
+    },
+  },
+  {
+    id: "miniwasp",
+    featured: true,
+    year: "2026",
+    context: "Seguridad de Software · UTA",
+    /* Sin `value` en la cobertura: el decimal se escribe distinto en cada idioma. */
+    metrics: [{ key: "tests", value: "709" }, { key: "coverage" }, { key: "e2e", value: "14/14" }, { key: "threats", value: "39" }],
+    tech: [
+      "Node.js",
+      "WebSocket (ws)",
+      "WebRTC",
+      "TensorFlow.js (WASM)",
+      "nsfwjs",
+      "AES-256-GCM",
+      "Amazon S3",
+      "Docker",
+      "Railway",
+      "node:test",
+      "Playwright",
+      "OWASP ZAP",
+    ],
+    repo: null,
+    live: "https://miniwasp.up.railway.app",
+    tone: "dark",
+    cover: miniwasp.room,
+    inset: miniwasp.mobileRoom,
+    gallery: [miniwasp.home, miniwasp.room, miniwasp.whisper, miniwasp.blocked, miniwasp.mobileHome, miniwasp.mobileRoom],
+    /* Un solo proceso, cuatro fronteras de confianza: los navegadores y el
+       bucket no son de confianza; la llamada no pasa por el servidor. */
+    diagram: {
+      width: 640,
+      height: 250,
+      nodes: [
+        { id: "browserA", x: 82, y: 52, tech: "HTML · JS" },
+        { id: "browserB", x: 82, y: 198, tech: "HTML · JS" },
+        { id: "server", label: "Node.js", x: 300, y: 125, h: 210, accent: true, tech: "http · ws" },
+        { id: "moderation", x: 530, y: 52, tech: "nsfwjs · workers" },
+        { id: "bucket", label: "Bucket S3", x: 530, y: 198, tech: "AES-256-GCM" },
+      ],
+      edges: [
+        { from: "browserA", to: "server", label: "HTTPS · WSS" },
+        { from: "browserB", to: "server", label: "HTTPS · WSS" },
+        { from: "browserA", to: "browserB", label: "WebRTC · DTLS-SRTP", async: true },
+        { from: "server", to: "moderation" },
+        { from: "server", to: "bucket" },
       ],
     },
   },
@@ -267,7 +325,6 @@ export const projects = [
   },
   {
     id: "gasoline",
-    featured: true,
     year: "2025 – 2026",
     team: 4,
     metrics: [

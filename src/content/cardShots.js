@@ -8,6 +8,14 @@ export const cardShots = {
     "src": "/assets/projects/kaphiy/pwa-chat-sm.webp",
     "w": 400
   },
+  "/assets/projects/miniwasp/public-room.webp": {
+    "src": "/assets/projects/miniwasp/public-room-sm.webp",
+    "w": 800
+  },
+  "/assets/projects/miniwasp/mobile-room.webp": {
+    "src": "/assets/projects/miniwasp/mobile-room-sm.webp",
+    "w": 400
+  },
   "/assets/projects/helpdesk/operator-chat.webp": {
     "src": "/assets/projects/helpdesk/operator-chat-sm.webp",
     "w": 800

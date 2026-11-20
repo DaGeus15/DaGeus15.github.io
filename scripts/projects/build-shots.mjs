@@ -84,6 +84,15 @@ const SHOTS = [
   ["helpdesk", "panel-cursos.jpg", "courses", "web"],
   ["helpdesk", "landing-contacto.jpg", "public-landing", "web"],
   ["helpdesk", "login-movil.jpg", "mobile-login", "mobile"],
+
+  // MiniWasp: capturas de producción con una sala de demostración y personas
+  // ficticias (Ana, Luis y Sofi); la foto del chat es un paisaje generado.
+  ["miniwasp", "01-inicio-salas-publicas.png", "home", "web"],
+  ["miniwasp", "03-sala-publica-chat-adjuntos.png", "public-room", "web"],
+  ["miniwasp", "05-susurro-invitacion-y-personas.png", "whisper", "web"],
+  ["miniwasp", "04-mensaje-bloqueado.png", "blocked-message", "web"],
+  ["miniwasp", "06-movil-inicio.png", "mobile-home", "mobile"],
+  ["miniwasp", "07-movil-sala.png", "mobile-room", "mobile"],
 ];
 
 /** El recuadro de la cámara, difuminado, con el óvalo guía y su anillo redibujados. */

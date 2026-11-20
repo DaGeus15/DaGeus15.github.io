@@ -281,6 +281,55 @@ export const copy = {
           tests: "La suite de pruebas del panel de cocina, en verde.",
         },
       },
+      miniwasp: {
+        title: "MiniWasp",
+        subtitle: "Mensajería temporal con moderación local y videollamadas cifradas",
+        summary:
+          "Chat y videollamadas sin cuentas ni teléfono. Todo vive en memoria y los archivos quedan ilegibles al cerrarse la sala.",
+        client: "Proyecto académico · Seguridad de Software, UTA",
+        description: [
+          "Salas temporales de hasta 20 personas por enlace de invitación, salas públicas con moderación estricta y videollamadas uno a uno. Sin cuentas, sin número de teléfono y sin base de datos: salas, mensajes y sesiones viven en memoria y desaparecen cuando la sala se cierra.",
+          "Un solo servidor Node.js sirve la página, autentica, modera, cifra y hace de señalización WebRTC. Nada de lo que llega del navegador es de confianza, y el proveedor del bucket tampoco: los adjuntos salen del proceso sólo cifrados, y el audio y el video viajan directo entre los dos navegadores.",
+        ],
+        features: [
+          "Salas por invitación de 128 bits, de hasta 20 personas. Quien crea la sala puede sacar a alguien y renovar el enlace.",
+          "Salas públicas en la portada con su título y ocupación, nunca nombres: moderación estricta, modo lento de 2 s y veto con una huella HMAC de la IP, no la IP.",
+          "Susurros: de una sala pública a una privada para dos, si la invitada acepta, con un pase de un solo uso que vence en 60 segundos.",
+          "Fotos, notas de voz, PDF y texto cifrados con AES-256-GCM y una clave por sala. El tipo se reconoce por sus bytes, no por la extensión.",
+          "Fotos sin EXIF ni GPS: el navegador las redibuja y el servidor las vuelve a codificar desde los píxeles, con límites contra bombas de descompresión.",
+          "Moderación local de texto e imágenes: un normalizador deshace las evasiones y nsfwjs revisa las fotos en hilos aparte. Si los hilos no responden, la foto no se publica.",
+          "Videollamadas uno a uno por WebRTC (DTLS-SRTP), con un código de seguridad de 12 dígitos derivado de las huellas DTLS para detectar una intercepción.",
+          "CSP sin `unsafe-inline`, COOP y COEP, HSTS, una cookie `HttpOnly` y `SameSite=Strict` de la que el servidor sólo guarda el hash, y verificación de `Origin` contra CSRF.",
+          "Una API REST (`/api/v1`) con las mismas reglas que el navegador.",
+          "**709 pruebas** con `node:test` y jsdom (98,75 % de cobertura de líneas), 14 escenarios E2E con dos Chrome reales y OWASP ZAP sin alertas contra producción.",
+        ],
+        challenge: {
+          title: "Borrar es más fácil si nunca puedes leer",
+          body: "Los adjuntos tenían que vivir en un bucket externo y no podía confiar en que el proveedor los borrara de verdad al cerrarse la sala. Cada sala tiene una clave AES-256-GCM aleatoria que sólo existe en la memoria del servidor, con `sala:adjunto` como dato asociado para que un objeto no se pueda mover a otra sala. Al cerrarse la sala, la clave se sobrescribe con ceros: cualquier copia que quede en el proveedor es ruido.",
+        },
+        role: "Todo el proyecto, sola: el modelo de amenazas STRIDE (39 amenazas, cada una con su control y su prueba), el servidor y el cliente sin frameworks, la moderación, las pruebas y el despliegue en Railway con Docker.",
+        scope:
+          "Limitaciones declaradas: sin servidor TURN algunas redes bloquean la llamada, una videollamada de 20 personas necesitaría un SFU, y la moderación no analiza por dentro las notas de voz ni los PDF, por eso las salas públicas no los aceptan.",
+        metrics: {
+          tests: "pruebas automatizadas, todas en verde",
+          coverage: { value: "98,75 %", label: "cobertura de líneas" },
+          e2e: "escenarios E2E con dos Chrome reales",
+          threats: "amenazas STRIDE, cada una con su prueba",
+        },
+        nodes: {
+          browserA: "Navegador A",
+          browserB: "Navegador B",
+          moderation: "Moderación",
+        },
+        shots: {
+          home: "La portada: crear una sala, entrar con una invitación o elegir una sala pública.",
+          "public-room": "Sala pública con una foto revisada por la IA local y re-codificada sin metadatos. Las personas son ficticias.",
+          whisper: "La invitación a hablar en privado que recibe Luis, junto a la lista de conectados con «Susurrar».",
+          "blocked-message": "La moderación estricta rechaza un insulto antes de publicarlo.",
+          "mobile-home": "La portada en un teléfono.",
+          "mobile-room": "La sala en un teléfono, con la tira de participantes.",
+        },
+      },
       helpdesk: {
         title: "Asistente de cursos CTT-FISEI",
         subtitle: "Asistente de Telegram con intervención humana en vivo",
@@ -885,6 +934,55 @@ export const copy = {
           "pwa-chat": "The customer PWA: Praliné's menu and the way into the chat with the agent.",
           "kitchen-display": "The kitchen board (KDS): orders by table, in real time.",
           tests: "The kitchen board's test suite, all green.",
+        },
+      },
+      miniwasp: {
+        title: "MiniWasp",
+        subtitle: "Ephemeral messaging with on-server moderation and encrypted video calls",
+        summary:
+          "Chat and video calls with no accounts or phone numbers. Everything lives in memory and files become unreadable when the room closes.",
+        client: "Academic project · Software Security, UTA",
+        description: [
+          "Temporary rooms of up to 20 people joined through an invitation link, public rooms with strict moderation, and one-to-one video calls. No accounts, no phone number and no database: rooms, messages and sessions live in memory and disappear when the room closes.",
+          "A single Node.js server serves the page, authenticates, moderates, encrypts and handles WebRTC signalling. Nothing that comes from the browser is trusted, and neither is the bucket provider: attachments only leave the process encrypted, and audio and video travel directly between the two browsers.",
+        ],
+        features: [
+          "Rooms behind a 128-bit invitation, for up to 20 people. Whoever creates the room can remove someone and renew the link.",
+          "Public rooms listed on the home page with their title and occupancy, never names: strict moderation, a 2 s slow mode and bans stored as an HMAC fingerprint of the IP, never the IP.",
+          "Whispers: from a public room to a private one for two, if the invitee accepts, with a single-use pass that expires in 60 seconds.",
+          "Photos, voice notes, PDFs and text encrypted with AES-256-GCM and a per-room key. File types are recognised by their bytes, not their extension.",
+          "Photos without EXIF or GPS: the browser redraws them and the server re-encodes them from the pixels, with limits against decompression bombs.",
+          "On-server moderation of text and images: a normaliser undoes evasion tricks and nsfwjs checks photos in worker threads. If the workers don't answer, the photo isn't published.",
+          "One-to-one video calls over WebRTC (DTLS-SRTP), with a 12-digit safety code derived from the DTLS fingerprints to detect interception.",
+          "CSP without `unsafe-inline`, COOP and COEP, HSTS, an `HttpOnly`, `SameSite=Strict` cookie of which the server only keeps the hash, and `Origin` checks against CSRF.",
+          "A REST API (`/api/v1`) with the same rules as the browser.",
+          "**709 tests** with `node:test` and jsdom (98.75% line coverage), 14 E2E scenarios with two real Chrome browsers, and OWASP ZAP with no alerts against production.",
+        ],
+        challenge: {
+          title: "Deleting is easier if you can never read",
+          body: "Attachments had to live in an external bucket, and I couldn't trust the provider to really delete them when a room closed. Each room has a random AES-256-GCM key that only exists in the server's memory, with `room:attachment` as associated data so an object can't be moved to another room. When the room closes, the key is overwritten with zeros: any copy left at the provider is noise.",
+        },
+        role: "The whole project, on my own: the STRIDE threat model (39 threats, each with its control and its test), the framework-free server and client, moderation, testing and the Railway deployment with Docker.",
+        scope:
+          "Stated limitations: without a TURN server some networks block the call, a 20-person video call would need an SFU, and moderation can't look inside voice notes or PDFs, which is why public rooms don't accept them.",
+        metrics: {
+          tests: "automated tests, all green",
+          coverage: { value: "98.75%", label: "line coverage" },
+          e2e: "E2E scenarios with two real Chrome browsers",
+          threats: "STRIDE threats, each with its test",
+        },
+        nodes: {
+          browserA: "Browser A",
+          browserB: "Browser B",
+          moderation: "Moderation",
+        },
+        shots: {
+          home: "The home page: create a room, join with an invitation or pick a public room.",
+          "public-room": "A public room with a photo checked by the on-server AI and re-encoded without metadata. The people are fictional.",
+          whisper: "The private-chat invitation Luis receives, next to the list of people online with “Whisper”.",
+          "blocked-message": "Strict moderation rejects an insult before it's published.",
+          "mobile-home": "The home page on a phone.",
+          "mobile-room": "The room on a phone, with the participant strip.",
         },
       },
       helpdesk: {

@@ -93,6 +93,15 @@ const projectIconFiles = {
   Cloudinary: "cloudinary",
   "Azure App Service": "azure",
   "Azure Static Web Apps": "azure",
+  "WebSocket (ws)": "events",
+  WebRTC: "webrtc",
+  nsfwjs: "moderation",
+  "AES-256-GCM": "encryption",
+  "Amazon S3": "storage",
+  Railway: "railway",
+  "node:test": "nodejs",
+  Playwright: "e2e",
+  "OWASP ZAP": "owasp",
 };
 
 export function technologyIcon(name) {
