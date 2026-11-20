@@ -8,7 +8,7 @@ competencias y congresos, hobbies) y Notas. Cada proyecto tiene su caso de estud
 arquitectura, funcionalidades, un reto concreto y galería. En español y en
 inglés, con tema oscuro y claro.
 
-**En vivo:** https://dageus15.github.io
+**En vivo:** https://dayle.dev
 
 ---
 

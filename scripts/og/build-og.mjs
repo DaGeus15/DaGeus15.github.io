@@ -58,7 +58,7 @@ const text = Buffer.from(`
   </style>
   <text x="${TEXT_X}" y="271" class="name">Daylé García Fernández</text>
   <text x="${TEXT_X}" y="317" class="role">Software Engineer</text>
-  <text x="${Math.round(cx - d / 2)}" y="${H - 52}" class="mono">dageus15.github.io</text>
+  <text x="${Math.round(cx - d / 2)}" y="${H - 52}" class="mono">dayle.dev</text>
 </svg>`);
 
 /* El tinte va sólo al fondo: aplicado al final teñía también la foto. */

@@ -15,7 +15,10 @@ export const DEFAULT_LANG = "es";
 export const isLang = (value) => LANGS.includes(value);
 export const otherLang = (lang) => (lang === "es" ? "en" : "es");
 
-export const SITE_URL = "https://dageus15.github.io";
+/** Dominio propio (Cloudflare Registrar, DNS a GitHub Pages). GitHub
+    redirige `dageus15.github.io` aquí con un 301, así que los enlaces viejos
+    siguen funcionando. */
+export const SITE_URL = "https://dayle.dev";
 
 /** Rutas con barra final: `trailingSlash` genera `es/index.html`, que es lo
     que GitHub Pages sirve sin reescrituras. */
