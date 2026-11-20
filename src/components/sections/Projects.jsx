@@ -7,17 +7,17 @@ import { pagePath, projectPath } from "@/lib/locales";
 /**
  * Trabajo seleccionado: primero de la página, porque con un año de
  * experiencia los sistemas construidos son la prueba más fuerte. Rejilla
- * asimétrica: KAPHIY (en producción) a todo el ancho y los otros seis en
- * filas de 7 + 5 / 5 + 7 / 7 + 5. Si cambia el número, que las filas sigan
- * cerrando: con uno de más quedaría una tarjeta de 5 columnas sola. Todos
- * llevan a su caso de estudio. Al final, el resto del código en GitHub, para
- * quien quiera más que siete.
+ * asimétrica con ocho: KAPHIY (en producción) a todo el ancho, 7 + 5, 5 + 7,
+ * otra a todo el ancho y 7 + 5. Si cambia el número, que las filas sigan
+ * cerrando: con siete en esta lista, la octava quedaba sola en 5 columnas,
+ * pequeña en una esquina. Todos llevan a su caso de estudio. Al final, el
+ * resto del código en GitHub.
  *
  * Con `featured`, el resumen del inicio: sólo los destacados (`featured` en
  * projects.js), uno a todo el ancho y dos en 7 + 5, y al final el enlace a la
- * página con los siete.
+ * página con todos.
  */
-const SIZES = ["wide", "large", "small", "small", "large", "large", "small"];
+const SIZES = ["wide", "large", "small", "small", "large", "wide", "large", "small"];
 const FEATURED_SIZES = ["wide", "large", "small"];
 
 export default function Projects({ t, featured = false, pageTitle = false }) {
