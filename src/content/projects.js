@@ -190,7 +190,7 @@ export const projects = [
       "Playwright",
       "OWASP ZAP",
     ],
-    repo: null,
+    repo: "https://github.com/DaGeus15/miniwasp",
     live: "https://miniwasp.up.railway.app",
     tone: "dark",
     cover: miniwasp.room,
