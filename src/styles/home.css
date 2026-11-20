@@ -407,11 +407,15 @@
   inset: -16% -12% -4%;
   z-index: -1;
   pointer-events: none;
+  /* Radios explícitos que caben en la caja (52% + 46% < 100%, 42% − 42% = 0):
+     la luz se apaga antes de cada borde. Con el tamaño por defecto
+     (farthest-corner) seguía encendida al llegar al borde derecho y se veía
+     un corte vertical junto al retrato en pantallas grandes. */
   background: radial-gradient(
-    ellipse at 52% 42%,
+    46% 42% at 52% 42%,
     var(--portrait-studio-key),
-    var(--portrait-studio-fill) 36%,
-    transparent 67%
+    var(--portrait-studio-fill) 54%,
+    transparent 100%
   );
 }
 
