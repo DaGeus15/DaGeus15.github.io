@@ -240,7 +240,7 @@ export const projects = [
       "Vercel",
     ],
     repo: "https://github.com/DaGeus15/helpdesk_agent_uta",
-    live: "https://helpdesk.dayle.dev/contacto",
+    live: "https://helpdesk.dayle.dev/",
     cover: helpdesk.chat,
     inset: helpdesk.login,
     gallery: [helpdesk.chat, helpdesk.summary, helpdesk.metrics, helpdesk.courses, helpdesk.landing, helpdesk.login],
