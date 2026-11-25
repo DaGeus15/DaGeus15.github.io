@@ -5,25 +5,26 @@ import WorkCard from "@/components/project/WorkCard";
 import { pagePath, projectPath } from "@/lib/locales";
 
 /**
- * Proyectos en dos alturas. Los cuatro destacados (`featured` en
- * projects.js) son tarjetas grandes en 7 + 5 / 5 + 7, en el inicio y en
- * Proyectos: los mismos que el README de GitHub y LinkedIn. En Proyectos, el
- * resto va debajo como lista compacta (título, resumen, stack y enlaces):
- * se ven todos sin que cada uno ocupe una tarjeta con capturas. Todos llevan
- * a su caso de estudio.
+ * Proyectos en dos alturas. Arriba, el mosaico: los proyectos con capturas y
+ * caso de estudio (projects.js, hasta unos diez), en 7 + 5 / 5 + 7 para que
+ * las filas cierren parejas; los cuatro destacados primero. Debajo, una lista
+ * compacta con los trabajos pequeños (moreProjects.js): nombre, resumen,
+ * stack y enlaces, sin capturas, para que estén sin ocupar lo mismo.
  *
- * Con `featured`, el resumen del inicio: sólo las tarjetas y el enlace a la
- * página con todos. Sin él, al final, el resto del código en GitHub.
+ * Con `featured`, el resumen del inicio: sólo los cuatro destacados
+ * (`featured`, los mismos que el README de GitHub y LinkedIn) y el enlace a
+ * la página con todos. Sin él, al final, el resto del código en GitHub.
  */
 const SIZES = ["large", "small", "small", "large"];
+const sizeAt = (i) => SIZES[i % SIZES.length];
 const LIST_TECH = 4;
 
 export default function Projects({ t, featured = false, pageTitle = false }) {
   const { ui, lang } = t;
   const labels = { caseStudy: ui.caseStudy, inProduction: ui.inProduction };
   const github = t.social.find((s) => s.id === "github");
-  const main = t.projects.filter((p) => p.featured);
-  const rest = featured ? [] : t.projects.filter((p) => !p.featured);
+  const main = featured ? t.projects.filter((p) => p.featured) : t.projects;
+  const rest = featured ? [] : t.moreProjects;
   const heading = featured ? t.sections.featured : t.sections.projects;
   const id = featured ? "featured" : "projects";
   const level = pageTitle ? 2 : 3;
@@ -34,9 +35,9 @@ export default function Projects({ t, featured = false, pageTitle = false }) {
 
       <ul className="work-grid">
         {main.map((p, i) => (
-          <li className="work-grid__item reveal" data-size={SIZES[i] ?? "small"} key={p.id}>
+          <li className="work-grid__item reveal" data-size={sizeAt(i)} key={p.id}>
             <WorkCard
-              size={SIZES[i] ?? "small"}
+              size={sizeAt(i)}
               headingLevel={level}
               eager={featured}
               href={projectPath(lang, p.id)}
@@ -67,11 +68,7 @@ export default function Projects({ t, featured = false, pageTitle = false }) {
               return (
                 <li className="work-row" key={p.id}>
                   <div className="work-row__main">
-                    <Heading className="work-row__name">
-                      <Link href={projectPath(lang, p.id)} className="work-row__link">
-                        {p.title}
-                      </Link>
-                    </Heading>
+                    <Heading className="work-row__name">{p.title}</Heading>
                     <span className="work-row__year mono">{p.year}</span>
                   </div>
                   <p className="work-row__summary">{p.summary}</p>

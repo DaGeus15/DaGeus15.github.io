@@ -1,6 +1,7 @@
 import copy from "@/content/copy";
 import profileBase from "@/content/profile";
 import projectsBase from "@/content/projects";
+import moreProjectsBase from "@/content/moreProjects";
 import skillGroups from "@/content/skills";
 import experienceBase from "@/content/experience";
 import navBase from "@/content/navigation";
@@ -61,6 +62,8 @@ export function getContent(lang) {
     };
   });
 
+  const moreProjects = moreProjectsBase.map((p) => ({ ...p, ...c.moreProjects[p.id] }));
+
   const content = {
     lang,
     meta: c.meta,
@@ -81,6 +84,7 @@ export function getContent(lang) {
       ...role,
     })),
     projects,
+    moreProjects,
     // Cada nota con su texto, su proyecto ya resuelto (título para el enlace
     // al caso) y los minutos de lectura. Las más recientes primero.
     notes: notesBase

@@ -24,12 +24,13 @@ silencio.
   nombre y el rol usan el ancho de la portada. Un reclutador quiere ver a quién está
   leyendo; antes la foto estaba al final (Sobre mí) y la portada la ocupaba
   la pila 3D. Sobre mí ya no repite la foto.
-- **Dos alturas de proyecto: cuatro destacados y una lista.** Los
-  destacados (`featured`) son los mismos en el inicio, el README de GitHub y
-  LinkedIn (MiniWasp, KAPHIY, FuelOps y Fiado: código suyo y comprobable). En
-  Proyectos van como tarjetas grandes y el resto debajo, como lista compacta
-  (nombre, resumen, stack, Demo y GitHub), sin capturas: se ven bastantes
-  proyectos sin que todos ocupen lo mismo. Todos conservan su caso.
+- **Dos alturas de proyecto: mosaico y lista.** En Proyectos, arriba el
+  mosaico con los que tienen capturas y caso (`projects.js`, hasta unos
+  diez, en 7 + 5 / 5 + 7) y debajo una lista compacta con los trabajos
+  pequeños (`moreProjects.js`: nombre, resumen, stack, Demo y GitHub, sin
+  capturas). Sólo en el portafolio: los cuatro destacados (`featured`:
+  MiniWasp, KAPHIY, FuelOps y Fiado, código suyo y comprobable) son los
+  únicos del inicio, del README de GitHub y de LinkedIn.
 - **La portada resume; el caso de estudio lo cuenta todo.** Cada destacado sale
   en la portada con título, una línea, dos cifras y sus capturas; el stack, la
   arquitectura, las funcionalidades, el reto, la galería y el rol viven en

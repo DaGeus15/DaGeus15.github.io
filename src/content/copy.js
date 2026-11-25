@@ -239,6 +239,33 @@ export const copy = {
       },
     },
 
+    moreProjects: {
+      scalar: {
+        title: "API documentada con Scalar",
+        summary: "API de práctica en NestJS con CRUD de razas, perros y datos curiosos sobre SQLite, documentada con Scalar, y la guía para publicarla.",
+      },
+      mnist: {
+        title: "MNIST: red neuronal frente a KNN",
+        summary: "Clasificador de dígitos escritos a mano que compara una red neuronal con KNN, con curvas de aprendizaje y matriz de confusión.",
+      },
+      search: {
+        title: "Búsquedas informadas",
+        summary: "El 8-puzzle resuelto con A*, búsqueda en anchura, en profundidad y bidireccional, para comparar los algoritmos.",
+      },
+      feriauto: {
+        title: "FeriaAuto",
+        summary: "Juego de preguntas en el navegador. Hice la versión para móvil, la música y los efectos de sonido.",
+      },
+      freecodecamp: {
+        title: "freeCodeCamp · Back End y APIs",
+        summary: "Los seis laboratorios de la certificación: un módulo de npm, microservicios REST, middleware, un chat con WebSockets y una API con JWT y roles.",
+      },
+      datascience: {
+        title: "Data Science Essentials (Cisco)",
+        summary: "Los cinco proyectos abiertos del curso: limpieza de datos, gráficas, un modelo y conclusiones con datasets reales.",
+      },
+    },
+
     projects: {
       kaphiy: {
         title: "KAPHIY",
@@ -898,6 +925,33 @@ export const copy = {
           { h: "What it doesn't do" },
           "This liveness check stops a printed or on-screen photo, which doesn't turn or smile on request. It is not a replacement for a certified passive detector (ISO/IEC 30107-3) against masks or real-time deepfakes. That is why recognition sits behind an interface (`BiometricProvider`): swapping face-api for a commercial provider leaves the rest of the system untouched.",
         ],
+      },
+    },
+
+    moreProjects: {
+      scalar: {
+        title: "API documented with Scalar",
+        summary: "A practice NestJS API with CRUD for breeds, dogs and fun facts on SQLite, documented with Scalar, plus the guide to publish it.",
+      },
+      mnist: {
+        title: "MNIST: neural network vs. KNN",
+        summary: "A handwritten-digit classifier comparing a neural network with KNN, with learning curves and a confusion matrix.",
+      },
+      search: {
+        title: "Informed search",
+        summary: "The 8-puzzle solved with A*, breadth-first, depth-first and bidirectional search, to compare the algorithms.",
+      },
+      feriauto: {
+        title: "FeriaAuto",
+        summary: "A quiz game in the browser. I built the mobile version, the music and the sound effects.",
+      },
+      freecodecamp: {
+        title: "freeCodeCamp · Back End and APIs",
+        summary: "The six certification labs: an npm module, REST microservices, middleware, a WebSocket chat and an API with JWT and roles.",
+      },
+      datascience: {
+        title: "Data Science Essentials (Cisco)",
+        summary: "The course's five open-ended projects: data cleaning, charts, a model and conclusions with real datasets.",
       },
     },
 
