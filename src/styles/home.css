@@ -1155,6 +1155,159 @@
   }
 }
 
+/* Más proyectos: lista compacta bajo las tarjetas. Una superficie mate con
+   una fila por proyecto (sin capturas): nombre y año, resumen y stack, y los
+   enlaces. El título es un enlace estirado al caso; Demo y GitHub van encima
+   con su propio z-index. En escritorio, tres columnas; debajo de 1024px, la
+   fila se apila. */
+.work-list {
+  margin-top: var(--sp-9);
+}
+
+.work-list__title {
+  margin-bottom: var(--sp-4);
+  font-size: clamp(1.35rem, 1.1rem + 0.8vw, 1.75rem);
+  font-weight: 650;
+  font-stretch: var(--title-stretch);
+  letter-spacing: -0.02em;
+}
+
+.work-list__items {
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.work-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 15rem) minmax(0, 1fr) auto;
+  grid-template-areas:
+    "main summary links"
+    "main tech links";
+  column-gap: var(--sp-6);
+  row-gap: var(--sp-1);
+  align-items: baseline;
+  padding: var(--sp-5) clamp(1.25rem, 1rem + 1vw, 2rem);
+}
+
+.work-row + .work-row {
+  border-top: 1px solid var(--border);
+}
+
+.work-row__main {
+  grid-area: main;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+}
+
+.work-row__name {
+  font-size: 1.08rem;
+  font-weight: 620;
+  line-height: 1.25;
+}
+
+.work-row__link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.work-row__link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.work-row__link:focus-visible {
+  outline: none;
+}
+
+.work-row:has(.work-row__link:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+  border-radius: var(--r-lg);
+}
+
+.work-row__year {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.work-row__summary {
+  grid-area: summary;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+
+.work-row__tech {
+  grid-area: tech;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.work-row__links {
+  grid-area: links;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  gap: var(--sp-4);
+  align-self: center;
+  white-space: nowrap;
+}
+
+.work-row:active {
+  scale: 0.995;
+  transition: scale 160ms var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .work-row {
+    transition: background-color var(--dur-base) var(--ease-out);
+  }
+
+  .work-row:hover {
+    background-color: var(--surface-raised);
+  }
+
+  .work-row:hover .work-row__link {
+    color: var(--accent);
+  }
+}
+
+@media (pointer: coarse) {
+  .work-row__links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 1023px) {
+  .work-row {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "main"
+      "summary"
+      "tech"
+      "links";
+    row-gap: var(--sp-2);
+  }
+
+  .work-row__main {
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--sp-3);
+  }
+
+  .work-row__links {
+    align-self: start;
+    margin-top: var(--sp-1);
+  }
+}
+
 /* El resto del código: la misma pastilla que los enlaces de contacto, centrada
    bajo la rejilla, donde termina la lectura de los proyectos. */
 .work-more {

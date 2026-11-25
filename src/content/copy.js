@@ -39,6 +39,7 @@ export const copy = {
       inProduction: "En producción",
       privateCode: "Código privado",
       live: "En línea",
+      demo: "Demo",
       sourceCode: "Código",
       caseStudy: "Ver caso de estudio",
       moreOnGithub: "Más proyectos en GitHub",
@@ -130,7 +131,7 @@ export const copy = {
     },
 
     sections: {
-      projects: { title: "Proyectos" },
+      projects: { title: "Proyectos", more: "Más proyectos" },
       experience: { title: "Experiencia" },
       notes: {
         title: "Notas",
@@ -711,6 +712,7 @@ export const copy = {
       inProduction: "In production",
       privateCode: "Private code",
       live: "Live",
+      demo: "Demo",
       sourceCode: "Code",
       caseStudy: "Read case study",
       moreOnGithub: "More projects on GitHub",
@@ -798,7 +800,7 @@ export const copy = {
     },
 
     sections: {
-      projects: { title: "Projects" },
+      projects: { title: "Projects", more: "More projects" },
       experience: { title: "Experience" },
       notes: {
         title: "Notes",

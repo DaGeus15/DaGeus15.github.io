@@ -3,7 +3,7 @@ import Projects from "@/components/sections/Projects";
 import { getContent } from "@/lib/content";
 import { pageMetadata } from "@/lib/pageMeta";
 
-/** Proyectos: los siete, con sus capturas; cada uno lleva a su caso. */
+/** Proyectos: los destacados en tarjetas y el resto en lista; cada uno lleva a su caso. */
 export async function generateMetadata({ params }) {
   const { lang } = await params;
   return pageMetadata(lang, "projects");
