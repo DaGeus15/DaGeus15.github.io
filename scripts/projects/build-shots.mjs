@@ -33,10 +33,14 @@ const SHOTS = [
   ["kaphiy", "kaphiy/p14_213_594x841.png", "kitchen-display", "mobile"],
   ["kaphiy", "kaphiy/p15_220_1115x517.png", "tests", "web"],
 
-  ["gasoline", "gasoline/p22_131_1126x652.png", "vehicles", "web", { blur: [[8, 490, 200, 36]] }],
-  ["gasoline", "gasoline/p23_137_1126x664.jpeg", "routes", "web", { blur: [[8, 492, 200, 36]] }],
-  ["gasoline", "gasoline/p25_145_1129x926.jpeg", "fuel", "web", { blur: [[8, 458, 200, 36]] }],
-  ["gasoline", "gasoline/p19_113_1126x539.jpeg", "login", "web"],
+  // FuelOps: la demo publicada, con datos sintéticos (placas DEMO-0xx, nombres y
+  // correos @example.test inventados). Las de 1440 son capturas nuevas a tamaño real.
+  ["fuelops", "dashboard-dark.jpg", "dashboard", "web"],
+  ["fuelops", "1440/routes.png", "routes", "web"],
+  ["fuelops", "1440/drivers.png", "drivers", "web"],
+  ["fuelops", "1440/vehicles.png", "vehicles", "web"],
+  ["fuelops", "1440/landing.png", "landing", "web"],
+  ["fuelops", "dashboard-mobile.jpg", "mobile-dashboard", "web", { crop: [0, 0, 375, 812] }],
 
   ["contable", "contable/p19_94_940x450.png", "journal-entries", "web"],
   ["contable", "contable/p20_97_790x517.png", "entry-detail", "web", { blur: [[4, 428, 260, 30]] }],

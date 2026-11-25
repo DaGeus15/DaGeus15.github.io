@@ -24,8 +24,8 @@ export const cardShots = {
     "src": "/assets/projects/helpdesk/mobile-login-sm.webp",
     "w": 400
   },
-  "/assets/projects/gasoline/routes.webp": {
-    "src": "/assets/projects/gasoline/routes-sm.webp",
+  "/assets/projects/fuelops/dashboard.webp": {
+    "src": "/assets/projects/fuelops/dashboard-sm.webp",
     "w": 800
   },
   "/assets/projects/safetrade/home.webp": {

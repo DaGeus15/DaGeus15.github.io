@@ -85,11 +85,14 @@ const miniwasp = {
   mobileRoom: shot("miniwasp", "mobile-room", 647, 1400),
 };
 
-const gasoline = {
-  routes: shot("gasoline", "routes", 1126, 664),
-  vehicles: shot("gasoline", "vehicles", 1126, 652),
-  fuel: shot("gasoline", "fuel", 1129, 926),
-  login: shot("gasoline", "login", 1126, 539),
+/* FuelOps: la demo publicada (antes Gasoline System), con datos sintéticos. */
+const fuelops = {
+  dashboard: shot("fuelops", "dashboard", 1425, 1540),
+  routes: shot("fuelops", "routes", 1440, 1000),
+  drivers: shot("fuelops", "drivers", 1440, 1000),
+  vehicles: shot("fuelops", "vehicles", 1440, 1000),
+  landing: shot("fuelops", "landing", 1440, 900),
+  mobile: shot("fuelops", "mobile-dashboard", 375, 812),
 };
 
 const contable = {
@@ -324,7 +327,7 @@ export const projects = [
     },
   },
   {
-    id: "gasoline",
+    id: "fuelops",
     year: "2025 – 2026",
     team: 4,
     metrics: [
@@ -340,25 +343,29 @@ export const projects = [
       "Prisma",
       "PostgreSQL",
       "MongoDB",
-      "Docker Compose",
       "JWT",
+      "Prometheus",
+      "Grafana",
+      "Docker Compose",
       "Next.js",
     ],
     repo: "https://github.com/Application-Distributed-Gasoline-System",
+    live: "https://fuelops.dayle.dev",
     tone: "dark",
-    cover: gasoline.routes,
-    gallery: [gasoline.routes, gasoline.vehicles, gasoline.fuel, gasoline.login],
+    cover: fuelops.dashboard,
+    inset: fuelops.mobile,
+    gallery: [fuelops.dashboard, fuelops.routes, fuelops.drivers, fuelops.vehicles, fuelops.landing, fuelops.mobile],
     diagram: {
       width: 640,
       height: 260,
       nodes: [
         { id: "client", x: 70, y: 130, tech: "Next.js" },
         { id: "gateway", label: "API Gateway", x: 238, y: 130, accent: true, tech: "NestJS · JWT" },
-        { id: "auth", x: 424, y: 26, w: 120, h: 34 },
+        { id: "auth", x: 424, y: 26, w: 120, h: 34, accent: true },
         { id: "drivers", x: 424, y: 78, w: 120, h: 34 },
         { id: "vehicles", x: 424, y: 130, w: 120, h: 34 },
-        { id: "routes", x: 424, y: 182, w: 120, h: 34 },
-        { id: "fuel", x: 424, y: 234, w: 120, h: 34 },
+        { id: "routes", x: 424, y: 182, w: 120, h: 34, accent: true },
+        { id: "fuel", x: 424, y: 234, w: 120, h: 34, accent: true },
         { id: "bus", label: "NATS", x: 584, y: 130, w: 72, h: 242, tech: "events" },
       ],
       edges: [
