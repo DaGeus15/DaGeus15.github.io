@@ -16,7 +16,9 @@ import { pagePath, projectPath } from "@/lib/locales";
  * la página con todos. Sin él, al final, el resto del código en GitHub.
  */
 const SIZES = ["large", "small", "small", "large"];
-const sizeAt = (i) => SIZES[i % SIZES.length];
+/* Con un número impar, la última va a todo el ancho: sola en 7 columnas
+   quedaba un hueco de 5 al lado. */
+const sizeAt = (i, n) => (n % 2 === 1 && i === n - 1 ? "wide" : SIZES[i % SIZES.length]);
 const LIST_TECH = 4;
 
 export default function Projects({ t, featured = false, pageTitle = false }) {
@@ -35,9 +37,9 @@ export default function Projects({ t, featured = false, pageTitle = false }) {
 
       <ul className="work-grid">
         {main.map((p, i) => (
-          <li className="work-grid__item reveal" data-size={sizeAt(i)} key={p.id}>
+          <li className="work-grid__item reveal" data-size={sizeAt(i, main.length)} key={p.id}>
             <WorkCard
-              size={sizeAt(i)}
+              size={sizeAt(i, main.length)}
               headingLevel={level}
               eager={featured}
               href={projectPath(lang, p.id)}

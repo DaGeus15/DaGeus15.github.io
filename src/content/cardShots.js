@@ -1,5 +1,13 @@
 /* generado por npm run cards, no editar */
 export const cardShots = {
+  "/assets/projects/miniwasp/public-room.webp": {
+    "src": "/assets/projects/miniwasp/public-room-sm.webp",
+    "w": 800
+  },
+  "/assets/projects/miniwasp/mobile-room.webp": {
+    "src": "/assets/projects/miniwasp/mobile-room-sm.webp",
+    "w": 400
+  },
   "/assets/projects/kaphiy/kitchen-display.webp": {
     "src": "/assets/projects/kaphiy/kitchen-display-sm.webp",
     "w": 400
@@ -8,13 +16,9 @@ export const cardShots = {
     "src": "/assets/projects/kaphiy/pwa-chat-sm.webp",
     "w": 400
   },
-  "/assets/projects/miniwasp/public-room.webp": {
-    "src": "/assets/projects/miniwasp/public-room-sm.webp",
+  "/assets/projects/fuelops/dashboard.webp": {
+    "src": "/assets/projects/fuelops/dashboard-sm.webp",
     "w": 800
-  },
-  "/assets/projects/miniwasp/mobile-room.webp": {
-    "src": "/assets/projects/miniwasp/mobile-room-sm.webp",
-    "w": 400
   },
   "/assets/projects/helpdesk/operator-chat.webp": {
     "src": "/assets/projects/helpdesk/operator-chat-sm.webp",
@@ -24,9 +28,13 @@ export const cardShots = {
     "src": "/assets/projects/helpdesk/mobile-login-sm.webp",
     "w": 400
   },
-  "/assets/projects/fuelops/dashboard.webp": {
-    "src": "/assets/projects/fuelops/dashboard-sm.webp",
+  "/assets/projects/placas/landing.webp": {
+    "src": "/assets/projects/placas/landing-sm.webp",
     "w": 800
+  },
+  "/assets/projects/placas/mobile-detection.webp": {
+    "src": "/assets/projects/placas/mobile-detection-sm.webp",
+    "w": 400
   },
   "/assets/projects/safetrade/home.webp": {
     "src": "/assets/projects/safetrade/home-sm.webp",

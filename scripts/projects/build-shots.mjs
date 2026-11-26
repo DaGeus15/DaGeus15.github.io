@@ -80,6 +80,14 @@ const SHOTS = [
   ["safetrade", "techstore/word/media/image22.jpeg", "mobile-product", "mobile"],
   ["safetrade", "techstore/word/media/image17.png", "azure-resources", "web"],
 
+  // ALPR Ecuador (placas): capturas de producción con placas ficticias.
+  ["placas", "desktop-01-landing.png", "landing", "web"],
+  ["placas", "desktop-08-veredicto.png", "verdict", "web"],
+  ["placas", "desktop-07-binaria.png", "binary", "web"],
+  ["placas", "desktop-06-bordes.png", "edges", "web"],
+  ["placas", "mobile-02-deteccion.png", "mobile-detection", "mobile"],
+  ["placas", "mobile-08-veredicto.png", "mobile-verdict", "mobile"],
+
   // Helpdesk: capturas del panel en producción. El correo de la conversación de
   // demostración es inventado pero usa el dominio real de la UTA: difuminado.
   ["helpdesk", "panel-chat.jpg", "operator-chat", "web", { blur: [[814, 530, 146, 22], [385, 549, 36, 20], [898, 655, 174, 22]] }],

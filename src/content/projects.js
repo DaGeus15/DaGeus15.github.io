@@ -97,6 +97,16 @@ const fuelops = {
   mobile: shot("fuelops", "mobile-dashboard", 375, 812),
 };
 
+/* ALPR Ecuador: la demo publicada, con placas ficticias. */
+const placas = {
+  landing: shot("placas", "landing", 1600, 1000),
+  verdict: shot("placas", "verdict", 1600, 1000),
+  binary: shot("placas", "binary", 1600, 1000),
+  edges: shot("placas", "edges", 1600, 1000),
+  mobile: shot("placas", "mobile-detection", 647, 1400),
+  mobileVerdict: shot("placas", "mobile-verdict", 647, 1400),
+};
+
 const contable = {
   entries: shot("contable", "journal-entries", 940, 450),
   entry: shot("contable", "entry-detail", 790, 517),
@@ -383,6 +393,43 @@ export const projects = [
         { from: "api", to: "guardrails" },
         { from: "api", to: "catalog" },
         { from: "api", to: "enrollment" },
+      ],
+    },
+  },
+  {
+    id: "placas",
+    year: "2026",
+    team: 2,
+    metrics: [
+      { key: "knn", value: "91,25 %" },
+      { key: "latency", value: "1,8 s" },
+      { key: "tests", value: "10" },
+    ],
+    tech: ["Python", "FastAPI", "OpenCV", "NumPy", "YOLOv8", "ONNX", "SQLite", "Next.js", "Docker", "Render", "Cloudflare Pages"],
+    repo: null,
+    live: "https://placas.dayle.dev",
+    cover: placas.landing,
+    inset: placas.mobile,
+    gallery: [placas.landing, placas.verdict, placas.binary, placas.edges, placas.mobile, placas.mobileVerdict],
+    /* La API es una caja alta: cada etapa del pipeline sale de ella. Lo mío
+       del proyecto original es la base (la interfaz y la API). */
+    diagram: {
+      width: 640,
+      height: 260,
+      nodes: [
+        { id: "web", x: 82, y: 135, accent: true, tech: "Next.js · Pages" },
+        { id: "api", label: "API", x: 300, y: 135, h: 236, accent: true, tech: "FastAPI · Render" },
+        { id: "detector", x: 530, y: 40, tech: "YOLO · ONNX" },
+        { id: "ocr", x: 530, y: 103, tech: "KNN · NumPy" },
+        { id: "fuzzy", x: 530, y: 167, tech: "Mamdani" },
+        { id: "db", label: "SQLite", x: 530, y: 230 },
+      ],
+      edges: [
+        { from: "web", to: "api", label: "HTTPS" },
+        { from: "api", to: "detector" },
+        { from: "api", to: "ocr" },
+        { from: "api", to: "fuzzy" },
+        { from: "api", to: "db" },
       ],
     },
   },
