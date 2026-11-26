@@ -301,7 +301,7 @@ export const projects = [
       "Vercel",
       "Render",
     ],
-    repo: null,
+    repo: "https://github.com/seby10/simulador-financiero",
     live: "https://fiado-zeta.vercel.app/",
     cover: fiado.step,
     inset: fiado.focus,
