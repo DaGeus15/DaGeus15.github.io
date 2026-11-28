@@ -8,6 +8,14 @@ export const cardShots = {
     "src": "/assets/projects/miniwasp/mobile-room-sm.webp",
     "w": 400
   },
+  "/assets/projects/securetex/editor.webp": {
+    "src": "/assets/projects/securetex/editor-sm.webp",
+    "w": 800
+  },
+  "/assets/projects/securetex/mobile-editor.webp": {
+    "src": "/assets/projects/securetex/mobile-editor-sm.webp",
+    "w": 400
+  },
   "/assets/projects/kaphiy/kitchen-display.webp": {
     "src": "/assets/projects/kaphiy/kitchen-display-sm.webp",
     "w": 400

@@ -80,6 +80,14 @@ const SHOTS = [
   ["safetrade", "techstore/word/media/image22.jpeg", "mobile-product", "mobile"],
   ["safetrade", "techstore/word/media/image17.png", "azure-resources", "web"],
 
+  // SecureTex: producción con un currículum de ejemplo y usuarios sintéticos.
+  ["securetex", "editor-escritorio.png", "editor", "web"],
+  ["securetex", "colaboracion-escritorio.png", "collaboration", "web"],
+  ["securetex", "compilacion-escritorio.png", "compiling", "web"],
+  ["securetex", "pdf-firmado-escritorio.png", "signed-pdf", "web"],
+  ["securetex", "editor-oscuro-escritorio.png", "editor-dark", "web"],
+  ["securetex", "editor-movil.png", "mobile-editor", "mobile"],
+
   // ALPR Ecuador (placas): capturas de producción con placas ficticias.
   ["placas", "desktop-01-landing.png", "landing", "web"],
   ["placas", "desktop-08-veredicto.png", "verdict", "web"],

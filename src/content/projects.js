@@ -10,7 +10,7 @@
  * Campos:
  *   year     Como en el CV.
  *   status   "production" pinta "En producción".
- *   featured Uno de los cuatro más importantes: tarjeta grande en el inicio y
+ *   featured Uno de los más importantes: tarjeta grande en el inicio y
  *            en Proyectos, y los mismos que el README de GitHub y LinkedIn.
  *            El resto va en Proyectos como lista compacta (título, resumen,
  *            stack y enlaces).
@@ -95,6 +95,16 @@ const fuelops = {
   vehicles: shot("fuelops", "vehicles", 1440, 1000),
   landing: shot("fuelops", "landing", 1440, 900),
   mobile: shot("fuelops", "mobile-dashboard", 375, 812),
+};
+
+/* SecureTex: producción, con un currículum de ejemplo y usuarios sintéticos. */
+const securetex = {
+  editor: shot("securetex", "editor", 1600, 1000),
+  collaboration: shot("securetex", "collaboration", 1600, 1000),
+  compiling: shot("securetex", "compiling", 1600, 1000),
+  pdf: shot("securetex", "signed-pdf", 1600, 1000),
+  dark: shot("securetex", "editor-dark", 1600, 1000),
+  mobile: shot("securetex", "mobile-editor", 647, 1400),
 };
 
 /* ALPR Ecuador: la demo publicada, con placas ficticias. */
@@ -182,6 +192,62 @@ export const projects = [
         { from: "browserA", to: "browserB", label: "WebRTC · DTLS-SRTP", async: true },
         { from: "server", to: "moderation" },
         { from: "server", to: "bucket" },
+      ],
+    },
+  },
+  {
+    id: "securetex",
+    featured: true,
+    year: "2026",
+    team: 5,
+    metrics: [
+      { key: "abuse", value: "82" },
+      { key: "tests", value: "142" },
+      { key: "axe", value: "0" },
+    ],
+    tech: [
+      "Next.js",
+      "React",
+      "TypeScript",
+      "NestJS",
+      "Fastify",
+      "Prisma",
+      "PostgreSQL",
+      "Yjs",
+      "CodeMirror",
+      "WebSocket",
+      "TeX Live",
+      "gVisor",
+      "Docker",
+      "GitHub Actions",
+      "Playwright",
+    ],
+    repo: "https://github.com/SecurTex-Devs/securetex",
+    live: "https://securetex.dayle.dev",
+    cover: securetex.editor,
+    inset: securetex.mobile,
+    gallery: [securetex.editor, securetex.collaboration, securetex.compiling, securetex.pdf, securetex.dark, securetex.mobile],
+    /* La API es la caja alta: el navegador llega por el BFF (REST) y por
+       WebSocket (la colaboración). El compilador sólo recibe trabajos por el
+       buzón, sin red. */
+    diagram: {
+      width: 640,
+      height: 260,
+      nodes: [
+        { id: "client", x: 82, y: 60, tech: "CodeMirror · Yjs" },
+        { id: "web", label: "Next.js", x: 82, y: 205, tech: "BFF" },
+        { id: "api", label: "API", x: 300, y: 135, h: 236, accent: true, tech: "NestJS · Fastify" },
+        { id: "db", label: "PostgreSQL", x: 530, y: 40, tech: "cifrado · RLS" },
+        { id: "jobs", x: 530, y: 135, tech: "tmpfs" },
+        { id: "compiler", x: 530, y: 230, tech: "gVisor · sin red" },
+      ],
+      edges: [
+        { from: "client", to: "web", label: "HTTPS" },
+        { from: "client", to: "api", label: "WebSocket" },
+        { from: "web", to: "api", label: "REST" },
+        { from: "api", to: "db" },
+        { from: "api", to: "jobs" },
+        { from: "jobs", to: "compiler", label: "SSH", async: true },
       ],
     },
   },

@@ -267,6 +267,52 @@ export const copy = {
     },
 
     projects: {
+      securetex: {
+        title: "SecureTex",
+        subtitle: "Editor LaTeX colaborativo con cifrado y compilación aislada",
+        summary:
+          "Un editor LaTeX para escribir en equipo, con el contenido cifrado desde el navegador y cada compilación en un contenedor sin red.",
+        client: "Proyecto académico · Seguridad de Software, UTA",
+        description: [
+          "Un editor LaTeX colaborativo: varias personas escriben a la vez sobre el mismo documento y revisan el PDF mientras trabajan. La demo abre un currículum de ejemplo editable, sin registro ni contraseña.",
+          "El contenido se cifra desde el navegador, la base de datos aplica RLS forzada con roles separados y cada compilación corre en un contenedor gVisor efímero y sin red que se destruye al terminar. El PDF lleva una firma Ed25519 que el navegador verifica antes de mostrarlo o descargarlo. El servidor descifra para compilar: no protege frente a quien lo opera.",
+          "Se publica solo: cada merge a main pasa las pruebas, construye imágenes ARM64 por SHA y despliega en mi servidor Oracle con comprobación de salud y vuelta atrás automática.",
+        ],
+        features: [
+          "Edición simultánea con Yjs sobre CodeMirror; compilación con pdfLaTeX, XeLaTeX o LuaLaTeX, visor de PDF con SyncTeX y tema oscuro.",
+          "Cifrado del contenido desde el cliente (AES-256-GCM, con un sobre X25519 y ChaCha20-Poly1305) y archivos cifrados en reposo con claves envueltas.",
+          "Cuentas con Argon2id, verificación de correo, TOTP, rotación y revocación de sesiones, protección CSRF e inicio de sesión con Google (OpenID Connect y PKCE).",
+          "PostgreSQL con RLS forzada y roles distintos para identidad, aplicación y auditoría; la API no tiene las credenciales del propietario de la base.",
+          "Cada compilación en un contenedor gVisor efímero: sin red, raíz de solo lectura, usuario sin privilegios, sin shell-escape y con un plazo de 30 s.",
+          "PDF firmado con Ed25519 y verificado en el navegador antes de mostrarse; PDF.js no ejecuta acciones del documento.",
+          "Demo pública acotada: sesión de 30 minutos, cuotas por IP y globales, y restauración cada medianoche.",
+          "**142 pruebas unitarias** y **82 casos de abuso** contra servicios reales en CI, sin infracciones de axe en las páginas públicas y una revisión con OWASP ZAP.",
+          "Despliegue automático por SHA con main protegida, una clave SSH de comando forzado y reversión automática si falla la salud.",
+        ],
+        challenge: {
+          title: "LaTeX ajeno en un servidor compartido",
+          body: "Compilar el LaTeX que escribe cualquiera es ejecutar código no confiable, y el servidor Oracle es ARM64, no tiene KVM y ya tenía otros servicios en marcha. Se instaló gVisor ARM64 en modo systrap sin reiniciar Docker ni cambiar su runtime predeterminado. Cada trabajo corre en un contenedor sin red que sólo ve su subdirectorio del buzón y se destruye al terminar; ni la API ni el controlador reciben el socket de Docker. Al cambiar de versión, la API saliente vacía sus cambios de Yjs antes de detenerse, para que una reversión no pierda lo que se estaba escribiendo.",
+        },
+        role: "Equipo de cinco. Todo el código del repositorio salió de mi cuenta (164 commits), escrito con agentes de IA que dirigí (Claude Code y, para la entrega, Codex): la interfaz y el editor, la API, el cifrado, la identidad, el compilador aislado, las pruebas y el despliegue automático.",
+        metrics: {
+          abuse: "casos de abuso contra servicios reales, en CI",
+          tests: "pruebas unitarias de la API",
+          axe: "infracciones de accesibilidad (axe) en las páginas públicas",
+        },
+        nodes: {
+          client: "Navegador",
+          jobs: "Buzón de trabajos",
+          compiler: "Compilador",
+        },
+        shots: {
+          editor: "El editor en producción: el currículum de ejemplo, el código y el PDF firmado al lado.",
+          collaboration: "Dos personas sintéticas escribiendo a la vez, una desde Chromium y otra desde Firefox.",
+          compiling: "Una compilación en curso: primero el análisis de seguridad en el servidor.",
+          "signed-pdf": "El PDF, mostrado sólo después de verificar su firma Ed25519.",
+          "editor-dark": "El editor con el tema oscuro.",
+          "mobile-editor": "El editor en el móvil.",
+        },
+      },
       kaphiy: {
         title: "KAPHIY",
         subtitle: "Pedidos por chat con IA para una cafetería, en producción",
@@ -1002,6 +1048,52 @@ export const copy = {
     },
 
     projects: {
+      securetex: {
+        title: "SecureTex",
+        subtitle: "Collaborative LaTeX editor with encryption and isolated compilation",
+        summary:
+          "A LaTeX editor for writing as a team, with content encrypted in the browser and every compilation in a container without network access.",
+        client: "University project · Software Security, UTA",
+        description: [
+          "A collaborative LaTeX editor: several people write in the same document at once and review the PDF as they go. The demo opens an editable sample résumé, with no sign-up or password.",
+          "Content is encrypted in the browser, the database enforces RLS with separate roles, and every compilation runs in an ephemeral gVisor container with no network that is destroyed when it finishes. The PDF carries an Ed25519 signature that the browser verifies before showing or downloading it. The server decrypts to compile: it does not protect against whoever runs it.",
+          "It deploys itself: every merge to main runs the tests, builds ARM64 images by SHA and deploys to my Oracle server with a health check and automatic rollback.",
+        ],
+        features: [
+          "Simultaneous editing with Yjs on CodeMirror; compilation with pdfLaTeX, XeLaTeX or LuaLaTeX, a PDF viewer with SyncTeX and a dark theme.",
+          "Client-side content encryption (AES-256-GCM, with an X25519 and ChaCha20-Poly1305 envelope) and files encrypted at rest with wrapped keys.",
+          "Accounts with Argon2id, email verification, TOTP, session rotation and revocation, CSRF protection and Google sign-in (OpenID Connect with PKCE).",
+          "PostgreSQL with enforced RLS and separate roles for identity, application and audit; the API never holds the database owner's credentials.",
+          "Every compilation in an ephemeral gVisor container: no network, read-only root, an unprivileged user, no shell escape and a 30 s limit.",
+          "PDF signed with Ed25519 and verified in the browser before it is shown; PDF.js does not run document actions.",
+          "A bounded public demo: 30-minute sessions, per-IP and global quotas, and a reset every midnight.",
+          "**142 unit tests** and **82 abuse cases** against real services in CI, no axe violations on the public pages and an OWASP ZAP review.",
+          "Automatic deployment by SHA with a protected main branch, a forced-command SSH key and automatic rollback if the health check fails.",
+        ],
+        challenge: {
+          title: "Other people's LaTeX on a shared server",
+          body: "Compiling LaTeX that anyone writes means running untrusted code, and the Oracle server is ARM64, has no KVM and was already running other services. gVisor for ARM64 was installed in systrap mode without restarting Docker or changing its default runtime. Every job runs in a container with no network that only sees its own mailbox subdirectory and is destroyed when it finishes; neither the API nor the controller gets the Docker socket. On a version change, the outgoing API flushes its Yjs changes before stopping, so a rollback does not lose what people were writing.",
+        },
+        role: "A team of five. All the code in the repository came from my account (164 commits), written with AI agents I directed (Claude Code and, for the release, Codex): the interface and editor, the API, encryption, identity, the isolated compiler, the tests and automatic deployment.",
+        metrics: {
+          abuse: "abuse cases against real services, in CI",
+          tests: "API unit tests",
+          axe: "accessibility violations (axe) on the public pages",
+        },
+        nodes: {
+          client: "Browser",
+          jobs: "Job mailbox",
+          compiler: "Compiler",
+        },
+        shots: {
+          editor: "The editor in production: the sample résumé, its source and the signed PDF side by side.",
+          collaboration: "Two synthetic people writing at once, one from Chromium and one from Firefox.",
+          compiling: "A compilation in progress: the server-side security check comes first.",
+          "signed-pdf": "The PDF, shown only after its Ed25519 signature is verified.",
+          "editor-dark": "The editor in the dark theme.",
+          "mobile-editor": "The editor on a phone.",
+        },
+      },
       kaphiy: {
         title: "KAPHIY",
         subtitle: "AI chat ordering for a coffee shop, in production",

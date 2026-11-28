@@ -28,9 +28,10 @@ silencio.
   mosaico con los que tienen capturas y caso (`projects.js`, hasta unos
   diez, en 7 + 5 / 5 + 7) y debajo una lista compacta con los trabajos
   pequeños (`moreProjects.js`: nombre, resumen, stack, Demo y GitHub, sin
-  capturas). Sólo en el portafolio: los cuatro destacados (`featured`:
-  MiniWasp, KAPHIY, FuelOps y Fiado, código suyo y comprobable) son los
-  únicos del inicio, del README de GitHub y de LinkedIn.
+  capturas). Sólo en el portafolio: los destacados (`featured`: MiniWasp,
+  SecureTex, KAPHIY, FuelOps y Fiado) son los únicos del inicio, del README
+  de GitHub y de LinkedIn. Con un número impar, la última tarjeta va a todo
+  el ancho para que las filas cierren.
 - **La portada resume; el caso de estudio lo cuenta todo.** Cada destacado sale
   en la portada con título, una línea, dos cifras y sus capturas; el stack, la
   arquitectura, las funcionalidades, el reto, la galería y el rol viven en
@@ -50,7 +51,7 @@ silencio.
   Sobre mí y Notas** (`content/navigation.js`), más una por proyecto y una
   por nota. Era una sola página; con las competencias, congresos,
   certificados y hobbies ya no cabía todo sin esconder nada. El inicio es lo
-  que lee el reclutador con prisa: portada, los cuatro proyectos destacados
+  que lee el reclutador con prisa: portada, los proyectos destacados
   (`featured` en `projects.js`) con el enlace a todos, y el contacto.
   Dentro de cada página, nada de modos de lectura ni "ver más" que escondan
   contenido: lo que está oculto no se lee. El título de la primera sección de
